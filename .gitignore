@@ -6,8 +6,9 @@
 *.bam.bai
 *.saf.idx
 
-# Pipeline logs #
+# Pipeline logs & metadata #
 ################
 *.log
 *.out
 *.err
+*.snakemake*
