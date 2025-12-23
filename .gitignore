@@ -1,0 +1,13 @@
+# Data files #
+###################
+*.gz
+*.fastq*
+*.bam
+*.bam.bai
+*.saf.idx
+
+# Pipeline logs #
+################
+*.log
+*.out
+*.err
