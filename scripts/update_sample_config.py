@@ -1,42 +1,27 @@
 # A streamlined way to update the sample config.yaml file needed for Snakemake pipeline runs
 # Useful for folks who don't want to use VIM or a remote VSCode session to edit the file
+# Script currenlty cannot edit ref_genome or anc_genome paths; those must be changed manually
 
 # Evan Hackstadt
 # Whittall Lab Dudleya Genomics
 # December 2025
 
 
-
-# TODO: REDO HOW WE WRITE TO CONFIG FILE!!! CONFIG FILE HAS NEW FORMAT!!!
-
-# POTENTIALLY USEFUL OLD SAMPLE NAME PARSING FUNCTION:
-'''
-def shortname(sample):
-    # code_LP_xxx_Du-xxx
-    substrings = sample.split("_")
-    LP = DU = ""
-    code = substrings[0]
-    code += substrings[1] if substrings[0] == 'CY' else ''
-    for i, s in enumerate(substrings):
-        if s == 'LP':
-            LP = substrings[i+1]
-        if 'Du' in s:
-            DU = s.replace('Du-', '')
-    return f"{code}{DU}"
-'''
+# WARNING: will need to update parsing depending on filenames...
+#          currently set up for samplename_R1.fastq*
 
 
 import sys
 import os
 import argparse
 
-# --- CLI Args ---
+# --- CLI ARGS ---
 parser = argparse.ArgumentParser()
 parser.add_argument('data_dir', help='Path to the directory containing input data (raw reads) of interest. By default, adds all samples to a new config file.', type=str)
 parser.add_argument('config_dir', help='Path to the directory where the config.yaml file should be saved.', type=str)
 parser.add_argument('-n', '--n_samples', help='(optional) integer value --> add the first n samples to config file', type=int)
 parser.add_argument('-c', '--custom_samples', help='(optional) allows you to enter custom samples for the config file', action='store_true')
-parser.add_argument('-a', '--append_to_file', help='(optional) script will add samples to an existing "config.yaml" file in config_dir', action='store_true')
+parser.add_argument('-e', '--append_to_file', help='(optional) script will add selected samples to the existing "config.yaml" file in config_dir', action='store_true')
 parser.add_argument('-q', '--quiet', help='(optional) script will not print modified config file contents after writing', action='store_true')
 args = parser.parse_args()
 
@@ -44,30 +29,48 @@ args = parser.parse_args()
 data_dir = os.path.abspath(args.data_dir)   # ensure we have absolute paths
 config_dir = os.path.abspath(args.config_dir)
 n_samples = args.n_samples if args.n_samples else None
+
 data_files = [f for f in os.listdir(data_dir) 
               if os.path.isfile(os.path.join(data_dir, f))]
 data_files.sort()
 
 if not os.path.isdir(data_dir):
-    raise(ValueError, f"{data_dir} is not a directory.")
+    raise ValueError(f"{data_dir} is not a directory.")
 if not os.path.isdir(config_dir):
-    raise(ValueError, f"{config_dir} is not a directory.")
+    raise ValueError(f"{config_dir} is not a directory.")
 if args.n_samples is not None and args.custom_samples is True:
-    raise(ValueError, "Cannot use both --n_samples and --custom_samples flags. Choose one or neither.")
+    raise ValueError("Cannot use both --n_samples and --custom_samples flags. Choose one or neither.")
 if len(data_files) == 0:
-    raise(ValueError, f"{data_dir} does not contain any files.")
+    raise ValueError(f"{data_dir} does not contain any files.")
+if len(data_files) % 2 != 0:
+    raise ValueError(f"{data_dir} has an odd number of files. Expected even number (R1 and R2 for each sample).")
 
-# parse filenames into samples (filenames up until _R1 or _R2)
+# from filenames, map R1 and R2 files to their sample names
 data_samples = []
+data_dict = {}
 for f in data_files:
     if '_R1' in f:
+        r1_path = os.path.abspath(os.path.join(data_dir, f))
         substrings = f.split('_R1')
-        data_samples.append(substrings[0])  # left of the split (filename up until _R1)
+        sample_name = substrings[0]  # left of the split (filename up until _R1)
+        data_samples.append(sample_name)
+        # find its corresponding R2 file
+        for f2 in data_files:
+            if sample_name in f2 and '_R2' in f2:
+                r2_path = os.path.abspath(os.path.join(data_dir, f2))
+                data_dict[sample_name] = [r1_path, r2_path]
     elif '_R2' in f:
-        substrings = f.split('_R2')
-        data_samples.append(substrings[0])  # left of the split (filename up until _R2)
-data_samples = list(set(data_samples))    # remove duplicates
+        continue
+    else:
+        raise ValueError(f"File found without R1/R2 designation: {f}")
 data_samples.sort()
+
+# make sure nothing got messed up
+if len(data_samples)*2 != len(data_files):
+    raise ValueError(f"Error: found {len(data_samples)} but {len(data_files)}. Expected twice as many files as samples.")
+for sample, file_list in data_dict.items():
+    if len(file_list) != 2:
+        raise ValueError(f"Error: mapped {len(file_list)} files to {sample}. Expected 2 (R1 and R2).")
 
 print("\n----ARGS----")
 
@@ -79,14 +82,18 @@ print(data_files) if not args.quiet else print("(message supressed)")
 print(f"Parsed into {len(data_samples)} samples: ")
 print(data_samples) if not args.quiet else print("(message supressed)")
 
+print("Mapped filepaths to samples as follows:")
+print(data_dict) if not args.quiet else print("(message supressed)")
 
-# --- Select samples based on args provided ---
+
+# --- SELECT SAMPLES ---
 print("\n----SAMPLE SELECTION----")
 selected_samples = []
 
 if args.custom_samples:         # custom_samples
     print("Custom samples requested.")
-    print("Please enter desired samples (not filenames) one-by-one, matching the options listed above.")
+    print("Please enter desired samples (not filenames) one-by-one, matching the options listed below:")
+    print(data_samples)
     print("Type 'save' to finish selection. Type 'quit' to cancel and exit.")
     print(">>>>>>>>")
     user_input = input()
@@ -130,25 +137,44 @@ else:               # (default) all samples
 print(f"Selected {len(selected_samples)} samples to write: ", selected_samples)
 
 
-# --- Write to the config file ---
+# --- WRITE TO CONFIG FILE ---
 print("\n----WRITING TO FILE----")
 config_path = os.path.join(config_dir, "config.yaml")
 print("Config file path: ", config_path)
 
 if args.append_to_file:
-    mode = "a"
+    mode = 'a'
     print("Append requested. Selected samples will be added to end of existing config file.")
 else:
-    mode = "w"
+    mode = 'w'
     print("Mode is write. Overwriting previous config file.")
+    # extract ref_genome and anc_genome so we can write them in the new file
+    with open(config_path, 'r') as f:
+        line = f.readline()
+        while line == '\n' or line[0] == '#':
+            line = f.readline()
+        ref_line = line
+        line = f.readline()
+        while line == '\n' or line[0] == '#':
+            line = f.readline()
+        anc_line = line
+        # ensure file was properly formatted...
+        if 'ref_genome: ' not in ref_line:
+            raise ValueError(f"Unable to extract ref_genome from old config file. Instead read: {ref_line}")
+        if 'anc_genome: ' not in anc_line:
+            raise ValueError(f"Unable to extract anc_genome from old config file. Instead read: {anc_line}")
+    print(f"...Extracted {ref_line}")
+    print(f"...Extracted {anc_line}")
 
 with open(config_path, mode) as f:
-    print(f"...Writing to {config_path} ...")
+    print(f"...Opening {config_path}...")
     
-    # if we are writing a new file, add the path and samples header
+    # if we are writing a new file, add ref_genome and anc_genome to the top
     if mode == "w":
         f.write(f"# {config_path}")
-        f.write(f"\nsamples_path: {data_dir}")
+        f.write(f"\n# Note: changing the layout of this file might break the update_sample_config.py script")
+        f.write(f"\n{ref_line}")
+        f.write(f"{anc_line}")
         f.write("\nsamples:")
     
     # now write the selected samples line-by-line
@@ -159,11 +185,13 @@ with open(config_path, mode) as f:
         if sample in contents:
             print(f">>>>WARNING: {sample} is already in config file. Skipping...")
         else:
-            f.write(f"\n- {sample}")
+            f.write(f'\n  {sample}:')
+            f.write(f'\n    r1: "{data_dict[sample][0]}"')
+            f.write(f'\n    r2: "{data_dict[sample][1]}"')
 
 print("Finished writing!")
 
 if not args.quiet:
-    print(f"Resulting contents of {config_path}:\n")
+    print(f"\nNEW CONFIG FILE LOOKS LIKE:\n")
     with open(config_path, 'r') as f:
         print(f.read(), "\n")
