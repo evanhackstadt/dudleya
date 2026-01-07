@@ -2,10 +2,9 @@
 
 Dr. Justen Whittall, Evan Hackstadt, Karina Martinez, Dante Cable
 
-## Instructions for Current Snakemake Pipeline
-Last updated: 1/6/26
+Instructions last updated: 1/6/26
 
-### The Architecture
+## Pipeline Architecture
 
 * `Snakefile` — contains the bulk of the **pipeline**. It is a list of steps (terminal commands / scripts) to process the data.
 * The Snakefile depends on two **config files** that tell it what to do:
@@ -14,9 +13,9 @@ Last updated: 1/6/26
   * `update_sample_config.py` — utility script providing an easy way to update samples config file.
 * `submit_snakemake.sh` — batch file that allows us to run the pipeline in the background (as a master SLURM job).
 
-### Running the Pipeline
+## Running the Pipeline
 
-#### Update sample config
+### Update sample config
 Let's say we have **new samples** in a folder `data/` that we want to process.
 First we need to udpate `samples_config/config.yaml` to point to our samples.
 
@@ -34,7 +33,7 @@ python scripts/update_sample_config.py data/ snakemake/samples_config/
 
 The script should print what it's doing to the terminal. Note that this script CANNOT change paths to the ref and anc genomes, so these must be changed manually if needed.
 
-#### Run Snakemake
+### Run Snakemake
 Now we can run the pipeline.
 
 To run Snakemake in the background (as a SLURM job):
@@ -50,8 +49,8 @@ To run Snakemake directly (not recommended since this requires you to stay logge
 snakemake --profile profiles/config.yaml
 ```
 
-#### Currently: Visualization is Manual
-We hope to integrate visualization (PCA plotting) into the pipeline, but currently it must be done manually.
+### Visualization
+Currently, visualization (PCA plotting) must be done manually. We hope to integrate it into the pipeline soon.
 
 Once Snakemake finishes, you should have `results/pca/` containing `population.cov` and `population.info` files.
 We need to pass these to `pcangsd_visualize.py` to create a plot. This script requires the visualization conda env.
