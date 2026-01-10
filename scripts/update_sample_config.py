@@ -7,13 +7,14 @@
 # December 2025
 
 
-# WARNING: will need to update parsing depending on filenames...
-#          currently set up for samplename_R1.fastq*
+# NOTE: assumes this specific filename format:
+#       popcode_LP_xxx_Du-xxx_Sxxx_Lxxx_Rx_00x.fastq.gz
 
 
 import sys
 import os
 import argparse
+from datetime import datetime
 
 # --- CLI ARGS ---
 parser = argparse.ArgumentParser()
@@ -44,6 +45,8 @@ if len(data_files) == 0:
     raise ValueError(f"{data_dir} does not contain any files.")
 if len(data_files) % 2 != 0:
     raise ValueError(f"{data_dir} has an odd number of files. Expected even number (R1 and R2 for each sample).")
+if not os.path.isfile(os.path.join(config_dir, "config.yaml")):
+    raise ValueError(f"No config.yaml file found in {config_dir}. An initial file is required to update.")
 
 # from filenames, map R1 and R2 files to their sample names
 data_samples = []
@@ -51,16 +54,26 @@ data_dict = {}
 for f in data_files:
     if '_R1' in f:
         r1_path = os.path.abspath(os.path.join(data_dir, f))
-        substrings = f.split('_R1')
-        sample_name = substrings[0]  # left of the split (filename up until _R1)
+        # filename parsing assuming: "popcode_LP_xxx_Du-xxx_Sxxx_Lxxx_Rx_00x.fastq.gz"
+        # split on LP to get popcode (which may contain '_')
+        popcode_substrings = f.split('_LP_')
+        popcode = popcode_substrings[0]
+        # extract Du# and LP# from split on '_'
+        substrings = f.split('_')
+        for i, s in enumerate(substrings):
+            if 'Du-' in s:
+                DU_label = s
+            if s == 'LP':
+                LP_num = substrings[i+1]   # once we find 'LP', the next substring is the LP number
+        sample_name = f"{popcode}_LP_{LP_num}_{DU_label}"
         data_samples.append(sample_name)
-        # find its corresponding R2 file
+        # now find the corresponding R2 file (check DU# and LP# for redundancy)
         for f2 in data_files:
-            if sample_name in f2 and '_R2' in f2:
+            if DU_label in f2 and f'LP_{LP_num}' in f2 and '_R2' in f2:
                 r2_path = os.path.abspath(os.path.join(data_dir, f2))
                 data_dict[sample_name] = [r1_path, r2_path]
     elif '_R2' in f:
-        continue
+        continue    # we process R2 above, after finding its R1
     else:
         raise ValueError(f"File found without R1/R2 designation: {f}")
 data_samples.sort()
@@ -147,7 +160,9 @@ if args.append_to_file:
     print("Append requested. Selected samples will be added to end of existing config file.")
 else:
     mode = 'w'
-    print("Mode is write. Overwriting previous config file.")
+    overwrite = True
+    print("Mode is write.")
+    
     # extract ref_genome and anc_genome so we can write them in the new file
     with open(config_path, 'r') as f:
         line = f.readline()
@@ -163,8 +178,38 @@ else:
             raise ValueError(f"Unable to extract ref_genome from old config file. Instead read: {ref_line}")
         if 'anc_genome: ' not in anc_line:
             raise ValueError(f"Unable to extract anc_genome from old config file. Instead read: {anc_line}")
-    print(f"...Extracted {ref_line}")
-    print(f"...Extracted {anc_line}")
+    print(f"...Extracted {ref_line}...Extracted {anc_line}")
+    
+    # if a config.yaml already exists, ask whether to preserve or overwrite
+    if os.path.isfile(os.path.join(config_dir, "config.yaml")):
+        print("WARNING! Current config.yaml file exists. Would you like to preserve this file or overwrite it?")
+        print("(1)\tPreserve existing config file")
+        print("(2)\tOverwrite (delete) existing config file")
+        print("(quit)\tCancel script")
+        print(">>>>>>>>")
+        user_input = input()
+        print("<<<<<<<<")
+        while user_input != '1' and user_input != '2' and user_input != 'quit':
+            print("Invalid input. Please enter '1', '2', or 'quit'.")
+            print(">>>>>>>>")
+            user_input = input()
+            print("<<<<<<<<")
+        if user_input == '1':
+            overwrite = False
+            print("Preserve requested. Current config.yaml file will be renamed.")
+        elif user_input == '2':
+            overwrite = True
+            print("Overwrite requested. Current config.yaml file will be replaced.")
+        elif user_input == 'quit':
+            print("Cancelling script. No config file written.")
+            sys.exit()
+    if not overwrite:
+        timestamp = str(datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+        old_file = os.path.join(config_dir, "config.yaml")
+        new_file = os.path.join(config_dir, f"old_config_{timestamp}.yaml")
+        os.rename(old_file, new_file)
+        print(f"Renamed config.yaml --> config_old_{timestamp}.yaml. New file will be config.yaml.")
+    
 
 with open(config_path, mode) as f:
     print(f"...Opening {config_path}...")
