@@ -1,4 +1,4 @@
-# A streamlined way to update the sample config.yaml file needed for Snakemake pipeline runs
+# A streamlined way to update the sample samples.yaml file needed for Snakemake pipeline runs
 # Useful for folks who don't want to use VIM or a remote VSCode session to edit the file
 # Script currenlty cannot edit ref_genome or anc_genome paths; those must be changed manually
 
@@ -19,10 +19,10 @@ from datetime import datetime
 # --- CLI ARGS ---
 parser = argparse.ArgumentParser()
 parser.add_argument('data_dir', help='Path to the directory containing input data (raw reads) of interest. By default, adds all samples to a new config file.', type=str)
-parser.add_argument('config_dir', help='Path to the directory where the config.yaml file should be saved.', type=str)
+parser.add_argument('config_dir', help='Path to the directory where the samples.yaml file should be saved.', type=str)
 parser.add_argument('-n', '--n_samples', help='(optional) integer value --> add the first n samples to config file', type=int)
 parser.add_argument('-c', '--custom_samples', help='(optional) allows you to enter custom samples for the config file', action='store_true')
-parser.add_argument('-e', '--append_to_file', help='(optional) script will add selected samples to the existing "config.yaml" file in config_dir', action='store_true')
+parser.add_argument('-e', '--append_to_file', help='(optional) script will add selected samples to the existing "samples.yaml" file in config_dir', action='store_true')
 parser.add_argument('-q', '--quiet', help='(optional) script will not print modified config file contents after writing', action='store_true')
 args = parser.parse_args()
 
@@ -45,8 +45,8 @@ if len(data_files) == 0:
     raise ValueError(f"{data_dir} does not contain any files.")
 if len(data_files) % 2 != 0:
     raise ValueError(f"{data_dir} has an odd number of files. Expected even number (R1 and R2 for each sample).")
-if not os.path.isfile(os.path.join(config_dir, "config.yaml")):
-    raise ValueError(f"No config.yaml file found in {config_dir}. An initial file is required to update.")
+if not os.path.isfile(os.path.join(config_dir, "samples.yaml")):
+    raise ValueError(f"No samples.yaml file found in {config_dir}. An initial file is required to update.")
 
 # from filenames, map R1 and R2 files to their sample names
 data_samples = []
@@ -152,7 +152,7 @@ print(f"Selected {len(selected_samples)} samples to write: ", selected_samples)
 
 # --- WRITE TO CONFIG FILE ---
 print("\n----WRITING TO FILE----")
-config_path = os.path.join(config_dir, "config.yaml")
+config_path = os.path.join(config_dir, "samples.yaml")
 print("Config file path: ", config_path)
 
 if args.append_to_file:
@@ -180,9 +180,9 @@ else:
             raise ValueError(f"Unable to extract anc_genome from old config file. Instead read: {anc_line}")
     print(f"...Extracted {ref_line}...Extracted {anc_line}")
     
-    # if a config.yaml already exists, ask whether to preserve or overwrite
-    if os.path.isfile(os.path.join(config_dir, "config.yaml")):
-        print("WARNING! Current config.yaml file exists. Would you like to preserve this file or overwrite it?")
+    # if a samples.yaml already exists, ask whether to preserve or overwrite
+    if os.path.isfile(os.path.join(config_dir, "samples.yaml")):
+        print("WARNING! Current samples.yaml file exists. Would you like to preserve this file or overwrite it?")
         print("(1)\tPreserve existing config file")
         print("(2)\tOverwrite (delete) existing config file")
         print("(quit)\tCancel script")
@@ -196,19 +196,19 @@ else:
             print("<<<<<<<<")
         if user_input == '1':
             overwrite = False
-            print("Preserve requested. Current config.yaml file will be renamed.")
+            print("Preserve requested. Current samples.yaml file will be renamed.")
         elif user_input == '2':
             overwrite = True
-            print("Overwrite requested. Current config.yaml file will be replaced.")
+            print("Overwrite requested. Current samples.yaml file will be replaced.")
         elif user_input == 'quit':
             print("Cancelling script. No config file written.")
             sys.exit()
     if not overwrite:
         timestamp = str(datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-        old_file = os.path.join(config_dir, "config.yaml")
-        new_file = os.path.join(config_dir, f"old_config_{timestamp}.yaml")
+        old_file = os.path.join(config_dir, "samples.yaml")
+        new_file = os.path.join(config_dir, f"old_samples_{timestamp}.yaml")
         os.rename(old_file, new_file)
-        print(f"Renamed config.yaml --> config_old_{timestamp}.yaml. New file will be config.yaml.")
+        print(f"Renamed samples.yaml --> old_samples_{timestamp}.yaml. New file will be samples.yaml.")
     
 
 with open(config_path, mode) as f:

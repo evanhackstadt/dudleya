@@ -21,5 +21,5 @@ module load Anaconda3
 conda activate /WAVE/projects/whittalllab/conda_envs/genomics
 #
 # 2. Run the main Snakemake command
-# All args specified in profiles/config.yaml (including executor: slurm)
-snakemake --profile "profiles/"
+# All args specified in config/profile.yaml (including executor: slurm)
+snakemake --profile "../config/profile.yaml"
