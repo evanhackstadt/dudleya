@@ -6,9 +6,18 @@
 *.bam.bai
 *.saf.idx
 
+# Draft and Ancestral Genomes #
+################
+draft_genome/
+ancestral_genome_Du-14/
+
 # Pipeline logs & metadata #
 ################
 *.log
 *.out
 *.err
 *.snakemake*
+
+# Misc files #
+################
+*.pac
