@@ -17,6 +17,7 @@ ancestral_genome_Du-14/
 *.out
 *.err
 *.snakemake*
+*.tsv
 
 # Misc files #
 ################

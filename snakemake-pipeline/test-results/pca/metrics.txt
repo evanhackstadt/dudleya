@@ -1,0 +1,34 @@
+——————
+Script Info
+——————
+_arg_	_received_	_absolute_path_
+dir:	.		/WAVE/projects2/whittalllab/dudleya/snakemake-testing/results/pca
+x_pc:	1
+y_pc:	2
+Plot saved to: ./pcangsd_pc1_pc2.png
+——————
+Population Info
+——————
+_population_	_sample_
+DUCY		CY_SIE_14
+DUSE		DAN_79
+DUSE		DAN_78
+DUSE		TULP_254
+DUSE		QUIN_173
+——————
+PCA Summary
+——————
+PC1 explains 57.1115754570119% of variance
+PC2 explains 20.24841640101312% of variance
+PC3 explains 14.724241868410012% of variance
+PC4 explains 7.4838543283115895% of variance
+PC5 explains 0.4319119452533929% of variance
+——————
+PCA Details
+——————
+Eigenvalues:		Eigenvectors:
+3.9211524982799606	[-0.8944199  -0.01908326  0.00502401 -0.00484688  0.44676631]
+1.3902107921503242	[ 0.23252614 -0.4904497   0.0715221   0.70463377  0.45140506]
+1.010933376037795	[ 0.236535   -0.4875579   0.07474283 -0.70954901  0.44417587]
+0.5138246294450524	[ 0.21134655  0.3967651  -0.77237038 -0.0026424   0.44871717]
+0.02965410408686892	[0.21290482 0.60329071 0.62667125 0.00098976 0.4449652 ]

@@ -1,0 +1,21 @@
+# /WAVE/projects2/whittalllab/dudleya/snakemake-testing/samples_config/config.yaml
+# Note: changing the layout of this file might break the update_sample_config.py script
+ref_genome: "/WAVE/projects/whittalllab/dudleya/draft_genome/Dudleya_hifiasm_purged_host_genome.fasta"
+anc_genome: "/WAVE/projects/whittalllab/dudleya/ancestral_genome_Du-14/D_cymosa_consensus.fa.gz"
+
+samples:
+  CY_SIE_LP_012_Du-14:
+    r1: "/WAVE/projects2/whittalllab/dudleya/snakemake-testing/test_data/CY_SIE_LP_012_Du-14_R1.fastq-002.gz"
+    r2: "/WAVE/projects2/whittalllab/dudleya/snakemake-testing/test_data/CY_SIE_LP_012_Du-14_R2.fastq-001.gz"
+  DAN_LP_010_Du-79:
+    r1: "/WAVE/projects2/whittalllab/dudleya/snakemake-testing/test_data/DAN_LP_010_Du-79_R1.fastq-002.gz"
+    r2: "/WAVE/projects2/whittalllab/dudleya/snakemake-testing/test_data/DAN_LP_010_Du-79_R2.fastq-004.gz"
+  DAN_LP_011_Du-78:
+    r1: "/WAVE/projects2/whittalllab/dudleya/snakemake-testing/test_data/DAN_LP_011_Du-78_R1.fastq-003.gz"
+    r2: "/WAVE/projects2/whittalllab/dudleya/snakemake-testing/test_data/DAN_LP_011_Du-78_R2.fastq-008.gz"
+  QUIN_LP_000_Du-173:
+    r1: "/WAVE/projects2/whittalllab/dudleya/snakemake-testing/test_data/QUIN_LP_000_Du-173_S000_L000_R1_001.fastq.gz"
+    r2: "/WAVE/projects2/whittalllab/dudleya/snakemake-testing/test_data/QUIN_LP_000_Du-173_S000_L000_R2_001.fastq.gz"
+  TULP_LP_000_Du-254:
+    r1: "/WAVE/projects2/whittalllab/dudleya/snakemake-testing/test_data/TULP_LP_000_Du-254_R1.fastq.gz"
+    r2: "/WAVE/projects2/whittalllab/dudleya/snakemake-testing/test_data/TULP_LP_000_Du-254_R2.fastq.gz"
