@@ -2,14 +2,14 @@
 
 Dr. Justen Whittall, Evan Hackstadt, Karina Martinez, Dante Cable
 
-Instructions last updated: 1/6/26
+Instructions last updated: 1/14/26
 
 ## Pipeline Architecture
 
 * `Snakefile` — contains the bulk of the **pipeline**. It is a list of steps (terminal commands / scripts) to process the data.
 * The Snakefile depends on two **config files** that tell it what to do:
-  * `profiles/config.yaml` — contains parameters telling Snakemake to use SLURM and specifying default resources. We do NOT normally change this.
-  * `samples_config/config.yaml` — paths to the ref genome, anc genome, and a dictionary mapping sample names to the paths to each raw file (R1 and R2). We MAY change this.
+  * `config/profile.yaml` — contains parameters telling Snakemake to use SLURM and specifying default resources. We do NOT normally change this.
+  * `config/samples.yaml` — paths to the ref genome, anc genome, and a dictionary mapping sample names to the paths to each raw file (R1 and R2). We MAY change this.
   * `update_sample_config.py` — utility script providing an easy way to update samples config file.
 * `submit_snakemake.sh` — batch file that allows us to run the pipeline in the background (as a master SLURM job).
 
@@ -17,7 +17,7 @@ Instructions last updated: 1/6/26
 
 ### Update sample config
 Let's say we have **new samples** in a folder `data/` that we want to process.
-First we need to udpate `samples_config/config.yaml` to point to our samples.
+First we need to udpate `config/samples.yaml` to point to our samples.
 
 You can use the utility script, `update_sample_config.py`, to do this easily without editing the file directly.
 
@@ -46,8 +46,19 @@ The pipeline creates a master `results/` directory containing subdirectories for
 
 To run Snakemake directly (not recommended since this requires you to stay logged in until it finishes):
 ```
-snakemake --profile profiles/config.yaml
+snakemake --profile config/profile.yaml
 ```
+
+#### Batching
+For large datasets, Snakemake allows us to compute batches of input files for a specified rule.
+This needs to be run manually, or profile.yaml needs to be changed, to add the `--batch myrule=1/n` flag.
+This rule should be an aggregation step: in this pipeline, create_bam_list. Example:
+```
+snakemake --profile config/profile.yaml --batch create_bam_list=1/3
+snakemake --profile config/profile.yaml --batch create_bam_list=2/3
+snakemake --profile config/profile.yaml --batch create_bam_list=3/3
+```
+After running the final third (3/3), the rest of the pipeline will be run.
 
 ### Visualization
 Currently, visualization (PCA plotting) must be done manually. We hope to integrate it into the pipeline soon.
