@@ -4,7 +4,10 @@
 executor: slurm
 jobs: 100
 
-# Let Snakemake calculate default resources unless specified in rule
+# Use custom per-rule conda envs
+use-conda: True
+
+# Default resources to use unless specified in rule
 default-resources:
   slurm_partition: "cmp"
   runtime: 60

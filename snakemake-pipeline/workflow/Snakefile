@@ -1,13 +1,12 @@
 # Config:
-# configfile: "samples_config/config.yaml"      # also specified in profiles/config.yaml
-SAMPLES = config["samples"].keys()     # dict mapping sample name to r1 and r2 filepaths
+# configfile specified in profile (config/config.yaml)
+SAMPLES = config["samples"].keys()     # maps sample name (POPCODE_LP_xxx_Du-xxx) to r1 and r2 filepaths
 
 
 # ---- Overall Goal: ----
 rule all:
     input:
-        "results/pca/population.info"
-        # "results/pca/pca_pc1_pc2.png"
+        "results/pca/pca.png"
 
 
 # ---- Rule 1: Fastp Filtering ----
@@ -16,11 +15,10 @@ rule fastp:
         r1 = lambda wildcards: config["samples"][wildcards.sample]["r1"],
         r2 = lambda wildcards: config["samples"][wildcards.sample]["r2"]
     output:
-        r1 = "results/filtered/{sample}_R1.fastq.gz",     # TODO: make temp?
-        r2 = "results/filtered/{sample}_R2.fastq.gz",
+        r1 = temp("results/filtered/{sample}_R1.fastq.gz"),     # delete after use for space
+        r2 = temp("results/filtered/{sample}_R2.fastq.gz"),
         html = "results/qc/FastpFilterReport_{sample}.html",
         json = "results/qc/FastpFilterReport_{sample}.json"
-    env:
     threads: 4
     resources:
         cpus_per_task = lambda wildcards, threads: threads  # dynamically allocate # cpus = # threads
@@ -58,7 +56,7 @@ rule map_and_sort:
         # MANUAL thread allocation (12 for BWA, 4 for Sam). Update if reducing threads.
         """
         bwa mem -t 12 {input.ref} {input.r1} {input.r2} | \
-        samtools sort -@ 2 -o {output}
+        samtools sort -@ 4 -o {output}
         """
 
 # ---- Rule 3: Indexing ----
@@ -81,7 +79,7 @@ rule samtools_flagstat:
 
 
 # ---- Rule 5: Create BAM Filelist
-# "Gather" step. Requires ALL samples to be processed.
+# The "aggregate" or "gather" step. Requires that ALL samples have been processed.
 rule create_bam_list:
     input:
         bams = expand("results/mapped/{sample}_sorted.bam", sample=SAMPLES),
@@ -102,13 +100,13 @@ rule angsd:
     output:
         beagle = "results/angsd/population.beagle.gz",
         mafs = "results/angsd/population.mafs.gz"
-        # additional output files will be created
+        # additional output files not listed here will be created
     log:
         "logs/angsd/angsd.log"
     threads: 8
     resources:
-        mem_mb = 96000,      # 96 GB RAM
-        runtime = 1440,      # 24 hours
+        mem_mb = 256000,      # 256 GB RAM
+        runtime = 2880,      # 48 hours
         slurm_partition = "mem",
         cpus_per_task = lambda wildcards, threads: threads
     benchmark:
@@ -141,8 +139,7 @@ rule pcangsd:
 # ---- Rule 8: Create Population Info ----
 rule create_pop_info:
     input:
-        # we don't need this file; this just links to rule 7
-        "results/pca/population.cov"
+        "results/pca/population.cov"    # this just links it to rule 7
     output:
         info = "results/pca/population.info"
     run:
@@ -150,24 +147,14 @@ rule create_pop_info:
             for sample in SAMPLES:
                 f.write(sample + "\n")
 
-
-'''
-# PLOTTING CURRENTLY NOT IN PIPELINE - DO MANUALLY
-
-# Some issues to consider:
-# - different conda env needed
-# - how to run with different params e.g. pc3
-# - will it be able to rerun quickly if we change the script?
-#   Snakemake will see the output file and not redo anything...
-# - more flexible overall do to manually since fast? or annoying?
-
 # ---- Rule 9: Visualization ----
 rule plot_pca:
     input:
         cov = "results/pca/population.cov",
         info = "results/pca/population.info"
     output:
-        "results/pca/pca_pc1_pc2.png"
+        "results/pca/pca.png"
+    conda:
+        "/WAVE/projects/whittalllab/conda_envs/visualization"
     script:
         "scripts/pcangsd_visualize.py"
-'''

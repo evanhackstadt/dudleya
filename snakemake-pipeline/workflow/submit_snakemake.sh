@@ -22,4 +22,4 @@ conda activate /WAVE/projects/whittalllab/conda_envs/genomics
 #
 # 2. Run the main Snakemake command
 # All args specified in config/profile.yaml (including executor: slurm)
-snakemake --profile "../config/profile.yaml"
+snakemake --profile "/WAVE/projects/whittalllab/dudleya/snakemake-pipeline/config/"
