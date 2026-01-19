@@ -23,7 +23,7 @@ dir=$2      # path to working directory from which the bam.filelist is relative 
 # path to the reference genome .fasta file. if non provided, uses:
 ref=${3:-'/WAVE/projects/whittalllab/dudleya/draft_genome/Dudleya_hifiasm_purged_host_genome.fasta'}
 # path to .fasta file of the ancestral genome. if none provided, uses:
-anc=${4:-'/WAVE/projects/whittalllab/dudleya/pipeline-testing/cymosa-DU014LP012/D_cymosa_consensus.fa.gz'}
+anc=${4:-"/WAVE/projects/whittalllab/dudleya/ancestral_genome_Du-14/D_cymosa_consensus.fa.gz"}
 #
 # log vars
 echo "Received parameter 1 (path to bam.filelist) as: $b"

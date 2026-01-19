@@ -15,8 +15,8 @@ import seaborn as sns
 
 # TODO: switch to seaborn plots
 
-
-# --- CLI Args ---
+'''
+# --- OLD CLI Arg Handling ---
 parser = argparse.ArgumentParser()
 parser.add_argument('dir', help='path to the directory containing pcangsd .cov and .info file, and optionally .selection', type=str)
 parser.add_argument('-o', '--out', help='(optional) path to a dedicated output directory. if ommitted, dir is used.', type=str)
@@ -25,8 +25,8 @@ parser.add_argument('-y', '--y_axis_pc', help='(optional) integer value of the s
 args = parser.parse_args()
 
 # find files
-dir_path = args.dir
-out_path = args.out if args.out else args.dir
+dir_path = os.path.abspath(args.dir)
+out_path = os.path.abspath(args.out) if args.out else os.path.abspath(args.dir)
 cov_path = info_path = selection_path = None
 os.chdir(dir_path)
 for f in os.listdir(dir_path):
@@ -45,24 +45,49 @@ if not info_path:
 
 x_pc = args.x_axis_pc if args.x_axis_pc else 1
 y_pc = args.y_axis_pc if args.y_axis_pc else 2
+'''
+
+# --- NEW Snakemake Arg Handling ---
+# these are defined in the snakemake rule
+cov_path = snakemake.input[0]
+info_path = snakemake.input[1]
+out_path = os.path.dirname(snakemake.output[0])     # output is .../pca.png; need the parent dir
+x_pc = 1
+y_pc = 2
 
 
 # --- Process Data ---
 cov = np.loadtxt(cov_path)  # Reads estimated covariance matrix
-
-info = np.loadtxt(info_path, dtype=str)    # Reads labels for our samples
+info = np.loadtxt(info_path, dtype=str)    # Reads sample names
+species_labels = []
 pop_labels = []
 point_labels = []
 
-for sample in info:     # each sample = code_LP_xxx_Du-xxx
-    substrings = sample.split('_')
-    DU_num = substrings[-1].replace('Du-', '')
-    if substrings[0] == 'CY':
-        pop_labels.append('DUCY')
-        point_labels.append(substrings[0] + '_' + substrings[1] + '_' + DU_num)
+# parse sample names assuming format: "POPCODE_LP_xxx_Du-xxx"
+for sample in info:
+    # split on _LP_ to isolate popcode
+    substrings1 = sample.split('_LP_')
+    popcode = substrings1[0]
+    pop_labels.append(popcode)
+    # extract Du# and LP# from split on '_'
+    substrings2 = sample.split('_')
+    for i, s in enumerate(substrings2):
+        if 'Du-' in s:
+            DU_label = s
+        if s == 'LP':
+            LP_num = substrings2[i+1]   # once we find 'LP', the next substring is the LP number
+    point_labels.append(f"{DU_label}_LP_{LP_num}")
+    # check if we have specified a non-setchelli (i.e. popcode = SPECIES_POPCODE)
+    if '_' in popcode:
+        popcode_substrings = popcode.split('_')
+        species = popcode_substrings[0]
+        if species in ['ABAB', 'ABBE', 'ABMU', 'CY']:
+            if species == 'CY':
+                species_labels.append('DUCY')
+            else:
+                species_labels.append(species)
     else:
-        pop_labels.append('DUSE')
-        point_labels.append(substrings[0] + '_' + DU_num)
+        species_labels.append('DUSE')
 
 # process .cov into eigenvectors & eigenvalues
 evals, evecs = np.linalg.eigh(cov)
@@ -73,9 +98,11 @@ evals_sum = np.sum(evals)
 
 # put our data into a DataFrame
 points = pd.DataFrame({   # each row is a point
+    'species': species_labels,
     'pop': pop_labels,
-    'point': point_labels,
+    'point': point_labels
 })
+
 # also store the variance explained by each PC
 variance_explained = {}
 # add info for each PC to the DataFrame and dict
@@ -87,29 +114,18 @@ for i in range(len(evals)):
 # --- PCA Plot ---
 # one pop and one point at a time so we can label
 
+'''
 unique_pops = points['pop'].unique()
 
 fig, ax = plt.subplots(figsize=(8,6))
 
+# OLD MATPLOTLIB PLOTTING
 for pop in unique_pops:
-
-    # TEMP manual color formatting
-    if pop == 'DUCY':
-        color = '#ff7f0e'
-        marker = 'X'
-    elif pop == 'DUSE':
-        color = '#1f77b4'
-        marker = 'o'
-    else:
-        color = None
-        marker = None
-
-    
     subset = points[points['pop'] == pop]
-    ax.scatter(subset[f'pc{x_pc}'], subset[f'pc{y_pc}'], 
-               label=pop, color=color, marker=marker)    #TODO: robust error handling
-    for row in subset.itertuples():
-        ax.annotate(row.point, xy=(getattr(row, f'pc{x_pc}'), getattr(row, f'pc{y_pc}')))
+    ax.scatter(subset[f'pc{x_pc}'], subset[f'pc{y_pc}'], label=pop)    #TODO: robust error handling
+    # label points
+    # for row in subset.itertuples():
+    #     ax.annotate(row.point, xy=(getattr(row, f'pc{x_pc}'), getattr(row, f'pc{y_pc}')))
 
 # decorate rest of plot
 ax.set_xlabel(f"PC{x_pc} ({variance_explained[f'pc{x_pc}']}% of variance)",
@@ -118,47 +134,46 @@ ax.set_ylabel(f"PC{y_pc} ({variance_explained[f'pc{y_pc}']}% of variance)",
               fontsize=18)
 ax.set_title(f"{len(evals)}-Sample PCAngsd", fontsize=16)
 ax.legend(fontsize=14)
-png_path = os.path.join(out_path, f"pcangsd_pc{x_pc}_pc{y_pc}.png")
-plt.savefig(png_path, dpi=400)
+'''
+
+# NEW SEABORN PLOTTING
+ax = sns.scatterplot(data=points, x=f"pc{x_pc}", y=f"pc{y_pc}",
+                hue="species", style="species")                 # optional: legend=False
+ax.legend(fontsize=10)
+# sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
+ax.set_title(f"{len(evals)}-Sample PCAngsd", fontsize=14)
+
+
+png_path = os.path.join(out_path, f"pca.png")   # consider: if allowing modular PCs, include in filename
+plt.savefig(png_path, dpi=600)
 print("Plot saved to ", png_path)
 
 
 # --- Extra Stuff ---
 
+'''
 # Obtain p-values from PC-based selection scan, if provided
 if selection_path:
     D = np.loadtxt(selection_path)    # Reads PC based selection statistics
     p = chi2.sf(D, 1)
     print("p-values from PC-based selection scan:\n", p)
+'''
 
 
 # Save various info & metrics to a file
 metrics_path = os.path.join(out_path, "metrics.txt")
-if os.path.exists(metrics_path):
-    os.remove(metrics_path)
 
-with open(metrics_path, 'a') as f:
-    f.write("——————\nScript Info\n——————\n")
-    f.write("_arg_\t_received_\t_absolute_path_\n")
-    f.write(f"dir:\t{args.dir}\t\t{os.path.abspath(args.dir)}\n")
-    if args.out:
-        f.write(f"out: {out_path}\t\t{os.path.abspath(args.out)}\n")
-    f.write(f"x_pc:\t{x_pc}\n")
-    f.write(f"y_pc:\t{y_pc}\n")
-    f.write(f"Plot saved to: {png_path}\n")
+with open(metrics_path, 'w') as f:
+    # f.write("——————\nScript Info\n——————\n")
     
     f.write("——————\nPopulation Info\n——————\n")
-    f.write("_population_\t_sample_\n")
-    for pop, point in zip(pop_labels, point_labels):
-        f.write(f"{pop}\t\t{point}\n")
+    f.write("_species_\t_population_\t_sample_\n")
+    for species, pop, point in zip(species_labels, pop_labels, point_labels):
+        f.write(f"{species}\t{pop}\t\t{point}\n")
 
     f.write("——————\nPCA Summary\n——————\n")
     for i, val in enumerate(evals):
         f.write(f"PC{i+1} explains {100*evals[i]/evals_sum}% of variance\n")
-    
-    if selection_path:
-        f.write("——————\nSelection Statistics\n——————\n")
-        f.write(f"p-values from PC-based selection scan:\n{p}\n")
 
     # this will get really big with many samples. make optional?
     f.write("——————\nPCA Details\n——————\n")

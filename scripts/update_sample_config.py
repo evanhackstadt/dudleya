@@ -14,13 +14,14 @@
 import sys
 import os
 import argparse
+import random
 from datetime import datetime
 
 # --- CLI ARGS ---
 parser = argparse.ArgumentParser()
 parser.add_argument('data_dir', help='Path to the directory containing input data (raw reads) of interest. By default, adds all samples to a new config file.', type=str)
 parser.add_argument('config_dir', help='Path to the directory where the samples.yaml file should be saved.', type=str)
-parser.add_argument('-n', '--n_samples', help='(optional) integer value --> add the first n samples to config file', type=int)
+parser.add_argument('-n', '--n_samples', help='(optional) integer value --> add n random samples to config file', type=int)
 parser.add_argument('-c', '--custom_samples', help='(optional) allows you to enter custom samples for the config file', action='store_true')
 parser.add_argument('-e', '--append_to_file', help='(optional) script will add selected samples to the existing "samples.yaml" file in config_dir', action='store_true')
 parser.add_argument('-q', '--quiet', help='(optional) script will not print modified config file contents after writing', action='store_true')
@@ -135,9 +136,9 @@ if args.custom_samples:         # custom_samples
         
 elif args.n_samples is not None:      # n_samples
     print("Specific number of samples requested.")
-    print(f"Selecting the first {n_samples} from the directory.")
+    print(f"Selecting {n_samples} random from the directory.")
     if n_samples <= len(data_samples):
-        selected_samples = data_samples[:n_samples]
+        selected_samples = random.sample(data_samples, n_samples)
     else:
         print(f"n={n_samples} provided, which is > number of samples present. ",
               f"Selecting all {len(data_samples)} samples instead.")
