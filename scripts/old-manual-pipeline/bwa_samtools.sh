@@ -44,11 +44,12 @@ ls
 # ------- Run the pipeline commands ------- 
 #
 # BWA
-# clear old files
-if [ -d "aln/" ]; then
-    rm -rv aln/
-fi
-mkdir -v aln
+# clear old files — DISABLED FOR NOW
+# if [ -d "aln/" ]; then
+#     rm -rv aln/
+# fi
+# mkdir -v aln
+mkdir -pv aln
 echo "Running BWA..."
 # run BWA
 # first check if ref genome is already indexed; if not, index it

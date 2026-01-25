@@ -22,13 +22,10 @@ read1=$1     # path to R1 fastq.gz file
 read2=$2     # path to R2 fastq.gz file
 dir=$3      # path to working directory to save outputs
 #
-# utility variables for output filenames
+# utility variables for filenames
 r1="_R1"
 r2="_R2"
-# filename parsing
-name=$(basename $read1 .fastq.gz)
-readarray -d _R1_ -t strarr <<< "$name"
-name=${strarr[0]}
+name=$(basename $read1 _R1.fastq.gz)
 # log vars
 echo "Received parameter 1 (path to read 1) as: $read1"
 echo "Recieved parameter 2 (path to read 2) as: $read2"
@@ -45,14 +42,17 @@ cd $dir
 echo "Working dir initially contains:"
 ls
 #
-# ------- Run the pipeline commands ------- 
+# ------- Run Fastp ------- 
 #
-# Fastp
-# clear old files
-if [ -d "fastp_filtering/" ]; then
-    rm -rv fastp_filtering/
-fi
-mkdir -v fastp_filtering
+# clear old files — DISABLED FOR NOW
+# if [ -d "fastp_filtering/" ]; then
+#     rm -rv fastp_filtering/
+# fi
+# mkdir -v fastp_filtering
+#
+# FOR NOW, JUST MAKE DIR IF DNE
+mkdir -pv fastp_filtering
+#
 echo "Running fastp..."
 fastp \
 -i $read1 \
