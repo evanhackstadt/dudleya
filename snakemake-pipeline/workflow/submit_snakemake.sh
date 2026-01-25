@@ -8,7 +8,7 @@
 #SBATCH --ntasks=1 
 #SBATCH --cpus-per-task=1   # Cores for the Controller
 #SBATCH --mem-per-cpu=4G    # Memory for the Controller
-#SBATCH --time=24:00:00     # Max time for the Controller
+#SBATCH --time=48:00:00     # Max time for the Controller
 #
 #SBATCH --mail-user=ehackstadt@scu.edu
 #SBATCH --mail-type=END

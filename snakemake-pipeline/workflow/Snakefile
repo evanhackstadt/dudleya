@@ -1,7 +1,10 @@
+import os
+
 # Config:
 # configfile specified in profile (config/config.yaml)
-SAMPLES = config["samples"].keys()     # maps sample name (POPCODE_LP_xxx_Du-xxx) to r1 and r2 filepaths
 
+SAMPLES = config["samples"].keys()     # maps sample name (POPCODE_LP_xxx_Du-xxx) to r1 and r2 filepaths
+DATA_DIR = config["data_parent_dir"]
 
 # ---- Overall Goal: ----
 rule all:
@@ -15,12 +18,13 @@ rule fastp:
         r1 = lambda wildcards: config["samples"][wildcards.sample]["r1"],
         r2 = lambda wildcards: config["samples"][wildcards.sample]["r2"]
     output:
-        r1 = temp("results/filtered/{sample}_R1.fastq.gz"),     # delete after use for space
-        r2 = temp("results/filtered/{sample}_R2.fastq.gz"),
-        html = "results/qc/FastpFilterReport_{sample}.html",
+        r1 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R1.fastq.gz"), # store next to raw reads rather than locally
+        r2 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R2.fastq.gz"),
+        html = "results/qc/FastpFilterReport_{sample}.html",    # but store reports locally
         json = "results/qc/FastpFilterReport_{sample}.json"
     threads: 4
     resources:
+        mem_mb = lambda wc, input: max(2.5 * input.size_mb, 2000),    # dynamically allocate mem for large inputs
         cpus_per_task = lambda wildcards, threads: threads  # dynamically allocate # cpus = # threads
     shell:
         """
@@ -38,17 +42,17 @@ rule fastp:
 rule map_and_sort:
     input:
         ref = config["ref_genome"],
-        r1 = "results/filtered/{sample}_R1.fastq.gz",
-        r2 = "results/filtered/{sample}_R2.fastq.gz"
+        r1 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R1.fastq.gz"),
+        r2 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R2.fastq.gz")
     output:
-        "results/mapped/{sample}_sorted.bam"
+        bam = os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam")
     log:
         "logs/bwa_mem_samtools/{sample}.log"
     threads: 16
     resources:
-        mem_mb = 32000,     # 32 GB RAM
-        runtime = 360,      # 6 hours
         slurm_partition = "condo",
+        runtime = 360,      # 6 hours
+        mem_mb = 32000,     # 32 GB RAM
         cpus_per_task = lambda wildcards, threads: threads
     benchmark:
         "benchmarks/bwa_mem_samtools/{sample}.tsv"
@@ -56,22 +60,22 @@ rule map_and_sort:
         # MANUAL thread allocation (12 for BWA, 4 for Sam). Update if reducing threads.
         """
         bwa mem -t 12 {input.ref} {input.r1} {input.r2} | \
-        samtools sort -@ 4 -o {output}
+        samtools sort -@ 4 -o {output.bam}
         """
 
 # ---- Rule 3: Indexing ----
 rule samtools_index:
     input:
-        "results/mapped/{sample}_sorted.bam"
+        os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam")
     output:
-        "results/mapped/{sample}_sorted.bam.bai"
+        os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam.bai")
     shell:
         "samtools index {input}"
 
 # ---- Rule 4: Flagstat ----
 rule samtools_flagstat:
     input:
-        "results/mapped/{sample}_sorted.bam"
+        os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam")
     output:
         "results/qc/{sample}_flagstat.txt"
     shell:
@@ -82,8 +86,8 @@ rule samtools_flagstat:
 # The "aggregate" or "gather" step. Requires that ALL samples have been processed.
 rule create_bam_list:
     input:
-        bams = expand("results/mapped/{sample}_sorted.bam", sample=SAMPLES),
-        indexes = expand("results/mapped/{sample}_sorted.bam.bai", sample=SAMPLES)
+        bams = expand(os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam"), sample=SAMPLES),
+        indexes = expand(os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam.bai"), sample=SAMPLES)
     output:
         bam_list = "results/angsd/bam.filelist"
     run:
@@ -105,9 +109,9 @@ rule angsd:
         "logs/angsd/angsd.log"
     threads: 8
     resources:
-        mem_mb = 256000,      # 256 GB RAM
-        runtime = 2880,      # 48 hours
         slurm_partition = "mem",
+        runtime = 1440,      # 24 hours
+        mem_mb = 256000,      # 256 GB RAM
         cpus_per_task = lambda wildcards, threads: threads
     benchmark:
         "benchmarks/angsd/angsd.tsv"
@@ -128,8 +132,11 @@ rule pcangsd:
         "results/angsd/population.beagle.gz"
     output:
         "results/pca/population.cov"
-    threads: 4
+    threads: 8
     resources:
+        slurm_partition = "mem",
+        runtime = 1440,      # 24 hours
+        mem_mb = lambda wc, input: max(20 * input.size_mb, 4000),    # dynamically allocate mem
         cpus_per_task = lambda wildcards, threads: threads
     shell:
         """

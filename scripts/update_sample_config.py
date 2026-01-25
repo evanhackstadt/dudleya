@@ -14,6 +14,7 @@
 import sys
 import os
 import argparse
+from pathlib import Path
 import random
 from datetime import datetime
 
@@ -29,6 +30,7 @@ args = parser.parse_args()
 
 # process args
 data_dir = os.path.abspath(args.data_dir)   # ensure we have absolute paths
+data_parent_dir = Path(data_dir).parent     # add to config so Snakemake can store intermediates next to raw reads
 config_dir = os.path.abspath(args.config_dir)
 n_samples = args.n_samples if args.n_samples else None
 
@@ -179,7 +181,7 @@ else:
             raise ValueError(f"Unable to extract ref_genome from old config file. Instead read: {ref_line}")
         if 'anc_genome: ' not in anc_line:
             raise ValueError(f"Unable to extract anc_genome from old config file. Instead read: {anc_line}")
-    print(f"...Extracted {ref_line}...Extracted {anc_line}")
+    print(f"...Extracted {ref_line}...Extracted {anc_line}...Parsed data_parent_dir: {data_parent_dir}\n")
     
     # if a samples.yaml already exists, ask whether to preserve or overwrite
     if os.path.isfile(os.path.join(config_dir, "samples.yaml")):
@@ -221,7 +223,8 @@ with open(config_path, mode) as f:
         f.write(f"\n# Note: changing the layout of this file might break the update_sample_config.py script")
         f.write(f"\n{ref_line}")
         f.write(f"{anc_line}")
-        f.write("\nsamples:")
+        f.write(f"\ndata_parent_dir: {data_parent_dir}")
+        f.write("\n\nsamples:")
     
     # now write the selected samples line-by-line
     for sample in selected_samples:
