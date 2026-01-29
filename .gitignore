@@ -11,13 +11,14 @@
 draft_genome/
 ancestral_genome_Du-14/
 
-# Pipeline logs & metadata #
+# Pipeline logs, metadata, and results #
 ################
 *.log
 *.out
 *.err
 *.snakemake*
 *.tsv
+results/
 
 # Misc files #
 ################
