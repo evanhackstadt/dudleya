@@ -1,6 +1,6 @@
 # Data files #
 ###################
-*.gz
+*.gz*
 *.fastq*
 *.bam
 *.bam.bai
@@ -19,7 +19,9 @@ ancestral_genome_Du-14/
 *.snakemake*
 *.tsv
 results/
+old-pipeline-testing/
 
 # Misc files #
 ################
 *.pac
+*.DS_Store
