@@ -6,10 +6,14 @@ import os
 SAMPLES = config["samples"].keys()     # maps sample name (POPCODE_LP_xxx_Du-xxx) to r1 and r2 filepaths
 DATA_DIR = config["data_parent_dir"]
 
+pathvars:
+    name = config["output_name"]
+
 # ---- Overall Goal: ----
 rule all:
     input:
-        "results/pca/pca.png"
+        "results/<name>/ngsdist/population.dist",
+        "results/<name>/pca/pca.png"
 
 
 # ---- Rule 1: Fastp Filtering ----
@@ -20,8 +24,8 @@ rule fastp:
     output:
         r1 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R1.fastq.gz"), # store next to raw reads rather than locally
         r2 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R2.fastq.gz"),
-        html = "results/qc/FastpFilterReport_{sample}.html",    # but store reports locally
-        json = "results/qc/FastpFilterReport_{sample}.json"
+        html = "results/<name>/qc/FastpFilterReport_{sample}.html",    # but store reports locally
+        json = "results/<name>/qc/FastpFilterReport_{sample}.json"
     threads: 4
     resources:
         mem_mb = lambda wc, input: max(2.5 * input.size_mb, 2000),    # dynamically allocate mem for large inputs
@@ -73,13 +77,16 @@ rule samtools_index:
         "samtools index {input}"
 
 # ---- Rule 4: Flagstat ----
+
 rule samtools_flagstat:
     input:
-        os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam")
+        bam = os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam"),
+        bai = os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam.bai")
     output:
-        "results/qc/{sample}_flagstat.txt"
+        "results/<name>/qc/{sample}_flagstat.txt"
     shell:
-        "samtools flagstat {input} > {output}"
+        "samtools flagstat {input.bam} > {output}"
+
 
 
 # ---- Rule 5: Create BAM Filelist
@@ -87,9 +94,10 @@ rule samtools_flagstat:
 rule create_bam_list:
     input:
         bams = expand(os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam"), sample=SAMPLES),
-        indexes = expand(os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam.bai"), sample=SAMPLES)
+        indexes = expand(os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam.bai"), sample=SAMPLES),
+        flagstat = expand("results/<name>/qc/{sample}_flagstat.txt", sample=SAMPLES)
     output:
-        bam_list = "results/angsd/bam.filelist"
+        bam_list = "results/<name>/angsd/bam.filelist"
     run:
         with open(output.bam_list, 'w') as f:
             for bam in input.bams:
@@ -98,20 +106,22 @@ rule create_bam_list:
 # ---- Rule 6: ANGSD ----
 rule angsd:
     input:
-        bam_list = "results/angsd/bam.filelist",
+        bam_list = "results/<name>/angsd/bam.filelist",
         ref = config["ref_genome"],
         anc = config["anc_genome"]
     output:
-        beagle = "results/angsd/population.beagle.gz",
-        mafs = "results/angsd/population.mafs.gz"
+        beagle = "results/<name>/angsd/population.beagle.gz",
+        mafs = "results/<name>/angsd/population.mafs.gz"
         # additional output files not listed here will be created
+    params:
+        name = config["output_name"]
     log:
         "logs/angsd/angsd.log"
     threads: 8
     resources:
-        slurm_partition = "mem",
+        # slurm_partition = "mem",
         runtime = 1440,      # 24 hours
-        mem_mb = 256000,      # 256 GB RAM
+        mem_mb = lambda wildcards, attempt: attempt * 128000,    # 128GB, then try 256GB, etc.
         cpus_per_task = lambda wildcards, threads: threads
     benchmark:
         "benchmarks/angsd/angsd.tsv"
@@ -123,32 +133,34 @@ rule angsd:
               -minMapQ 30 -minQ 20 \
               -SNP_pval 1e-6 -trim 5 \
               -nThreads {threads} \
-              -out results/angsd/population
+              -out results/{params.name}/angsd/population
         """
 
 # ---- Rule 7: PCAngsd ----
 rule pcangsd:
     input:
-        "results/angsd/population.beagle.gz"
+        "results/<name>/angsd/population.beagle.gz"
     output:
-        "results/pca/population.cov"
+        "results/<name>/pca/population.cov"
+    params:
+        name = config["output_name"]
     threads: 8
     resources:
-        slurm_partition = "mem",
+        # slurm_partition = "mem",
         runtime = 1440,      # 24 hours
         mem_mb = lambda wc, input: max(20 * input.size_mb, 4000),    # dynamically allocate mem
         cpus_per_task = lambda wildcards, threads: threads
     shell:
         """
-        pcangsd -b {input} -o results/pca/population -t {threads}
+        pcangsd -b {input} -o results/{params.name}/pca/population -t {threads}
         """
 
 # ---- Rule 8: Create Population Info ----
 rule create_pop_info:
     input:
-        "results/pca/population.cov"    # this just links it to rule 7
+        "results/<name>/pca/population.cov"    # this just links it to rule 7
     output:
-        info = "results/pca/population.info"
+        info = "results/<name>/pca/population.info"
     run:
         with open(output.info, "w") as f:
             for sample in SAMPLES:
@@ -157,11 +169,45 @@ rule create_pop_info:
 # ---- Rule 9: Visualization ----
 rule plot_pca:
     input:
-        cov = "results/pca/population.cov",
-        info = "results/pca/population.info"
+        cov = "results/<name>/pca/population.cov",
+        info = "results/<name>/pca/population.info"
     output:
-        "results/pca/pca.png"
+        "results/<name>/pca/pca.png"
     conda:
         "/WAVE/projects/whittalllab/conda_envs/visualization"
     script:
         "scripts/pcangsd_visualize.py"
+
+
+# ---- Rule 11: ngsDist ----
+
+rule ngsdist:
+    input:
+        beagle = "results/<name>/angsd/population.beagle.gz",
+        info = "results/<name>/pca/population.info"
+    output:
+        dist = "results/<name>/ngsdist/population.dist"
+    # conda:
+        # "/WAVE/projects/whittalllab/conda_envs/genomics"
+    params:
+        name = config["output_name"],
+        n_ind = config["n_individuals"]
+    resources:
+        # slurm_partition = "mem",
+        runtime = 1440,      # 24 hours
+        mem_mb = lambda wildcards, attempt: attempt * 32000,    # 32GB, then try 64GB, etc.
+        cpus_per_task = lambda wildcards, threads: threads
+    threads: 8
+    shell:
+        """
+        N_SITES=$(zcat {input.beagle} | tail -n +2 | wc -l)
+
+        ngsDist \
+            --geno {input.beagle} \
+            --probs \
+            --n_ind {params.n_ind} \
+            --n_sites $N_SITES \
+            --labels {input.info} \
+            --out {output.dist} \
+            --n_threads {threads}
+        """

@@ -1,7 +1,3 @@
-# A streamlined way to update the sample samples.yaml file needed for Snakemake pipeline runs
-# Useful for folks who don't want to use VIM or a remote VSCode session to edit the file
-# Script currenlty cannot edit ref_genome or anc_genome paths; those must be changed manually
-
 # Evan Hackstadt
 # Whittall Lab Dudleya Genomics
 # December 2025
@@ -10,6 +6,12 @@
 # NOTE: assumes this specific filename format:
 #       popcode_LP_xxx_Du-xxx_Sxxx_Lxxx_Rx_00x.fastq.gz
 
+"""
+A streamlined way to update the sample samples.yaml file needed for Snakemake pipeline runs
+Simply point the script at a folder containing your raw data of interest, and to the old config file
+Useful for folks who don't want to use VIM or a remote VSCode session to edit the file
+Script currenlty cannot edit ref_genome or anc_genome paths; those must be changed manually
+"""
 
 import sys
 import os
@@ -24,6 +26,7 @@ parser.add_argument('data_dir', help='Path to the directory containing input dat
 parser.add_argument('config_dir', help='Path to the directory where the samples.yaml file should be saved.', type=str)
 parser.add_argument('-n', '--n_samples', help='(optional) integer value --> add n random samples to config file', type=int)
 parser.add_argument('-c', '--custom_samples', help='(optional) allows you to enter custom samples for the config file', action='store_true')
+parser.add_argument('-x', '--exclude_samples', help='(optional) allows you to specify samples to exclude from the config file', action='store_true')
 parser.add_argument('-e', '--append_to_file', help='(optional) script will add selected samples to the existing "samples.yaml" file in config_dir', action='store_true')
 parser.add_argument('-q', '--quiet', help='(optional) script will not print modified config file contents after writing', action='store_true')
 args = parser.parse_args()
@@ -38,18 +41,71 @@ data_files = [f for f in os.listdir(data_dir)
               if os.path.isfile(os.path.join(data_dir, f))]
 data_files.sort()
 
+# improper args handling
 if not os.path.isdir(data_dir):
     raise ValueError(f"{data_dir} is not a directory.")
 if not os.path.isdir(config_dir):
     raise ValueError(f"{config_dir} is not a directory.")
-if args.n_samples is not None and args.custom_samples is True:
-    raise ValueError("Cannot use both --n_samples and --custom_samples flags. Choose one or neither.")
+if args.n_samples is not None:
+    if args.custom_samples is True:
+        raise ValueError("Cannot use both --n_samples and --custom_samples flags. Choose one or neither.")
+    if args.exclude_samples is True:
+        raise ValueError("Cannot use both --n_samples and --exclude_samples flags. Choose one or neither.")
+elif args.custom_samples is True and args.exclude_samples is True:
+    raise ValueError("Cannot use both --custom_samples and --exclude_samples flags. Choose one or neither.")
+
 if len(data_files) == 0:
     raise ValueError(f"{data_dir} does not contain any files.")
 if len(data_files) % 2 != 0:
     raise ValueError(f"{data_dir} has an odd number of files. Expected even number (R1 and R2 for each sample).")
 if not os.path.isfile(os.path.join(config_dir, "samples.yaml")):
     raise ValueError(f"No samples.yaml file found in {config_dir}. An initial file is required to update.")
+
+
+# --- HELPER FUNCTIONS ---
+def custom_selection(samples):
+    selected_samples = []
+    print(data_samples)
+    print("Enter the exact name of a sample above, or simply its unique Du-### or LP_##")
+    print("Type 'save' to finish selection. Type 'quit' to cancel and exit.")
+    print(">>>>>>>>")
+    user_input = input()
+    print("<<<<<<<<")
+    while user_input != 'quit' and user_input != 'save':
+        if user_input in selected_samples:
+            print(f"Error: You've already selected '{user_input}'")
+        elif user_input in data_samples:
+            selected_samples.append(user_input)
+            print(f"Added {user_input}")
+            print("All selected samples: ", selected_samples)
+        else:
+            # attempt to search
+            matches = [x for x in samples if user_input in x]
+            if len(matches) == 1:
+                selected_samples.append(user_input)
+                print(f"Found match {matches[0]} and added it.")
+                print("All selected samples: ", selected_samples)
+            elif len(matches) != 1:
+                print(f"Error: found {len(matches)} matches for {user_input} in possible samples.")
+                print(f"Valid samples are: {[x for x in data_samples if x not in selected_samples]}") if not args.quiet else print()
+            else:
+                print(f"Error: '{user_input}' is not a valid sample.")
+                print(f"Valid samples are: {[x for x in data_samples if x not in selected_samples]}") if not args.quiet else print()
+        print("Enter another sample, or 'save' to finish, or 'quit' to exit.")
+        print(">>>>>>>>")
+        user_input = input()
+        print("<<<<<<<<")
+    
+    if user_input == 'quit':
+        print("Cancelling script. No config file written.")
+        sys.exit()
+    if user_input == 'save':
+        print("--------")
+        print("Done selecting samples. Final selection:")
+        print(selected_samples)
+    
+    return selected_samples
+
 
 # from filenames, map R1 and R2 files to their sample names
 data_samples = []
@@ -58,6 +114,7 @@ for f in data_files:
     if '_R1' in f:
         r1_path = os.path.abspath(os.path.join(data_dir, f))
         # filename parsing assuming: "popcode_LP_xxx_Du-xxx_Sxxx_Lxxx_Rx_00x.fastq.gz"
+        DU_label = LP_num = ""
         # split on LP to get popcode (which may contain '_')
         popcode_substrings = f.split('_LP_')
         popcode = popcode_substrings[0]
@@ -102,41 +159,12 @@ print("Mapped filepaths to samples as follows:")
 print(data_dict) if not args.quiet else print("(message supressed)")
 
 
+
 # --- SELECT SAMPLES ---
 print("\n----SAMPLE SELECTION----")
 selected_samples = []
 
-if args.custom_samples:         # custom_samples
-    print("Custom samples requested.")
-    print("Please enter desired samples (not filenames) one-by-one, matching the options listed below:")
-    print(data_samples)
-    print("Type 'save' to finish selection. Type 'quit' to cancel and exit.")
-    print(">>>>>>>>")
-    user_input = input()
-    print("<<<<<<<<")
-    while user_input != 'quit' and user_input != 'save':
-        if user_input in data_samples and user_input not in selected_samples:
-            selected_samples.append(user_input)
-            print(f"Added {user_input}")
-            print("All selected samples: ", selected_samples)
-        else:
-            print(f"Error: '{user_input}' is not a valid sample, or you've already selected it.")
-            print(f"Valid samples: {[x for x in data_samples if x not in selected_samples]}") if not args.quiet else print()
-        print("Enter another sample, or 'save' to finish, or 'quit' to exit.")
-        print(">>>>>>>>")
-        user_input = input()
-        print("<<<<<<<<")
-    
-    if user_input == 'quit':
-        print("Cancelling script. No config file written.")
-        sys.exit()
-    if user_input == 'save':
-        print("--------")
-        print("Custom sample entry complete.")
-        print("Final custom samples:")
-        print(selected_samples)
-        
-elif args.n_samples is not None:      # n_samples
+if args.n_samples is not None:      # n_samples
     print("Specific number of samples requested.")
     print(f"Selecting {n_samples} random from the directory.")
     if n_samples <= len(data_samples):
@@ -145,12 +173,27 @@ elif args.n_samples is not None:      # n_samples
         print(f"n={n_samples} provided, which is > number of samples present. ",
               f"Selecting all {len(data_samples)} samples instead.")
         selected_samples = data_samples
+
+elif args.custom_samples:         # custom_samples
+    print("Custom samples requested.")
+    print("Please enter samples one-by-one to add to the config file.")
+    selected_samples = custom_selection(data_samples)
     
+elif args.exclude_samples:
+    print("Exclusion of samples requested.")
+    print("Please enter samples one-by-one to EXCLUDE from the config file.")
+    excluded_samples = custom_selection(data_samples)
+    print("Will add all samples except selected exclusions...")
+    selected_samples = [x for x in data_samples if x not in excluded_samples]
+    print("Final custom samples:")
+    print(selected_samples)
+
 else:               # (default) all samples
     print("All samples will be added to config file.")
     selected_samples = data_samples
 
 print(f"Selected {len(selected_samples)} samples to write: ", selected_samples)
+
 
 
 # --- WRITE TO CONFIG FILE ---
@@ -182,6 +225,29 @@ else:
         if 'anc_genome: ' not in anc_line:
             raise ValueError(f"Unable to extract anc_genome from old config file. Instead read: {anc_line}")
     print(f"...Extracted {ref_line}...Extracted {anc_line}...Parsed data_parent_dir: {data_parent_dir}\n")
+    
+    # optionally name this dataset for unique results folder
+    output_name = "results"
+    print("Would you like to give this dataset a unique name?")
+    print("The name will be used to name the results folder, making it unique and preserving previous results folders.")
+    print("The default name is 'results'")
+    print("Enter a single string as the name, or '0' to use default, or 'quit' to cancel the script.")
+    print(">>>>>>>>")
+    user_input = input()
+    print("<<<<<<<<")
+    while " " in user_input:
+        print("Invalid input. No spaces. Please enter a string, '0', or 'quit'.")
+        print(">>>>>>>>")
+        user_input = input()
+        print("<<<<<<<<")
+    if user_input == '0':
+        print("No custom dataset name. Output folder will simply be called 'results'")
+    elif user_input == 'quit':
+        print("Cancelling script. No config file written.")
+        sys.exit()
+    else:
+        print(f"Name is {user_input}. Output folder will be results-{user_input}/")
+        output_name = f"results-{user_input}"
     
     # if a samples.yaml already exists, ask whether to preserve or overwrite
     if os.path.isfile(os.path.join(config_dir, "samples.yaml")):
@@ -224,6 +290,8 @@ with open(config_path, mode) as f:
         f.write(f"\n{ref_line}")
         f.write(f"{anc_line}")
         f.write(f"\ndata_parent_dir: {data_parent_dir}")
+        f.write(f"\noutput_name: {output_name}")
+        f.write(f"\n\nn_individuals: {len(selected_samples)}")
         f.write("\n\nsamples:")
     
     # now write the selected samples line-by-line
