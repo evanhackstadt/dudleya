@@ -34,24 +34,23 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
     # --- Process Data ---
     cov = np.loadtxt(cov_path)  # Reads estimated covariance matrix
     info = np.loadtxt(info_path, dtype=str)    # Reads sample names
-    species_labels = []
-    pop_labels = []
-    point_labels = []
+    species_labels = []     # species e.g. DUSE
+    pop_labels = []     # popcodes e.g. DAN
+    Du_labels = []   # labels e.g. Du-78
 
     # parse sample names assuming format: "POPCODE_LP_xxx_Du-xxx"
     for sample in info:
-        # split on _LP_ to isolate popcode
+        # split on _LP_ to isolate popcode and LP#
         substrings1 = sample.split('_LP_')
         popcode = substrings1[0]
         pop_labels.append(popcode)
         # extract Du# and LP# from split on '_'
         substrings2 = sample.split('_')
         for i, s in enumerate(substrings2):
-            if 'Du-' in s:
-                DU_label = s
+            Du_label = s if 'Du-' in s else ""
             if s == 'LP':
-                LP_num = substrings2[i+1]   # once we find 'LP', the next substring is the LP number
-        point_labels.append(f"{DU_label}_LP_{LP_num}")
+                LP_num = substrings2[i+1]
+        Du_labels.append(Du_label)  # optionally use LP instead
         # check if we have specified a non-setchelli (i.e. popcode = SPECIES_POPCODE)
         if '_' in popcode:
             popcode_substrings = popcode.split('_')
@@ -60,7 +59,7 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
                 if species == 'CY':
                     species_labels.append('DUCY')
                 else:
-                    species_labels.append(species)
+                    species_labels.append('DUAB')
         else:
             species_labels.append('DUSE')
 
@@ -75,53 +74,68 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
     points = pd.DataFrame({   # each row is a point
         'species': species_labels,
         'pop': pop_labels,
-        'point': point_labels
+        'point': Du_labels
     })
 
     # also store the variance explained by each PC
     variance_explained = {}
+    
     # add info for each PC to the DataFrame and dict
     for i in range(len(evals)):
         points[f'PC{i+1}'] = evecs[:,i]
         variance_explained[f'PC{i+1}'] = round(100*evals[i]/evals_sum, 2)
 
+    # Points DF has cols: species, pop, point, PC1, PC2, PC3, ...
 
     # --- PCA Plot ---
-    # one pop and one point at a time so we can label
-
-    '''
-    unique_pops = points['pop'].unique()
-
-    fig, ax = plt.subplots(figsize=(8,6))
-
-    # OLD MATPLOTLIB PLOTTING
-    for pop in unique_pops:
-        subset = points[points['pop'] == pop]
-        ax.scatter(subset[f'PC{x_pc}'], subset[f'PC{y_pc}'], label=pop)    #TODO: robust error handling
-        # label points
-        # for row in subset.itertuples():
-        #     ax.annotate(row.point, xy=(getattr(row, f'PC{x_pc}'), getattr(row, f'PC{y_pc}')))
-
-    # decorate rest of plot
-    ax.set_xlabel(f"PC{x_pc} ({variance_explained[f'PC{x_pc}']}% of variance)",
-                fontsize=18)
-    ax.set_ylabel(f"PC{y_pc} ({variance_explained[f'PC{y_pc}']}% of variance)",
-                fontsize=18)
-    ax.set_title(f"{len(evals)}-Sample PCAngsd", fontsize=16)
-    ax.legend(fontsize=14)
-    '''
-
-    # NEW SEABORN PLOTTING
+    markers = {"DUSE": "o", "DUCY": "s", "DUAB": "X"}
+    hue_order = ["DUSE", "DUCY", "DUAB"]
     ax = sns.scatterplot(data=points, x=f"PC{x_pc}", y=f"PC{y_pc}",
-                    hue="species", style="species")                 # optional: legend=False
+                    hue="species", style="species", 
+                    hue_order=hue_order, markers=markers)                 # optional: legend=False
     ax.legend(fontsize=10)
     # sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
     ax.set_title(f"{len(evals)}-Sample PCAngsd", fontsize=14)
-
-
+    ax.set_xlabel(f"PC{x_pc} ({variance_explained[f'PC{x_pc}']}% of variance)")
+    ax.set_ylabel(f"PC{y_pc} ({variance_explained[f'PC{y_pc}']}% of variance)")
+    
+    # --- Save Plots ---
+    
+    # Unlabeled plot
     png_path = os.path.join(out_path, f"pca.png")   # consider: if allowing modular PCs, include in filename
     plt.savefig(png_path, dpi=600)
-    print("Plot saved to ", png_path)
+    
+    # Label and plot again
+    for x, y, label in zip(points[f"PC{x_pc}"], points[f"PC{y_pc}"], points["point"]):
+        plt.annotate(label, xy=(x,y), fontsize=6)
+
+    png_path_labeled = os.path.join(out_path, f"pca_labeled.png")   # consider: if allowing modular PCs, include in filename
+    plt.savefig(png_path_labeled, dpi=600)
+
+    # TEMP MANUAL ZOOM-IN ON CLUSTERS -- CONSIDER SOME WAY TO AUTOMATE THIS OR AT LEAST PASS IN AS PARAM
+    plt.xlim(-0.035, 0.005)
+    plt.ylim(-0.005, 0.01)
+    png_path_1 = os.path.join(out_path, f"pca_zoomed_1.png")
+    plt.savefig(png_path_1, dpi=600)
+    
+    plt.xlim(0.10, 0.14)
+    plt.ylim(-0.20, -0.07)
+    png_path_2 = os.path.join(out_path, f"pca_zoomed_2.png")
+    plt.savefig(png_path_2, dpi=600)
+    
+    plt.xlim(0.10, 0.14)
+    plt.ylim(0.10, 0.15)
+    png_path_3 = os.path.join(out_path, f"pca_zoomed_3.png")
+    plt.savefig(png_path_3, dpi=600)
+    
+    print("Plots saved to ", png_path)
+    
+    
+    # Save point coordinates
+    csv_path = os.path.join(out_path, "points.csv")
+    # currently - only save PCs 1 and 2 since that's what we're plotting - can change
+    points.to_csv(csv_path, columns=["species", "pop", "point", "PC1", "PC2"])
+    print("Points saved to ", csv_path)
 
 
     # --- Extra Stuff ---
@@ -143,7 +157,7 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
         
         f.write("——————\nPopulation Info\n——————\n")
         f.write("_species_\t_population_\t_sample_\n")
-        for species, pop, point in zip(species_labels, pop_labels, point_labels):
+        for species, pop, point in zip(species_labels, pop_labels, Du_labels):
             f.write(f"{species}\t{pop}\t\t{point}\n")
 
         f.write("——————\nPCA Summary\n——————\n")
@@ -164,7 +178,7 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
 
 # --- Snakemake Arg Handling ---
 
-# these are defined in the snakemake rule
+# snakemake object is defined and passed in by the Snakemake rule
 cov_path = snakemake.input[0]
 info_path = snakemake.input[1]
 out_path = os.path.dirname(snakemake.output[0])     # output is .../pca.png; need the parent dir

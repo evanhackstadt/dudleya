@@ -6,6 +6,8 @@
 # 24 January 2026
 
 
+# NOTE: CURRENTLY BROKEN, SNAKEMAKE OBJECT NAME ERROR WHEN CALLING FROM CLI
+
 import os
 import argparse
 from pcangsd_visualize import plot_pca
