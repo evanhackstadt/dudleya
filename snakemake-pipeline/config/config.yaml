@@ -11,7 +11,7 @@ use-conda: True
 default-resources:
   slurm_partition: "cmp"
   runtime: 60
-  mem_mb: 4000
+  # mem_mb: 4000
 
 # Path to our config file specifying samples to process
 configfile: samples.yaml

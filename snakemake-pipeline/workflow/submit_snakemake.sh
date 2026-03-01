@@ -16,10 +16,17 @@
 set -e
 echo "Snakemake master wrapper script started at $(date)"
 #
+# Store variable for path to config file if passed in as param
+config=${1:-'/WAVE/projects/whittalllab/dudleya/snakemake-pipeline/config/samples.yaml'}
+# Store variable for profile (static)
+profile="/WAVE/projects/whittalllab/dudleya/snakemake-pipeline/config/"
+echo "Using profile: $profile"
+echo "Using config file: $config"
+#
 # 1. Load and activate conda environment where Snakemake is installed
 module load Anaconda3
 conda activate /WAVE/projects/whittalllab/conda_envs/genomics
 #
 # 2. Run the main Snakemake command
-# All args specified in config/profile.yaml (including executor: slurm)
-snakemake --profile "/WAVE/projects/whittalllab/dudleya/snakemake-pipeline/config/"
+# Rest of the args are specified in config/profile.yaml (including executor: slurm)
+snakemake --profile $profile --configfile $config
