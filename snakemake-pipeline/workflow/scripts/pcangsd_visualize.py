@@ -36,7 +36,8 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
     info = np.loadtxt(info_path, dtype=str)    # Reads sample names
     species_labels = []     # species e.g. DUSE
     pop_labels = []     # popcodes e.g. DAN
-    Du_labels = []   # labels e.g. Du-78
+    Du_labels = []      # labels e.g. Du-78
+    LP_labels = []      # labels e.g. LP_10
 
     # parse sample names assuming format: "POPCODE_LP_xxx_Du-xxx"
     for sample in info:
@@ -44,13 +45,20 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
         substrings1 = sample.split('_LP_')
         popcode = substrings1[0]
         pop_labels.append(popcode)
+        
         # extract Du# and LP# from split on '_'
+        Du_label = ""
+        LP_num = None
         substrings2 = sample.split('_')
         for i, s in enumerate(substrings2):
             Du_label = s if 'Du-' in s else ""
             if s == 'LP':
                 LP_num = substrings2[i+1]
-        Du_labels.append(Du_label)  # optionally use LP instead
+        
+        Du_labels.append(Du_label)
+        if LP_num:
+            LP_labels.append(LP_num)
+        
         # check if we have specified a non-setchelli (i.e. popcode = SPECIES_POPCODE)
         if '_' in popcode:
             popcode_substrings = popcode.split('_')
@@ -74,7 +82,8 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
     points = pd.DataFrame({   # each row is a point
         'species': species_labels,
         'pop': pop_labels,
-        'point': Du_labels
+        'Du#': Du_labels,
+        'LP#': LP_labels
     })
 
     # also store the variance explained by each PC
@@ -106,7 +115,7 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
     plt.savefig(png_path, dpi=600)
     
     # Label and plot again
-    for x, y, label in zip(points[f"PC{x_pc}"], points[f"PC{y_pc}"], points["point"]):
+    for x, y, label in zip(points[f"PC{x_pc}"], points[f"PC{y_pc}"], points["Du#"]):
         plt.annotate(label, xy=(x,y), fontsize=6)
 
     png_path_labeled = os.path.join(out_path, f"pca_labeled.png")   # consider: if allowing modular PCs, include in filename
@@ -128,13 +137,18 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
     png_path_3 = os.path.join(out_path, f"pca_zoomed_3.png")
     plt.savefig(png_path_3, dpi=600)
     
+    plt.xlim(0.09, 0.11)
+    plt.ylim(0.031, 0.0325)
+    png_path_4 = os.path.join(out_path, f"pca_zoomed_4.png")
+    plt.savefig(png_path_4, dpi=600)
+    
     print("Plots saved to ", png_path)
     
     
     # Save point coordinates
     csv_path = os.path.join(out_path, "points.csv")
     # currently - only save PCs 1 and 2 since that's what we're plotting - can change
-    points.to_csv(csv_path, columns=["species", "pop", "point", "PC1", "PC2"])
+    points.to_csv(csv_path, columns=["species", "pop", "Du#", "LP#", "PC1", "PC2"])
     print("Points saved to ", csv_path)
 
 
@@ -157,8 +171,8 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
         
         f.write("——————\nPopulation Info\n——————\n")
         f.write("_species_\t_population_\t_sample_\n")
-        for species, pop, point in zip(species_labels, pop_labels, Du_labels):
-            f.write(f"{species}\t{pop}\t\t{point}\n")
+        for species, pop, Du, LP in zip(species_labels, pop_labels, Du_labels, LP_labels):
+            f.write(f"{species}\t{pop}\t\t{Du}\t{LP}\n")
 
         f.write("——————\nPCA Summary\n——————\n")
         for i, val in enumerate(evals):
