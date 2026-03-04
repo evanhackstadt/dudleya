@@ -2,6 +2,7 @@
 # Whittall Lab Dudleya Genomics
 # December 2025
 
+# TODO: organize into functions and __main__ CLI
 
 # NOTE: assumes this specific filename format:
 #       popcode_LP_xxx_Du-xxx_Sxxx_Lxxx_Rx_00x.fastq.gz
@@ -19,15 +20,17 @@ import argparse
 from pathlib import Path
 import random
 from datetime import datetime
+import re
 
 # --- CLI ARGS ---
 parser = argparse.ArgumentParser()
 parser.add_argument('data_dir', help='Path to the directory containing input data (raw reads) of interest. By default, adds all samples to a new config file.', type=str)
 parser.add_argument('config_dir', help='Path to the directory where the samples.yaml file should be saved.', type=str)
+parser.add_argument('-f', '--filename', help='(optional) string to be the name of the new config file (do not include .yaml extension)', type=str)
 parser.add_argument('-n', '--n_samples', help='(optional) integer value --> add n random samples to config file', type=int)
 parser.add_argument('-c', '--custom_samples', help='(optional) allows you to enter custom samples for the config file', action='store_true')
 parser.add_argument('-x', '--exclude_samples', help='(optional) allows you to specify samples to exclude from the config file', action='store_true')
-parser.add_argument('-e', '--append_to_file', help='(optional) script will add selected samples to the existing "samples.yaml" file in config_dir', action='store_true')
+parser.add_argument('-a', '--append_to_file', help='(optional) provide path to an existing .yaml file to add selected samples to', type=str)
 parser.add_argument('-q', '--quiet', help='(optional) script will not print modified config file contents after writing', action='store_true')
 args = parser.parse_args()
 
@@ -35,6 +38,7 @@ args = parser.parse_args()
 data_dir = os.path.abspath(args.data_dir)   # ensure we have absolute paths
 data_parent_dir = Path(data_dir).parent     # add to config so Snakemake can store intermediates next to raw reads
 config_dir = os.path.abspath(args.config_dir)
+filename = args.filename if args.filename else "samples"
 n_samples = args.n_samples if args.n_samples else None
 
 data_files = [f for f in os.listdir(data_dir) 
@@ -62,7 +66,7 @@ if not os.path.isfile(os.path.join(config_dir, "samples.yaml")):
     raise ValueError(f"No samples.yaml file found in {config_dir}. An initial file is required to update.")
 
 
-# --- HELPER FUNCTIONS ---
+# --- HELPER FUNCTION ---
 def custom_selection(samples):
     selected_samples = []
     print(data_samples)
@@ -82,7 +86,7 @@ def custom_selection(samples):
             # attempt to search
             matches = [x for x in samples if user_input in x]
             if len(matches) == 1:
-                selected_samples.append(user_input)
+                selected_samples.append(matches[0])
                 print(f"Found match {matches[0]} and added it.")
                 print("All selected samples: ", selected_samples)
             elif len(matches) != 1:
@@ -106,6 +110,8 @@ def custom_selection(samples):
     
     return selected_samples
 
+
+# --- MAIN SCRIPT ---
 
 # from filenames, map R1 and R2 files to their sample names
 data_samples = []
@@ -198,19 +204,21 @@ print(f"Selected {len(selected_samples)} samples to write: ", selected_samples)
 
 # --- WRITE TO CONFIG FILE ---
 print("\n----WRITING TO FILE----")
-config_path = os.path.join(config_dir, "samples.yaml")
+old_config_path = os.path.join(config_dir, "samples.yaml")
+config_path = os.path.join(config_dir, f"{filename}.yaml")
 print("Config file path: ", config_path)
 
-if args.append_to_file:
+if args.append_to_file is not None:
     mode = 'a'
-    print("Append requested. Selected samples will be added to end of existing config file.")
+    config_path = os.path.abspath(args.append_to_file)
+    print(f"Append requested. Selected samples will be added to end of existing config file: {config_path}")
 else:
     mode = 'w'
     overwrite = True
     print("Mode is write.")
     
     # extract ref_genome and anc_genome so we can write them in the new file
-    with open(config_path, 'r') as f:
+    with open(old_config_path, 'r') as f:
         line = f.readline()
         while line == '\n' or line[0] == '#':
             line = f.readline()
@@ -230,7 +238,8 @@ else:
     output_name = "results"
     print("Would you like to give this dataset a unique name?")
     print("The name will be used to name the results folder, making it unique and preserving previous results folders.")
-    print("The default name is 'results'")
+    print("Format: results-your_dataset_name")
+    print("The default name is simply 'results'")
     print("Enter a single string as the name, or '0' to use default, or 'quit' to cancel the script.")
     print(">>>>>>>>")
     user_input = input()
@@ -250,8 +259,8 @@ else:
         output_name = f"results-{user_input}"
     
     # if a samples.yaml already exists, ask whether to preserve or overwrite
-    if os.path.isfile(os.path.join(config_dir, "samples.yaml")):
-        print("WARNING! Current samples.yaml file exists. Would you like to preserve this file or overwrite it?")
+    if os.path.isfile(os.path.join(config_dir, f"{filename}.yaml")) and args.append_to_file:
+        print(f"WARNING! Current {filename}.yaml file exists. Would you like to preserve this file or overwrite it?")
         print("(1)\tPreserve existing config file")
         print("(2)\tOverwrite (delete) existing config file")
         print("(quit)\tCancel script")
@@ -265,35 +274,57 @@ else:
             print("<<<<<<<<")
         if user_input == '1':
             overwrite = False
-            print("Preserve requested. Current samples.yaml file will be renamed.")
+            print(f"Preserve requested. Current {filename}.yaml file will be renamed.")
         elif user_input == '2':
             overwrite = True
-            print("Overwrite requested. Current samples.yaml file will be replaced.")
+            print(f"Overwrite requested. Current {filename}.yaml file will be replaced.")
         elif user_input == 'quit':
             print("Cancelling script. No config file written.")
             sys.exit()
     if not overwrite:
         timestamp = str(datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-        old_file = os.path.join(config_dir, "samples.yaml")
-        new_file = os.path.join(config_dir, f"old_samples_{timestamp}.yaml")
-        os.rename(old_file, new_file)
-        print(f"Renamed samples.yaml --> old_samples_{timestamp}.yaml. New file will be samples.yaml.")
+        old_filename = os.path.join(config_dir, f"{filename}.yaml")
+        renamed = os.path.join(config_dir, f"old_samples_{timestamp}.yaml")
+        os.rename(old_filename, renamed)
+        print(f"Renamed {filename}.yaml --> old_samples_{timestamp}.yaml. New file will be {filename}.yaml.")
     
+
+# If appending, update the n_individuals value near the top of the file - AI GENERATED AND CURRENTLY BROKEN
+'''
+if mode == "a":
+    print(f"...Opening {config_path} for append and updating n_individuals if needed...")
+    with open(config_path, 'r') as fr:
+        contents = fr.read()
+    m = re.search(r'(?m)^[ \t]*n_individuals\s*:\s*(\d+)', contents)
+    if not m:
+        raise ValueError(f"Unable to find n_individuals in {config_path}.")
+    existing_n = int(m.group(1))
+    # count how many of the selected samples are not already present
+    to_add = sum(1 for s in selected_samples if s not in contents)
+    if to_add > 0:
+        new_n = existing_n + to_add
+        new_contents = re.sub(r'(?m)^([ \t]*n_individuals\s*:\s*)\d+', r'\1' + str(new_n), contents, count=1)
+        with open(config_path, 'w') as fw:
+            fw.write(new_contents)
+        print(f"Updated n_individuals: {existing_n} -> {new_n}")
+    else:
+        print("No new samples to add; n_individuals unchanged.")
+'''
 
 with open(config_path, mode) as f:
     print(f"...Opening {config_path}...")
-    
+
     # if we are writing a new file, add ref_genome and anc_genome to the top
     if mode == "w":
         f.write(f"# {config_path}")
         f.write(f"\n# Note: changing the layout of this file might break the update_sample_config.py script")
         f.write(f"\n{ref_line}")
         f.write(f"{anc_line}")
-        f.write(f"\ndata_parent_dir: {data_parent_dir}")
-        f.write(f"\noutput_name: {output_name}")
+        f.write(f'\ndata_parent_dir: "{data_parent_dir}"')
+        f.write(f'\noutput_name: "{output_name}"')
         f.write(f"\n\nn_individuals: {len(selected_samples)}")
         f.write("\n\nsamples:")
-    
+
     # now write the selected samples line-by-line
     for sample in selected_samples:
         # ensure sample is not already in file (skip duplicates)
