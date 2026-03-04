@@ -180,24 +180,23 @@ rule plot_pca:
 
 
 # ---- Rule 11: ngsDist ----
-
 rule ngsdist:
     input:
         beagle = "results/<name>/angsd/population.beagle.gz",
         info = "results/<name>/pca/population.info"
     output:
         dist = "results/<name>/ngsdist/population.dist"
-    # conda:
-        # "/WAVE/projects/whittalllab/conda_envs/genomics"
     params:
         name = config["output_name"],
         n_ind = config["n_individuals"]
+    log:
+        "logs/ngsdist/ngsdist.log"
+    threads: 8
     resources:
         # slurm_partition = "mem",
         runtime = 1440,      # 24 hours
-        mem_mb = lambda wildcards, attempt: attempt * 32000,    # 32GB, then try 64GB, etc.
+        mem_mb = lambda wildcards, attempt: attempt * 64000,    # 64GB, then try 128GB, etc.
         cpus_per_task = lambda wildcards, threads: threads
-    threads: 8
     shell:
         """
         N_SITES=$(zcat {input.beagle} | tail -n +2 | wc -l)
@@ -208,6 +207,10 @@ rule ngsdist:
             --n_ind {params.n_ind} \
             --n_sites $N_SITES \
             --labels {input.info} \
+            --pairwise_del \
+            --avg_nuc_dist \
+            --evol_model 0 \
             --out {output.dist} \
-            --n_threads {threads}
+            --n_threads {threads} \
+            --verbose 2
         """
