@@ -7,15 +7,9 @@ data_parent_dir: /WAVE/datasets/whittalllab/dudleya
 output_name: results-main
 
 samples:
-  ABAB_MAD_LP_222_Du-589:
-    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_222_Du-589_S244_L005_R1_001.fastq.gz"
-    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_222_Du-589_S244_L005_R2_001.fastq.gz"
   ABAB_MAD_LP_223_Du-590:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_223_Du-590_S253_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_223_Du-590_S253_L005_R2_001.fastq.gz"
-  ABAB_MAD_LP_225_Du-592:
-    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_225_Du-592_S272_L005_R1_001.fastq.gz"
-    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_225_Du-592_S272_L005_R2_001.fastq.gz"
   ABAB_MAD_LP_322_Du-593:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_322_Du-593_S172_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_322_Du-593_S172_L005_R2_001.fastq.gz"
@@ -253,9 +247,6 @@ samples:
   CY_HICS_LP_293_Du-757:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HICS_LP_293_Du-757_S242_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HICS_LP_293_Du-757_S242_L005_R2_001.fastq.gz"
-  CY_HICS_LP_295_Du-759:
-    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HICS_LP_295_Du-759_S259_L005_R1_001.fastq.gz"
-    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HICS_LP_295_Du-759_S259_L005_R2_001.fastq.gz"
   CY_HICS_LP_297_Du-761:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HICS_LP_297_Du-761_S279_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HICS_LP_297_Du-761_S279_L005_R2_001.fastq.gz"
@@ -268,9 +259,6 @@ samples:
   CY_HUN_LP_264_Du-683:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HUN_LP_264_Du-683_S265_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HUN_LP_264_Du-683_S265_L005_R2_001.fastq.gz"
-  CY_HUN_LP_265_Du-684:
-    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HUN_LP_265_Du-684_S276_L005_R1_001.fastq.gz"
-    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HUN_LP_265_Du-684_S276_L005_R2_001.fastq.gz"
   CY_HUN_LP_266_Du-685:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HUN_LP_266_Du-685_S285_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HUN_LP_266_Du-685_S285_L005_R2_001.fastq.gz"
@@ -280,9 +268,6 @@ samples:
   CY_HUN_LP_268_Du-687:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HUN_LP_268_Du-687_S228_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HUN_LP_268_Du-687_S228_L005_R2_001.fastq.gz"
-  CY_RED_LP_202_Du-561:
-    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_RED_LP_202_Du-561_S192_L005_R1_001.fastq.gz"
-    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_RED_LP_202_Du-561_S192_L005_R2_001.fastq.gz"
   CY_SIE_LP_188_Du-445:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_SIE_LP_188_Du-445_S129_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_SIE_LP_188_Du-445_S129_L005_R2_001.fastq.gz"
