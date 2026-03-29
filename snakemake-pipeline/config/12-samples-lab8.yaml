@@ -4,9 +4,7 @@ ref_genome: "/WAVE/projects/whittalllab/dudleya/draft_genome/Dudleya_hifiasm_pur
 anc_genome: "/WAVE/projects/whittalllab/dudleya/ancestral_genome_Du-14/D_cymosa_consensus.fa.gz"
 
 data_parent_dir: "/WAVE/datasets/whittalllab/dudleya"
-
 output_name: "results-12-samples-lab8"
-n_individuals: 12
 
 samples:
   BAI_LP_105_Du-222:

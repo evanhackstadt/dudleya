@@ -287,29 +287,6 @@ else:
         renamed = os.path.join(config_dir, f"old_samples_{timestamp}.yaml")
         os.rename(old_filename, renamed)
         print(f"Renamed {filename}.yaml --> old_samples_{timestamp}.yaml. New file will be {filename}.yaml.")
-    
-
-# If appending, update the n_individuals value near the top of the file - AI GENERATED AND CURRENTLY BROKEN
-'''
-if mode == "a":
-    print(f"...Opening {config_path} for append and updating n_individuals if needed...")
-    with open(config_path, 'r') as fr:
-        contents = fr.read()
-    m = re.search(r'(?m)^[ \t]*n_individuals\s*:\s*(\d+)', contents)
-    if not m:
-        raise ValueError(f"Unable to find n_individuals in {config_path}.")
-    existing_n = int(m.group(1))
-    # count how many of the selected samples are not already present
-    to_add = sum(1 for s in selected_samples if s not in contents)
-    if to_add > 0:
-        new_n = existing_n + to_add
-        new_contents = re.sub(r'(?m)^([ \t]*n_individuals\s*:\s*)\d+', r'\1' + str(new_n), contents, count=1)
-        with open(config_path, 'w') as fw:
-            fw.write(new_contents)
-        print(f"Updated n_individuals: {existing_n} -> {new_n}")
-    else:
-        print("No new samples to add; n_individuals unchanged.")
-'''
 
 with open(config_path, mode) as f:
     print(f"...Opening {config_path}...")
@@ -322,7 +299,6 @@ with open(config_path, mode) as f:
         f.write(f"{anc_line}")
         f.write(f'\ndata_parent_dir: "{data_parent_dir}"')
         f.write(f'\noutput_name: "{output_name}"')
-        f.write(f"\n\nn_individuals: {len(selected_samples)}")
         f.write("\n\nsamples:")
 
     # now write the selected samples line-by-line
@@ -337,6 +313,8 @@ with open(config_path, mode) as f:
             f.write(f'\n    r1: "{data_dict[sample][0]}"')
             f.write(f'\n    r2: "{data_dict[sample][1]}"')
 
+    # write a comment logging number of samples added for convenience
+    f.write(f"\n# Added {len(selected_samples)} samples above")
 print("Finished writing!")
 
 if not args.quiet:
