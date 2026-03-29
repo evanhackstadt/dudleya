@@ -1,4 +1,5 @@
 # .../profiles/config.yaml
+# Profile for Snakemake pipeline
 
 # Execute the pipeline using SLURM 
 executor: slurm
@@ -16,6 +17,7 @@ default-resources:
 # Path to our config file specifying samples to process
 configfile: samples.yaml
 
-# Misc flags
+# Behavior
+retries: 3
 printshellcmds: true
 show-failed-logs: true
