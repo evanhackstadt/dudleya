@@ -5,6 +5,7 @@ import os
 
 SAMPLES = config["samples"].keys()     # maps sample name (POPCODE_LP_xxx_Du-xxx) to r1 and r2 filepaths
 DATA_DIR = config["data_parent_dir"]
+N_SAMPLES = len(config["samples"])
 
 pathvars:
     name = config["output_name"]
@@ -12,11 +13,12 @@ pathvars:
 # ---- Overall Goal: ----
 rule all:
     input:
+        "results/<name>/pca/pca.png",
         "results/<name>/ngsdist/population.dist",
-        "results/<name>/pca/pca.png"
+        "results/<name>/tree/population_filtered.treefile"
 
 
-# ---- Rule 1: Fastp Filtering ----
+# ---- Rule 1: Fastp Filter ----
 rule fastp:
     input:
         r1 = lambda wildcards: config["samples"][wildcards.sample]["r1"],
@@ -28,7 +30,7 @@ rule fastp:
         json = "results/<name>/qc/FastpFilterReport_{sample}.json"
     threads: 4
     resources:
-        mem_mb = lambda wc, input: max(2.5 * input.size_mb, 2000),    # dynamically allocate mem for large inputs
+        mem_mb = lambda wc, input: max(2.5 * input.size_mb, 2000),    # 2GB or scale by input size
         cpus_per_task = lambda wildcards, threads: threads  # dynamically allocate # cpus = # threads
     shell:
         """
@@ -42,7 +44,7 @@ rule fastp:
               --json {output.json}
         """
 
-# ---- Rule 2: BWA Mapping & Samtools Sort ----
+# ---- Rule 2: Map to Reference and Sort ----
 rule map_and_sort:
     input:
         ref = config["ref_genome"],
@@ -67,7 +69,7 @@ rule map_and_sort:
         samtools sort -@ 4 -o {output.bam}
         """
 
-# ---- Rule 3: Indexing ----
+# ---- Rule 3: Index BAMs ----
 rule samtools_index:
     input:
         os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam")
@@ -77,7 +79,6 @@ rule samtools_index:
         "samtools index {input}"
 
 # ---- Rule 4: Flagstat ----
-
 rule samtools_flagstat:
     input:
         bam = os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam"),
@@ -87,6 +88,15 @@ rule samtools_flagstat:
     shell:
         "samtools flagstat {input.bam} > {output}"
 
+
+# ---- Rule 5: Create Population Info ----
+rule create_pop_info:
+    output:
+        info = "results/<name>/info/population.info"
+    run:
+        with open(output.info, "w") as f:
+            for sample in SAMPLES:
+                f.write(sample + "\n")
 
 
 # ---- Rule 5: Create BAM Filelist
@@ -111,8 +121,9 @@ rule angsd:
         anc = config["anc_genome"]
     output:
         beagle = "results/<name>/angsd/population.beagle.gz",
-        mafs = "results/<name>/angsd/population.mafs.gz"
-        # additional output files not listed here will be created
+        mafs   = "results/<name>/angsd/population.mafs.gz",
+        bcf    = temp("results/<name>/angsd/population.bcf"),
+        # additional ANGSD output files not listed here will also be created
     params:
         name = config["output_name"]
     log:
@@ -121,7 +132,7 @@ rule angsd:
     resources:
         # slurm_partition = "mem",
         runtime = 1440,      # 24 hours
-        mem_mb = lambda wildcards, attempt: attempt * 128000,    # 128GB, then try 256GB, etc.
+        mem_mb = lambda wildcards, attempt: attempt * max(800 * len(config["samples"]), 96000), # 96GB or scale by n_samples
         cpus_per_task = lambda wildcards, threads: threads
     benchmark:
         "benchmarks/angsd/angsd.tsv"
@@ -129,14 +140,136 @@ rule angsd:
         """
         angsd -b {input.bam_list} -ref {input.ref} -anc {input.anc} \
               -GL 1 -doGlf 2 -doMajorMinor 1 -doCounts 1 -doMaf 1 \
-              -doSaf 1 -doPost 1 -doGeno 32 -uniqueOnly 1 \
+              -doSaf 1 -doPost 1 -doGeno 32 -doBcf 1 -uniqueOnly 1 \
               -minMapQ 30 -minQ 20 \
               -SNP_pval 1e-6 -trim 5 \
               -nThreads {threads} \
               -out results/{params.name}/angsd/population
         """
 
-# ---- Rule 7: PCAngsd ----
+# ---- Rule 7: Convert BCF --> VCF
+rule convert_bcf:
+    input:
+        bcf = "results/<name>/angsd/population.bcf"
+    output:
+        vcf = temp("results/<name>/angsd/population_unnamed.vcf.gz")
+    shell:
+        """
+        bcftools convert -O z \
+              -o {output.vcf} \
+              {input.bcf}
+        """
+
+# ---- Rule 8: Index & Rename VCF ----
+rule index_vcf:
+    input:
+        vcf = "results/<name>/angsd/population_unnamed.vcf.gz",
+        info = "results/<name>/info/population.info"
+    output:
+        vcf   = "results/<name>/angsd/population.vcf.gz",
+        index = "results/<name>/angsd/population.vcf.gz.tbi"
+    shell:
+        """
+        bcftools reheader \
+            -s {input.info} \
+            -o {output.vcf} \
+            {input}
+        
+        tabix -p vcf {output.vcf}
+        """
+
+# ---- Rule 9: Filter VCF ----
+#   -m2 -M2: biallelic SNPs only (required for IQ-TREE)
+#   F_MISSING > 0.2: exclude sites missing in >20% of samples — tune
+#   --min-af 0.05: removes singletons and very rare variants; reduces noise but also removes potentially informative rare variants
+#   TODO: consider loosening cutoffs: F_MISSING > 0.4, 
+rule filter_vcf:
+    input:
+        vcf = "results/<name>/angsd/population.vcf.gz",
+        tbi = "results/<name>/angsd/population.vcf.gz.tbi"
+    output:
+        vcf = "results/<name>/angsd/population_filtered.vcf.gz",
+        tbi = "results/<name>/angsd/population_filtered.vcf.gz.tbi"
+    resources:
+        runtime = 720   # 12 hours
+    shell:
+        """
+        bcftools view -m2 -M2 -v snps {input.vcf} | \
+        bcftools filter -e 'F_MISSING > 0.2' | \
+        bcftools view --min-af 0.05:minor \
+            -o {output.vcf} -O z
+        tabix -p vcf {output.vcf}
+        """
+
+# ---- Rule 10: Convert VCF --> PHY
+rule vcf_to_phylip:
+    input:
+        vcf = "results/<name>/angsd/population_filtered.vcf.gz"
+    output:
+        phy = "results/<name>/tree/population_filtered.min4.phy"
+    params:
+        name = config["output_name"]
+    shell:
+        """
+        python workflow/scripts/vcf2phylip.py \
+            -i {input.vcf} \
+            --output-folder "results/{params.name}/tree" \
+            -m 4
+        """
+
+# ---- Rule 11: IQ-TREE Prep - generates variable sites alignment
+rule iqtree_prep:
+    input:
+        phy = "results/<name>/tree/population_filtered.min4.phy"
+    output:
+        varsites = "results/<name>/tree/population_filtered.varsites.phy"
+    params:
+        name = config["output_name"]
+    threads: 16
+    resources:
+        runtime = 1440,
+        mem_mb = lambda wc, input, attempt: attempt * max(6 * input.size_mb, 64000),    # 64GB or scale by input size
+        cpus_per_task = lambda wildcards, threads: threads
+    shell:
+        """
+        iqtree -s {input.phy} \
+                -st DNA \
+                -m GTR+ASC \
+                -B 1000 \
+                --bnni \
+                -T {threads} \
+                --prefix results/{params.name}/tree/population_filtered || true
+        """
+
+# ---- Rule 12: IQ-TREE ----
+# -m GTR+ASC = ascertainment bias correction
+# --bnni = branch NNI optimization for improved bootstrap accuracy
+rule iqtree:
+    input:
+        phy = "results/<name>/tree/population_filtered.varsites.phy"
+    output:
+        treefile = "results/<name>/tree/population_filtered.treefile"
+    params:
+        name = config["output_name"]
+    threads: 16
+    resources:
+        runtime = 1440,
+        mem_mb = lambda wc, input, attempt: attempt * max(6 * input.size_mb, 64000),    # 64GB or scale by input size
+        cpus_per_task = lambda wildcards, threads: threads
+    shell:
+        """
+        iqtree -s {input.phy} \
+                -st DNA \
+                -m GTR+ASC \
+                -B 1000 \
+                --bnni \
+                -T {threads} \
+                --prefix results/{params.name}/tree/population_filtered \
+                --redo
+        """
+
+
+# ---- Rule 13: PCAngsd ----
 rule pcangsd:
     input:
         "results/<name>/angsd/population.beagle.gz"
@@ -148,29 +281,18 @@ rule pcangsd:
     resources:
         # slurm_partition = "mem",
         runtime = 1440,      # 24 hours
-        mem_mb = lambda wc, input: max(20 * input.size_mb, 4000),    # dynamically allocate mem
+        mem_mb = lambda wc, input: max(20 * input.size_mb, 4000),    # 4GB or scale by input size
         cpus_per_task = lambda wildcards, threads: threads
     shell:
         """
         pcangsd -b {input} -o results/{params.name}/pca/population -t {threads}
         """
 
-# ---- Rule 8: Create Population Info ----
-rule create_pop_info:
-    input:
-        "results/<name>/pca/population.cov"    # this just links it to rule 7
-    output:
-        info = "results/<name>/pca/population.info"
-    run:
-        with open(output.info, "w") as f:
-            for sample in SAMPLES:
-                f.write(sample + "\n")
-
-# ---- Rule 9: Visualization ----
+# ---- Rule 14: Plot PCA ----
 rule plot_pca:
     input:
         cov = "results/<name>/pca/population.cov",
-        info = "results/<name>/pca/population.info"
+        info = "results/<name>/info/population.info"
     output:
         "results/<name>/pca/pca.png"
     conda:
@@ -179,23 +301,23 @@ rule plot_pca:
         "scripts/pcangsd_visualize.py"
 
 
-# ---- Rule 11: ngsDist ----
+# ---- Rule 15: ngsDist ----
 rule ngsdist:
     input:
         beagle = "results/<name>/angsd/population.beagle.gz",
-        info = "results/<name>/pca/population.info"
+        info = "results/<name>/info/population.info"
     output:
         dist = "results/<name>/ngsdist/population.dist"
     params:
         name = config["output_name"],
-        n_ind = config["n_individuals"]
+        n_ind = N_SAMPLES
     log:
         "logs/ngsdist/ngsdist.log"
     threads: 8
     resources:
         # slurm_partition = "mem",
         runtime = 1440,      # 24 hours
-        mem_mb = lambda wildcards, attempt: attempt * 64000,    # 64GB, then try 128GB, etc.
+        mem_mb = lambda wc, input, attempt: attempt * max(12 * input.size_mb, 32000),    # 32GB or scale by input size
         cpus_per_task = lambda wildcards, threads: threads
     shell:
         """
