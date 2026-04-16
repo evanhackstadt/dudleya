@@ -346,9 +346,6 @@ samples:
   DOV_LP_084_Du-180:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/DOV_LP_084_Du-180_S65_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/DOV_LP_084_Du-180_S65_L005_R2_001.fastq.gz"
-  DU-173_S73_L008_R1_001.fastq.gz_LP__:
-    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/DU-173_S73_L008_R1_001.fastq.gz"
-    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/TULP_LP_QB3-5_Du-254_S71_L008_R2_001.fastq.gz"
   DUD_LP_132_Du-283:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/DUD_LP_132_Du-283_S122_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/DUD_LP_132_Du-283_S122_L005_R2_001.fastq.gz"
@@ -589,6 +586,9 @@ samples:
   QUIN_LP_318_Du-164:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/QUIN_LP_318_Du-164_S25_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/QUIN_LP_318_Du-164_S25_L005_R2_001.fastq.gz"
+  QUIN_LP_QB3-2_Du-173:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/QUIN_LP_QB3-2_Du-173_S73_L008_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/QUIN_LP_QB3-2_Du-173_S73_L008_R2_001.fastq.gz"
   RIC_LP_192_Du-521:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/RIC_LP_192_Du-521_S170_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/RIC_LP_192_Du-521_S170_L005_R2_001.fastq.gz"
