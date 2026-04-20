@@ -76,9 +76,7 @@ def custom_selection(samples):
     user_input = input()
     print("<<<<<<<<")
     while user_input != 'quit' and user_input != 'save':
-        if user_input in selected_samples:
-            print(f"Error: You've already selected '{user_input}'")
-        elif user_input in data_samples:
+        if user_input in data_samples and not in selected_samples:  # if they entered the exact sample
             selected_samples.append(user_input)
             print(f"Added {user_input}")
             print("All selected samples: ", selected_samples)
@@ -86,9 +84,12 @@ def custom_selection(samples):
             # attempt to search
             matches = [x for x in samples if user_input in x]
             if len(matches) == 1:
-                selected_samples.append(matches[0])
-                print(f"Found match {matches[0]} and added it.")
-                print("All selected samples: ", selected_samples)
+                if user_input not in selected_samples:
+                    selected_samples.append(matches[0])
+                    print(f"Found match {matches[0]} and added it.")
+                    print("All selected samples: ", selected_samples)
+                else:
+                    print(f"Error: You've already selected '{user_input}'")
             elif len(matches) != 1:
                 print(f"Error: found {len(matches)} matches for {user_input} in possible samples.")
                 print(f"Valid samples are: {[x for x in data_samples if x not in selected_samples]}") if not args.quiet else print()
