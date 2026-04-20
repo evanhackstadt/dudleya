@@ -5,6 +5,12 @@
 # 1 November 2025
 
 
+# TODO: fix warning:
+#   PerformanceWarning: DataFrame is highly fragmented.
+#   This is usually the result of calling `frame.insert` many times, which has poor performance.
+#   Consider joining all columns at once using pd.concat(axis=1) instead. 
+#   To get a de-fragmented frame, use `newframe = frame.copy()
+
 import os
 import argparse
 import numpy as np
@@ -41,14 +47,15 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
 
     # parse sample names assuming format: "POPCODE_LP_xxx_Du-xxx"
     for sample in info:
-        # split on _LP_ to isolate popcode and LP#
+        # split on _LP_ to isolate popcode
         substrings1 = sample.split('_LP_')
         popcode = substrings1[0]
         pop_labels.append(popcode)
         
         # extract Du# and LP# from split on '_'
         Du_label = ""
-        LP_num = None
+        LP_num = ""
+        
         substrings2 = sample.split('_')
         for i, s in enumerate(substrings2):
             Du_label = s if 'Du-' in s else ""
@@ -56,8 +63,7 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
                 LP_num = substrings2[i+1]
         
         Du_labels.append(Du_label)
-        if LP_num:
-            LP_labels.append(LP_num)
+        LP_labels.append(LP_num)
         
         # check if we have specified a non-setchelli (i.e. popcode = SPECIES_POPCODE)
         if '_' in popcode:
@@ -104,7 +110,7 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
                     hue_order=hue_order, markers=markers)                 # optional: legend=False
     ax.legend(fontsize=10)
     # sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
-    ax.set_title(f"{len(evals)}-Sample PCAngsd", fontsize=14)
+    ax.set_title(f"{len(evals)}-Sample PCA", fontsize=14)
     ax.set_xlabel(f"PC{x_pc} ({variance_explained[f'PC{x_pc}']}% of variance)")
     ax.set_ylabel(f"PC{y_pc} ({variance_explained[f'PC{y_pc}']}% of variance)")
     
@@ -122,6 +128,8 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
     plt.savefig(png_path_labeled, dpi=600)
 
     # TEMP MANUAL ZOOM-IN ON CLUSTERS -- CONSIDER SOME WAY TO AUTOMATE THIS OR AT LEAST PASS IN AS PARAM
+    '''
+    # 267-sample zooms
     plt.xlim(-0.035, 0.005)
     plt.ylim(-0.005, 0.01)
     png_path_1 = os.path.join(out_path, f"pca_zoomed_1.png")
@@ -141,6 +149,12 @@ def plot_pca(cov_path, info_path, out_path, x_pc = 1, y_pc = 2):
     plt.ylim(0.031, 0.0325)
     png_path_4 = os.path.join(out_path, f"pca_zoomed_4.png")
     plt.savefig(png_path_4, dpi=600)
+    '''
+    # 262-sample zoom
+    plt.xlim(-0.0025, 0.0025)
+    plt.ylim(-0.01, 0.04)
+    png_path_1 = os.path.join(out_path, f"pca_zoomed_1.png")
+    plt.savefig(png_path_1, dpi=600) 
     
     print("Plots saved to ", png_path)
     
