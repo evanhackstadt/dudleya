@@ -15,7 +15,7 @@ rule all:
     input:
         "results/<name>/pca/pca.png",
         "results/<name>/ngsdist/population.dist",
-        "results/<name>/tree/population_filtered.treefile"
+        "results/<name>/tree/tree.png"
 
 
 # ---- Rule 1: Fastp Filter ----
@@ -107,7 +107,7 @@ rule create_bam_list:
         indexes = expand(os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam.bai"), sample=SAMPLES),
         flagstat = expand("results/<name>/qc/{sample}_flagstat.txt", sample=SAMPLES)
     output:
-        bam_list = "results/<name>/angsd/bam.filelist"
+        bam_list = "results/<name>/info/bam.filelist"
     run:
         with open(output.bam_list, 'w') as f:
             for bam in input.bams:
@@ -116,15 +116,16 @@ rule create_bam_list:
 # ---- Rule 6: ANGSD ----
 rule angsd:
     input:
-        bam_list = "results/<name>/angsd/bam.filelist",
+        bam_list = "results/<name>/info/bam.filelist",
         ref = config["ref_genome"],
         anc = config["anc_genome"]
     output:
-        beagle = "results/<name>/angsd/population.beagle.gz",
-        mafs   = "results/<name>/angsd/population.mafs.gz",
-        bcf    = temp("results/<name>/angsd/population.bcf"),
+        beagle = os.path.join(DATA_DIR, "angsd_runs/<name>/population.beagle.gz"), # store in datasets dir
+        mafs   = os.path.join(DATA_DIR, "angsd_runs/<name>/population.mafs.gz"),
+        bcf    = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/population.bcf")),
         # additional ANGSD output files not listed here will also be created
     params:
+        data_dir = DATA_DIR,
         name = config["output_name"]
     log:
         "logs/angsd/angsd.log"
@@ -142,17 +143,17 @@ rule angsd:
               -GL 1 -doGlf 2 -doMajorMinor 1 -doCounts 1 -doMaf 1 \
               -doSaf 1 -doPost 1 -doGeno 32 -doBcf 1 -uniqueOnly 1 \
               -minMapQ 30 -minQ 20 \
-              -SNP_pval 1e-6 -trim 5 \
+              -trim 5 \
               -nThreads {threads} \
-              -out results/{params.name}/angsd/population
+              -out {params.data_dir}/angsd_runs/{params.name}/population
         """
 
 # ---- Rule 7: Convert BCF --> VCF
 rule convert_bcf:
     input:
-        bcf = "results/<name>/angsd/population.bcf"
+        bcf = os.path.join(DATA_DIR, "angsd_runs/<name>/population.bcf")
     output:
-        vcf = temp("results/<name>/angsd/population_unnamed.vcf.gz")
+        vcf = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/population_unnamed.vcf.gz"))
     shell:
         """
         bcftools convert -O z \
@@ -163,11 +164,11 @@ rule convert_bcf:
 # ---- Rule 8: Index & Rename VCF ----
 rule index_vcf:
     input:
-        vcf = "results/<name>/angsd/population_unnamed.vcf.gz",
+        vcf = os.path.join(DATA_DIR, "angsd_runs/<name>/population_unnamed.vcf.gz"),
         info = "results/<name>/info/population.info"
     output:
-        vcf   = "results/<name>/angsd/population.vcf.gz",
-        index = "results/<name>/angsd/population.vcf.gz.tbi"
+        vcf   = os.path.join(DATA_DIR, "angsd_runs/<name>/population.vcf.gz"),
+        index = os.path.join(DATA_DIR, "angsd_runs/<name>/population.vcf.gz.tbi")
     shell:
         """
         bcftools reheader \
@@ -185,11 +186,11 @@ rule index_vcf:
 #   TODO: consider loosening cutoffs: F_MISSING > 0.4, 
 rule filter_vcf:
     input:
-        vcf = "results/<name>/angsd/population.vcf.gz",
-        tbi = "results/<name>/angsd/population.vcf.gz.tbi"
+        vcf   = os.path.join(DATA_DIR, "angsd_runs/<name>/population.vcf.gz"),
+        index = os.path.join(DATA_DIR, "angsd_runs/<name>/population.vcf.gz.tbi")
     output:
-        vcf = "results/<name>/angsd/population_filtered.vcf.gz",
-        tbi = "results/<name>/angsd/population_filtered.vcf.gz.tbi"
+        vcf   = os.path.join(DATA_DIR, "angsd_runs/<name>/population_filtered.vcf.gz"),
+        index = os.path.join(DATA_DIR, "angsd_runs/<name>/population_filtered.vcf.gz.tbi")
     resources:
         runtime = 720   # 12 hours
     shell:
@@ -204,7 +205,7 @@ rule filter_vcf:
 # ---- Rule 10: Convert VCF --> PHY
 rule vcf_to_phylip:
     input:
-        vcf = "results/<name>/angsd/population_filtered.vcf.gz"
+        vcf = os.path.join(DATA_DIR, "angsd_runs/<name>/population_filtered.vcf.gz")
     output:
         phy = "results/<name>/tree/population_filtered.min4.phy"
     params:
@@ -248,6 +249,7 @@ rule iqtree:
     input:
         phy = "results/<name>/tree/population_filtered.varsites.phy"
     output:
+        contree  = "results/<name>/tree/population_filtered.contree",
         treefile = "results/<name>/tree/population_filtered.treefile"
     params:
         name = config["output_name"]
@@ -268,11 +270,22 @@ rule iqtree:
                 --redo
         """
 
+# ---- Rule 12: Visualize IQ-TREE ----
+rule plot_tree:
+    input:
+        tree = "results/<name>/tree/population_filtered.contree"
+    output:
+        png = "results/<name>/tree/tree.png"
+    conda:
+        "/WAVE/projects/whittalllab/conda_envs/visualization"
+    script:
+        "scripts/iqtree_visualize.py"
+
 
 # ---- Rule 13: PCAngsd ----
 rule pcangsd:
     input:
-        "results/<name>/angsd/population.beagle.gz"
+        os.path.join(DATA_DIR, "angsd_runs/<name>/population.beagle.gz"),
     output:
         "results/<name>/pca/population.cov"
     params:
@@ -304,10 +317,11 @@ rule plot_pca:
 # ---- Rule 15: ngsDist ----
 rule ngsdist:
     input:
-        beagle = "results/<name>/angsd/population.beagle.gz",
+        beagle = os.path.join(DATA_DIR, "angsd_runs/<name>/population.beagle.gz"),
         info = "results/<name>/info/population.info"
     output:
-        dist = "results/<name>/ngsdist/population.dist"
+        dist = "results/<name>/ngsdist/population.dist",
+        n_sites = "results/<name>/ngsdist/n_sites.txt"
     params:
         name = config["output_name"],
         n_ind = N_SAMPLES
@@ -322,6 +336,8 @@ rule ngsdist:
     shell:
         """
         N_SITES=$(zcat {input.beagle} | tail -n +2 | wc -l)
+
+        echo $N_SITES > {output.n_sites}
 
         ngsDist \
             --geno {input.beagle} \
