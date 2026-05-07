@@ -3,9 +3,12 @@ import os
 # Config:
 # configfile specified in profile (config/config.yaml)
 
-SAMPLES = config["samples"].keys()     # maps sample name (POPCODE_LP_xxx_Du-xxx) to r1 and r2 filepaths
+# config maps sample name (POPCODE_LP_xxx_Du-xxx) to r1 and r2 filepaths
+SAMPLES = config["samples"].keys()
 DATA_DIR = config["data_parent_dir"]
 N_SAMPLES = len(config["samples"])
+# Chromosomes for ANGSD chromosome scatter-gather:
+CHROMS = [line.strip() for line in open(config["chroms_file"]) if line.strip()]
 
 pathvars:
     name = config["output_name"]
@@ -15,7 +18,8 @@ rule all:
     input:
         "results/<name>/pca/pca.png",
         "results/<name>/ngsdist/population.dist",
-        "results/<name>/tree/tree.png"
+        "results/<name>/tree/tree.png",
+        "results/<name>/qc/aggregate_qc.png"
 
 
 # ---- Rule 1: Fastp Filter ----
@@ -26,8 +30,8 @@ rule fastp:
     output:
         r1 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R1.fastq.gz"), # store next to raw reads rather than locally
         r2 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R2.fastq.gz"),
-        html = "results/<name>/qc/FastpFilterReport_{sample}.html",    # but store reports locally
-        json = "results/<name>/qc/FastpFilterReport_{sample}.json"
+        html = os.path.join(DATA_DIR, "qc_reports_reads", "{sample}_fastp_report.html"),
+        json = os.path.join(DATA_DIR, "qc_reports_reads", "{sample}_fastp_report.json")
     threads: 4
     resources:
         mem_mb = lambda wc, input: max(2.5 * input.size_mb, 2000),    # 2GB or scale by input size
@@ -52,8 +56,6 @@ rule map_and_sort:
         r2 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R2.fastq.gz")
     output:
         bam = os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam")
-    log:
-        "logs/bwa_mem_samtools/{sample}.log"
     threads: 16
     resources:
         slurm_partition = "condo",
@@ -84,7 +86,7 @@ rule samtools_flagstat:
         bam = os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam"),
         bai = os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam.bai")
     output:
-        "results/<name>/qc/{sample}_flagstat.txt"
+        os.path.join(DATA_DIR, "qc_reports_reads", "{sample}_flagstat.txt")
     shell:
         "samtools flagstat {input.bam} > {output}"
 
@@ -114,46 +116,103 @@ rule create_bam_list:
                 f.write(str(bam) + "\n")
 
 # ---- Rule 6: ANGSD ----
+# Runs per chromosome for efficiency; gathered in Rule 7
 rule angsd:
     input:
         bam_list = "results/<name>/info/bam.filelist",
         ref = config["ref_genome"],
         anc = config["anc_genome"]
     output:
-        beagle = os.path.join(DATA_DIR, "angsd_runs/<name>/population.beagle.gz"), # store in datasets dir
-        mafs   = os.path.join(DATA_DIR, "angsd_runs/<name>/population.mafs.gz"),
-        bcf    = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/population.bcf")),
+        beagle = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.beagle.gz"), # store in datasets dir
+        mafs   = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.mafs.gz"),
+        bcf    = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.bcf"),
+        depth  = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.depthSample")
         # additional ANGSD output files not listed here will also be created
     params:
         data_dir = DATA_DIR,
         name = config["output_name"]
-    log:
-        "logs/angsd/angsd.log"
-    threads: 8
+    threads: 32
     resources:
-        # slurm_partition = "mem",
-        runtime = 1440,      # 24 hours
+        slurm_partition = "mem",
+        runtime = 360,      # 6 hours
         mem_mb = lambda wildcards, attempt: attempt * max(800 * len(config["samples"]), 96000), # 96GB or scale by n_samples
         cpus_per_task = lambda wildcards, threads: threads
     benchmark:
-        "benchmarks/angsd/angsd.tsv"
+        "benchmarks/angsd/{chrom}.tsv"
     shell:
         """
         angsd -b {input.bam_list} -ref {input.ref} -anc {input.anc} \
+              -r {wildcards.chrom} \
               -GL 1 -doGlf 2 -doMajorMinor 1 -doCounts 1 -doMaf 1 \
               -doSaf 1 -doPost 1 -doGeno 32 -doBcf 1 -uniqueOnly 1 \
+              -doDepth 1 -maxDepth 1000 \
               -minMapQ 30 -minQ 20 \
               -trim 5 \
               -nThreads {threads} \
-              -out {params.data_dir}/angsd_runs/{params.name}/population
+              -out {params.data_dir}/angsd_runs/{params.name}/{wildcards.chrom}/population \
         """
 
-# ---- Rule 7: Convert BCF --> VCF
+# ---- Rule 7: Gather Per-Chromosome ANGSD Files ----
+rule concat_angsd:
+    input:
+        beagle = expand(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.beagle.gz"), chrom=CHROMS),
+        mafs   = expand(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.mafs.gz"), chrom=CHROMS),
+        bcf    = expand(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.bcf"), chrom=CHROMS),
+        depth  = expand(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.depthSample"), chrom=CHROMS)
+        # add more inputs/outputs if additional ANGSD modules are used
+    output:
+        beagle      = os.path.join(DATA_DIR, "angsd_runs/<name>/population.beagle.gz"),
+        mafs        = os.path.join(DATA_DIR, "angsd_runs/<name>/population.mafs.gz"),
+        bcf         = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/population.bcf")),
+        depthSample = os.path.join(DATA_DIR, "angsd_runs/<name>/population.depthSample")
+    params:
+        name = config["output_name"]
+    resources:
+        runtime = 120,
+        mem_mb = 8000,
+        cpus_per_task = 1
+    run:
+        import numpy as np
+
+        # --- Beagle: keep header from first file only ---
+        shell(
+            "(zcat {input.beagle[0]} | head -1; "
+            " for f in {input.beagle}; do zcat $f | tail -n +2; done"
+            ") | gzip > {output.beagle}"
+        )
+
+        # --- MAFs: same header-once pattern ---
+        shell(
+            "(zcat {input.mafs[0]} | head -1; "
+            " for f in {input.mafs}; do zcat $f | tail -n +2; done"
+            ") | gzip > {output.mafs}"
+        )
+
+        # --- BCF: bcftools handles its own header merging ---
+        shell("bcftools concat -o {output.bcf} -O b {input.bcf}")
+
+        # --- depthSample: element-wise sum across chromosomes ---
+        depth_sum = None
+        for f in input.depth:
+            arr = np.loadtxt(f)
+            depth_sum = arr if depth_sum is None else depth_sum + arr
+
+        assert depth_sum.shape[0] == len(config["samples"]), (
+            f"depthSample row count ({depth_sum.shape[0]}) does not match "
+            f"sample count ({len(config['samples'])}). BAM list order may be inconsistent."
+        )
+
+        np.savetxt(output.depthSample, depth_sum, fmt="%g")
+        
+
+# ---- Rule 8: Convert BCF --> VCF
 rule convert_bcf:
     input:
         bcf = os.path.join(DATA_DIR, "angsd_runs/<name>/population.bcf")
     output:
         vcf = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/population_unnamed.vcf.gz"))
+    resources:
+        runtime = 360       # 6 hours
     shell:
         """
         bcftools convert -O z \
@@ -239,6 +298,7 @@ rule iqtree_prep:
                 -B 1000 \
                 --bnni \
                 -T {threads} \
+                -redo \
                 --prefix results/{params.name}/tree/population_filtered || true
         """
 
@@ -325,13 +385,11 @@ rule ngsdist:
     params:
         name = config["output_name"],
         n_ind = N_SAMPLES
-    log:
-        "logs/ngsdist/ngsdist.log"
-    threads: 8
+    threads: 32
     resources:
-        # slurm_partition = "mem",
+        slurm_partition = "mem",
         runtime = 1440,      # 24 hours
-        mem_mb = lambda wc, input, attempt: attempt * max(12 * input.size_mb, 32000),    # 32GB or scale by input size
+        mem_mb = lambda wc, input, attempt: attempt * max(20 * input.size_mb, 32000),    # 32GB or scale by input size
         cpus_per_task = lambda wildcards, threads: threads
     shell:
         """
@@ -352,3 +410,18 @@ rule ngsdist:
             --n_threads {threads} \
             --verbose 2
         """
+
+
+# ---- Rule 16: Aggregate QC Report ----
+rule aggregate_qc:
+    input:
+        fastp_jsons = expand(os.path.join(DATA_DIR, "qc_reports_reads", "{sample}_fastp_report.json"), sample=SAMPLES),
+        flagstats   = expand(os.path.join(DATA_DIR, "qc_reports_reads", "{sample}_flagstat.txt"), sample=SAMPLES),
+        depthSample = os.path.join(DATA_DIR, "angsd_runs/<name>/population.depthSample")
+    output:
+        csv  = "results/<name>/qc/aggregate_qc.csv",
+        plot = "results/<name>/qc/aggregate_qc.png"
+    conda:
+        "/WAVE/projects/whittalllab/conda_envs/visualization"
+    script:
+        "scripts/aggregate_qc.py"

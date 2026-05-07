@@ -228,12 +228,17 @@ else:
         while line == '\n' or line[0] == '#':
             line = f.readline()
         anc_line = line
+        while line == '\n' or line[0] == '#':
+            line = f.readline()
+        chroms_line = line
         # ensure file was properly formatted...
         if 'ref_genome: ' not in ref_line:
             raise ValueError(f"Unable to extract ref_genome from old config file. Instead read: {ref_line}")
         if 'anc_genome: ' not in anc_line:
             raise ValueError(f"Unable to extract anc_genome from old config file. Instead read: {anc_line}")
-    print(f"...Extracted {ref_line}...Extracted {anc_line}...Parsed data_parent_dir: {data_parent_dir}\n")
+        if 'chroms_file: ' not in chroms_line:
+            raise ValueError(f"Unable to extract chroms_file from old config file. Instead read: {chroms_line}")
+    print(f"...Extracted {ref_line}...Extracted {anc_line}...Extracted {chroms_line}...Parsed data_parent_dir: {data_parent_dir}\n")
     
     # optionally name this dataset for unique results folder
     output_name = "results"
@@ -298,6 +303,7 @@ with open(config_path, mode) as f:
         f.write(f"\n# Note: changing the layout of this file might break the update_sample_config.py script")
         f.write(f"\n{ref_line}")
         f.write(f"{anc_line}")
+        f.write(f"{chroms_line}")
         f.write(f'\ndata_parent_dir: "{data_parent_dir}"')
         f.write(f'\noutput_name: "{output_name}"')
         f.write("\n\nsamples:")

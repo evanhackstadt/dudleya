@@ -2,6 +2,7 @@
 # Note: changing the layout of this file might break the update_sample_config.py script
 ref_genome: "/WAVE/projects/whittalllab/dudleya/draft_genome/Dudleya_hifiasm_purged_host_genome.fasta"
 anc_genome: "/WAVE/projects/whittalllab/dudleya/ancestral_genome_Du-14/D_cymosa_consensus.fa.gz"
+chroms_file: "config/chroms.txt"
 
 data_parent_dir: "/WAVE/datasets/whittalllab/dudleya"
 output_name: "results-biol173-multi-pop-clones"
