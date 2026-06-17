@@ -6,6 +6,7 @@ Santa Clara University (SCU)
 
 *README last updated: 6/16/2026*
 
+
 ## About
 
 This repo contains the bioinformatics pipeline used to study the conservation genomics of *Dudleya setchellii*, an endangered succulent endemic to Santa Clara county, California. The research project is led by Dr. Justen Whittall (Biology Department, Santa Clara University). Preliminary results were presented at the 2026 West Coast Biological Sciences Undergraduate Research Conference. Journal publication is anticipated to be forthcoming.
@@ -23,11 +24,11 @@ The pipeline produces three primary outputs:
 * Phylogenetic tree.
 
 ### Key Pipeline Steps
-Steps 1-3 are performed on every sample. Then, all samples are aggregated for steps 4-9.
+Steps 1-3 are performed on every sample. Then, all samples are aggregated by ANGSD for steps 4-9.
 1. fastp - filtering & QC
 2. BWA MEM - alignment to reference genome --> .bam
 3. Samtools - sort, index, and get QC report
-4. ANGSD - population analysis --> .beagle, .mafs, .bcf (parallel chromosomal scatter-gather optimizes runtime)
+4. ANGSD - population analysis --> .beagle, .mafs, .bcf
 5. bcftools - convert .bcf --> .vcf --> .phy
 6. IQTREE - produce phylogenetic tree
 7. PCAngsd - produce PCA plot
@@ -43,13 +44,13 @@ Steps 1-3 are performed on every sample. Then, all samples are aggregated for st
 * The **profile** (`config.yaml`)
   * Contains parameters telling Snakemake to use SLURM and specifying default resources
   * MUST be named config.yaml and shouldn't need to be modified
-* A config file (e.g. `samples.yaml`)
+* The **config file** (e.g. `samples.yaml`)
   * Contains paths to the raw input files and other files used by the pipeline
-  * We can create different configs (e.g. `config/biol173-multi-pop.yaml`) to specify different input files or datasets
+  * We can create different configs (e.g. `biol173-multi-pop.yaml`) to specify different input files or datasets
 
 Key Scripts:
 * `update_sample_config.py` — utility script providing an easy way to create or modify config files.
-* `submit_snakemake.sh` — batch file that allows us to run the pipeline in the background (as a master SLURM job).
+* `submit_snakemake.sh` — wrapper batch file that allows us to run the pipeline in the background using SLURM.
 
 
 ## Running the Pipeline
