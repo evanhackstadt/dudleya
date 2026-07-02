@@ -18,8 +18,9 @@ ancestral_genome_Du-14/
 *.err
 *.snakemake*
 *.tsv
-results/
+*.phy
 old-pipeline-testing/
+to-delete-old-pipeline-testing/
 
 # Misc files #
 ################
