@@ -16,9 +16,10 @@ pathvars:
 # ---- Overall Goal: ----
 rule all:
     input:
+        "results/<name>/tree/tree.png",
         "results/<name>/pca/pca.png",
         "results/<name>/ngsdist/population.dist",
-        "results/<name>/tree/tree.png",
+        "results/<name>/ngsdist/distance_analysis.txt",
         "results/<name>/qc/aggregate_qc.png"
 
 
@@ -107,7 +108,7 @@ rule create_bam_list:
     input:
         bams = expand(os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam"), sample=SAMPLES),
         indexes = expand(os.path.join(DATA_DIR, "mapped_reads", "{sample}_sorted.bam.bai"), sample=SAMPLES),
-        flagstat = expand("results/<name>/qc/{sample}_flagstat.txt", sample=SAMPLES)
+        flagstat = expand(os.path.join(DATA_DIR, "qc_reports_reads", "{sample}_fastp_report.json"), sample=SAMPLES)
     output:
         bam_list = "results/<name>/info/bam.filelist"
     run:
@@ -123,11 +124,12 @@ rule angsd:
         ref = config["ref_genome"],
         anc = config["anc_genome"]
     output:
-        beagle = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.beagle.gz"), # store in datasets dir
-        mafs   = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.mafs.gz"),
-        bcf    = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.bcf"),
+        beagle = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.beagle.gz")), # store in datasets dir
+        mafs   = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.mafs.gz")),
+        geno   = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.geno.gz")),
+        bcf    = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.bcf")),
         depth  = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.depthSample")
-        # additional ANGSD output files not listed here will also be created
+        # additional ANGSD output files not listed here may also be created
     params:
         data_dir = DATA_DIR,
         name = config["output_name"]
@@ -144,7 +146,7 @@ rule angsd:
         angsd -b {input.bam_list} -ref {input.ref} -anc {input.anc} \
               -r {wildcards.chrom} \
               -GL 1 -doGlf 2 -doMajorMinor 1 -doCounts 1 -doMaf 1 \
-              -doSaf 1 -doPost 1 -doGeno 32 -doBcf 1 -uniqueOnly 1 \
+              -doPost 1 -doGeno 32 -doBcf 1 -uniqueOnly 1 \
               -doDepth 1 -maxDepth 1000 \
               -minMapQ 30 -minQ 20 \
               -trim 5 \
@@ -167,25 +169,26 @@ rule concat_angsd:
         depthSample = os.path.join(DATA_DIR, "angsd_runs/<name>/population.depthSample")
     params:
         name = config["output_name"]
+    threads: 16
     resources:
-        runtime = 120,
-        mem_mb = 8000,
-        cpus_per_task = 1
+        runtime = 720,    # 12h
+        mem_mb = 16000,
+        cpus_per_task = lambda wildcards, threads: threads
     run:
         import numpy as np
 
         # --- Beagle: keep header from first file only ---
         shell(
-            "(zcat {input.beagle[0]} | head -1; "
+            "(zcat {input.beagle[0]} | head -1 || true; "
             " for f in {input.beagle}; do zcat $f | tail -n +2; done"
-            ") | gzip > {output.beagle}"
+            ") | pigz -p {threads} > {output.beagle}"
         )
 
         # --- MAFs: same header-once pattern ---
         shell(
-            "(zcat {input.mafs[0]} | head -1; "
+            "(zcat {input.mafs[0]} | head -1 || true; "
             " for f in {input.mafs}; do zcat $f | tail -n +2; done"
-            ") | gzip > {output.mafs}"
+            ") | pigz -p {threads} > {output.mafs}"
         )
 
         # --- BCF: bcftools handles its own header merging ---
@@ -352,9 +355,9 @@ rule pcangsd:
         name = config["output_name"]
     threads: 8
     resources:
-        # slurm_partition = "mem",
+        slurm_partition = "mem",
         runtime = 1440,      # 24 hours
-        mem_mb = lambda wc, input: max(20 * input.size_mb, 4000),    # 4GB or scale by input size
+        mem_mb = lambda wc, input: max(40 * input.size_mb, 4000),    # 4GB or scale by input size
         cpus_per_task = lambda wildcards, threads: threads
     shell:
         """
@@ -411,8 +414,26 @@ rule ngsdist:
             --verbose 2
         """
 
+# ---- Rule 16: Analyze Distance Matrix ----
+# Reports:
+#   - Mean between-species pairwise distances with SE
+#   - Permutation tests for between-species distance comparisons
+#     (accounts for non-independence in pairwise distance matrices)
+#   - Focal analysis of putative hybrid CY_HUN_LP_267_Du-686:
+#     mean distances to each species + permutation-based affinity tests
+rule analyze_ngsdist:
+    input:
+        dist = "results/<name>/ngsdist/population.dist",
+        info = "results/<name>/info/population.info"
+    output:
+        report = "results/<name>/ngsdist/distance_analysis.txt"
+    conda:
+        "/WAVE/projects/whittalllab/conda_envs/visualization"
+    script:
+        "scripts/ngsdist_analyze.py"
 
-# ---- Rule 16: Aggregate QC Report ----
+
+# ---- Rule 17: Aggregate QC Report ----
 rule aggregate_qc:
     input:
         fastp_jsons = expand(os.path.join(DATA_DIR, "qc_reports_reads", "{sample}_fastp_report.json"), sample=SAMPLES),
