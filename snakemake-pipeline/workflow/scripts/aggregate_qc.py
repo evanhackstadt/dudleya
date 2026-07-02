@@ -107,66 +107,89 @@ df["fastp_retention_pct"] = 100 * df["post_fastp_reads"] / df["raw_reads"]
 df["reads_lost_fastp"]    = df["raw_reads"] - df["post_fastp_reads"]
 df["reads_lost_mapping"]  = df["post_fastp_reads"] - df["mapped_reads"]
 
-# Flag potentially problematic samples (thresholds are adjustable)
-LOW_READS_THRESHOLD   = 1_000_000   # fewer than 1M mapped reads
-LOW_MAPPING_THRESHOLD = 70.0        # below 70% mapping rate
-LOW_DEPTH_THRESHOLD = 3.0   # mean depth below 3x is generally unreliable
+# Flag potentially problematic samples (thresholds are adjustable)  — ignoring for now
+# LOW_READS_THRESHOLD   = 1_000_000   # fewer than 1M mapped reads
+# LOW_MAPPING_THRESHOLD = 70.0        # below 70% mapping rate
+# LOW_DEPTH_THRESHOLD = 3.0   # mean depth below 3x is generally unreliable
 
-df["flag_low_reads"]   = df["mapped_reads"] < LOW_READS_THRESHOLD
-df["flag_low_mapping"] = df["mapping_rate"] < LOW_MAPPING_THRESHOLD
-df["flag_low_depth"] = df["angsd_mean_depth"] < LOW_DEPTH_THRESHOLD
-df["flagged"]        = df["flag_low_reads"] | df["flag_low_mapping"] | df["flag_low_depth"]
+# df["flag_low_reads"]   = df["mapped_reads"] < LOW_READS_THRESHOLD
+# df["flag_low_mapping"] = df["mapping_rate"] < LOW_MAPPING_THRESHOLD
+# df["flag_low_depth"] = df["angsd_mean_depth"] < LOW_DEPTH_THRESHOLD
+# df["flagged"]        = df["flag_low_reads"] | df["flag_low_mapping"] | df["flag_low_depth"]
 
 # Save CSV
 df.to_csv(snakemake.output.csv, index=False)
 print(f"QC table saved to {snakemake.output.csv}")
-print(f"\nFlagged samples ({df['flagged'].sum()} total):")
-print(df[df["flagged"]][["sample", "mapped_reads", "mapping_rate"]])
+# print(f"\nFlagged samples ({df['flagged'].sum()} total):")
+# print(df[df["flagged"]][["sample", "mapped_reads", "mapping_rate"]])
 
 
 # --- Plots ---
 
-fig, axes = plt.subplots(4, 1, figsize=(max(14, len(df) * 0.12), 18))
+fig, axes = plt.subplots(3, 1, figsize=(max(14, len(df) * 0.12), 18))   # temp 3, 1
 fig.suptitle(f"Aggregate QC — {len(df)} samples", fontsize=14, y=1.01)
 
 samples   = df["sample"]
 x         = np.arange(len(df))
 bar_width = 0.8
 
+for ax in axes:
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_linewidth(0.8)
+    ax.spines["bottom"].set_linewidth(0.8)
+    ax.tick_params(color="black", labelcolor="black")
+
 # --- Panel 1: Read attrition stacked bar ---
 ax1 = axes[0]
-ax1.bar(x, df["mapped_reads"],       width=bar_width, label="Mapped",            color="#4C72B0")
-ax1.bar(x, df["reads_lost_mapping"], width=bar_width, label="Lost at mapping",   color="#DD8452",
+ax1.bar(x,
+        df["mapped_reads"],
+        width=bar_width,
+        label="Mapped",
+        color="#4d4d4d",
+        edgecolor="black",
+        linewidth=0.5)
+ax1.bar(x,
+        df["reads_lost_mapping"],
+        width=bar_width,
+        label="Lost at mapping",
+        color="#bfbfbf",
+        edgecolor="black",
+        linewidth=0.5,
+        hatch="///",
         bottom=df["mapped_reads"])
-ax1.bar(x, df["reads_lost_fastp"],   width=bar_width, label="Lost at fastp",     color="#C44E52",
+ax1.bar(x,
+        df["reads_lost_fastp"],
+        width=bar_width,
+        label="Lost at fastp",
+        color="#ffffff",
+        edgecolor="black",
+        linewidth=0.5,
+        hatch="xxx",
         bottom=df["mapped_reads"] + df["reads_lost_mapping"])
-
-# Mark flagged samples
-flagged_x = x[df["flagged"].values]
-ax1.scatter(flagged_x,
-            df.loc[df["flagged"], "raw_reads"] * 1.02,
-            marker="v", color="black", s=20, zorder=5, label="Flagged")
 
 ax1.set_title("Read Attrition per Sample")
 ax1.set_ylabel("Read count")
 ax1.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f"{v/1e6:.1f}M"))
 ax1.set_xticks([])
-ax1.legend(fontsize=8, loc="upper right")
-ax1.axhline(LOW_READS_THRESHOLD, color="black", linestyle="--", linewidth=0.8, alpha=0.5)
+ax1.legend(fontsize=8, loc="upper right", frameon=False)
 
 # --- Panel 2: Mapping rate per sample ---
 ax2 = axes[1]
-colors = ["#C44E52" if f else "#4C72B0" for f in df["flagged"]]
-ax2.bar(x, df["mapping_rate"], width=bar_width, color=colors)
-ax2.axhline(LOW_MAPPING_THRESHOLD, color="black", linestyle="--", linewidth=0.8,
-            label=f"Threshold ({LOW_MAPPING_THRESHOLD}%)")
+ax2.bar(x,
+        df["mapping_rate"],
+        width=bar_width,
+        color="#4d4d4d",
+        edgecolor="black",
+        linewidth=0.5)
 ax2.set_title("Mapping Rate per Sample")
 ax2.set_ylabel("% reads mapped")
 ax2.set_ylim(0, 105)
 ax2.set_xticks([])
-ax2.legend(fontsize=8)
 
 # --- Panel 3: Mapped read count distribution by population ---
+# skip for now
+'''
 ax3 = axes[2]
 pop_order = df.groupby("population")["mapped_reads"].median().sort_values().index
 sns.boxplot(data=df, x="population", y="mapped_reads",
@@ -178,18 +201,21 @@ ax3.set_title("Mapped Read Distribution by Population")
 ax3.set_xlabel("Population")
 ax3.set_ylabel("Mapped reads")
 ax3.tick_params(axis="x", rotation=45)
+'''
 
 # --- Panel 4: Mean depth per sample post-ANGSD ---
-ax4 = axes[3]
-colors = ["#C44E52" if f else "#4C72B0" for f in df["flag_low_depth"]]
-ax4.bar(x, df["angsd_mean_depth"], width=bar_width, color=colors)
-ax4.axhline(LOW_DEPTH_THRESHOLD, color="black", linestyle="--", linewidth=0.8,
-            label=f"Threshold ({LOW_DEPTH_THRESHOLD}x)")
+ax4 = axes[2]
+ax4.bar(x,
+        df["angsd_mean_depth"],
+        width=bar_width,
+        color="#4d4d4d",
+        edgecolor="black",
+        linewidth=0.5)
 ax4.set_title("Mean Depth per Sample (post-ANGSD filters)")
 ax4.set_ylabel("Mean depth (x)")
 ax4.set_xticks(x)
-ax4.set_xticklabels(df["sample"], rotation=90, fontsize=4)
-ax4.legend(fontsize=8)
+ax4.set_xticklabels(df["sample"], rotation=90, fontsize=5)
+ax4.set_xlabel("Sample")
 
 plt.tight_layout()
 plt.savefig(snakemake.output.plot, dpi=300, bbox_inches="tight")
