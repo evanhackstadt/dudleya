@@ -1,0 +1,6 @@
+numpy
+pandas
+scikit-bio
+ete3
+matplotlib
+streamlit

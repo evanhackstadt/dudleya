@@ -1,0 +1,1688 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Distance Matrix to Tree</title>
+  <style>
+    :root {
+      --bg: #f5f8f7;
+      --card: #ffffff;
+      --ink: #152322;
+      --muted: #4b5d5b;
+      --accent: #0f766e;
+      --accent-2: #ea580c;
+      --line: #d2dfdc;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Trebuchet MS", "Gill Sans", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 400px at 15% -10%, rgba(15, 118, 110, 0.12), transparent 60%),
+        radial-gradient(800px 500px at 100% -20%, rgba(234, 88, 12, 0.1), transparent 55%),
+        var(--bg);
+    }
+
+    .wrap {
+      max-width: 1300px;
+      margin: 24px auto;
+      padding: 0 16px 28px;
+    }
+
+    .banner {
+      background: linear-gradient(90deg, #0f766e, #115e59);
+      color: #fff;
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .banner h1 {
+      margin: 0;
+      font-size: clamp(1.45rem, 2.6vw, 2.05rem);
+      letter-spacing: 0.2px;
+    }
+
+    .banner p {
+      margin: 8px 0 0;
+      opacity: 0.95;
+      line-height: 1.35;
+    }
+
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel, .viewer {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .viewer {
+      padding: 10px;
+      min-height: 620px;
+    }
+
+    h2 {
+      margin: 2px 0 8px;
+      font-size: 1.05rem;
+      color: var(--ink);
+      border-bottom: 2px solid #eef5f4;
+      padding-bottom: 4px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+
+    .row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 520px) {
+      .row-2, .row-3 { grid-template-columns: 1fr; }
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--ink);
+    }
+
+    input, select, button, textarea {
+      width: 100%;
+      border: 1px solid #c7d8d4;
+      border-radius: 9px;
+      padding: 8px 10px;
+      font-size: 0.92rem;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    input[type="checkbox"] {
+      width: auto;
+      transform: scale(1.1);
+      accent-color: var(--accent);
+    }
+
+    .checkline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: var(--ink);
+      margin-top: 2px;
+    }
+
+    button {
+      background: linear-gradient(90deg, var(--accent), #0b5f58);
+      color: #fff;
+      border: 0;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 120ms ease, filter 120ms ease;
+    }
+
+    button:hover { filter: brightness(1.04); transform: translateY(-1px); }
+
+    .secondary {
+      background: linear-gradient(90deg, #374151, #1f2937);
+    }
+
+    .alt {
+      background: linear-gradient(90deg, var(--accent-2), #c2410c);
+    }
+
+    #status {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #cbe7e3;
+      background: #f0fbf9;
+      font-size: 0.9rem;
+      color: #104a45;
+      white-space: pre-wrap;
+    }
+
+    .warn {
+      border-color: #f8d7aa !important;
+      background: #fff7ed !important;
+      color: #9a3412 !important;
+    }
+
+    .error {
+      border-color: #fecaca !important;
+      background: #fff1f2 !important;
+      color: #9f1239 !important;
+    }
+
+    .viewer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin: 2px 0 10px;
+      flex-wrap: wrap;
+    }
+
+    #treeSvg {
+      width: 100%;
+      height: 560px;
+      border: 1px dashed #c9dbd8;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ffffff, #f9fcfb);
+    }
+
+    .note {
+      font-size: 0.82rem;
+      color: #566a67;
+      line-height: 1.3;
+    }
+
+    .chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .chip {
+      border: 1px solid #cde2de;
+      color: #29504a;
+      font-size: 0.75rem;
+      border-radius: 999px;
+      padding: 2px 8px;
+      background: #f5faf9;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #223735;
+      margin-bottom: 6px;
+    }
+
+    .mono {
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      background: #f3f6f6;
+      padding: 1px 5px;
+      border-radius: 6px;
+      font-size: 0.84rem;
+    }
+
+    .footer {
+      margin-top: 10px;
+      color: #637775;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="banner">
+      <h1>Distance Matrix to Tree</h1>
+      <p>Upload a distance-matrix CSV or Excel file and infer NJ or UPGMA trees with validation, outgroup rooting, branch-length handling, and customizable visualization.</p>
+      <p style="margin:6px 0 0; font-size:0.88rem; opacity:0.9;">Created by Dr. Justen Whittall for BIOL173 Students in Winter 2026</p>
+    </header>
+
+    <main class="grid">
+      <section class="panel">
+        <div>
+          <h2>📁 1) Upload</h2>
+          <p class="small">Format: first column is sample names, first row headers are the same sample names in the same order. Diagonal should be 0. Full or triangular matrices are accepted. File types: CSV, XLSX, XLS.</p>
+          <div class="row">
+            <label for="csvFile">Distance matrix file</label>
+            <input id="csvFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
+          </div>
+          <div class="row-2">
+            <button id="loadBtn" class="secondary">Load Matrix</button>
+            <button id="exampleBtn" class="alt">Download Example CSV</button>
+          </div>
+          <details>
+            <summary>Example matrix format</summary>
+            <pre class="small">Taxon,Sp1,Sp2,Sp3,Sp4
+Sp1,0,,,
+Sp2,0.12,0,,
+Sp3,0.18,0.09,0,
+Sp4,0.25,0.14,0.07,0</pre>
+          </details>
+        </div>
+
+        <div>
+          <h2>🧮 2) Inference Knobs</h2>
+          <div class="row-2">
+            <div>
+              <label for="algorithm">🧬 Algorithm</label>
+              <select id="algorithm">
+                <option value="nj">Neighbor Joining (NJ)</option>
+                <option value="upgma">UPGMA</option>
+              </select>
+            </div>
+            <div>
+              <label for="ladderize">🪜 Ladderize</label>
+              <select id="ladderize">
+                <option value="down">Ladderize down (outgroup at top)</option>
+                <option value="up">Ladderize up (outgroup at bottom)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div>
+              <label for="branchMode">📏 Tree Style</label>
+              <select id="branchMode">
+                <option value="phylogram">Phylogram (use branch lengths)</option>
+                <option value="ultrametric">Ultrametric</option>
+              </select>
+            </div>
+            <div>
+              <label for="rootMode">🌱 Rooting</label>
+              <select id="rootMode">
+                <option value="none">None (leave as inferred)</option>
+                <option value="outgroup">Outgroup rooting</option>
+                <option value="midpoint">Midpoint rooting</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="outgroup">🌿 Outgroup Samples (multi-select)</label>
+            <select id="outgroup" multiple size="5"></select>
+            <div class="note">Use Ctrl/Cmd-click to select multiple samples.</div>
+          </div>
+
+          <label class="checkline"><input id="monoOut" type="checkbox" checked /> 🧩 Enforce monophyletic outgroup (when using outgroup rooting)</label>
+          <label class="checkline"><input id="showBL" type="checkbox" checked /> 🔢 Show branch-length labels</label>
+          <div class="note">Negative branch lengths are automatically redistributed to descendants.</div>
+        </div>
+
+        <div>
+          <h2>🎨 3) Style Controls</h2>
+          <div class="row-3">
+            <div>
+              <label for="tipFontSize">Tip font size</label>
+              <input id="tipFontSize" type="number" min="7" max="30" value="12" />
+            </div>
+            <div>
+              <label for="tipFontStyle">Tip font style</label>
+              <select id="tipFontStyle">
+                <option value="normal">Normal</option>
+                <option value="italic">Italic</option>
+                <option value="oblique">Oblique</option>
+              </select>
+            </div>
+            <div>
+              <label for="lineWidth">Line width</label>
+              <input id="lineWidth" type="number" min="0.5" max="5" step="0.1" value="1.8" />
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div>
+              <label for="tipLabelColor">Tip label color</label>
+              <input id="tipLabelColor" type="color" value="#111111" />
+            </div>
+            <div>
+              <label for="branchColor">Branch color</label>
+              <input id="branchColor" type="color" value="#3b4d4a" />
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div>
+              <label for="blFontSize">Branch length label font size</label>
+              <input id="blFontSize" type="number" min="6" max="30" value="10" />
+            </div>
+            <div>
+              <label for="blFontStyle">Branch length label font style</label>
+              <select id="blFontStyle">
+                <option value="normal">Normal</option>
+                <option value="italic">Italic</option>
+                <option value="oblique">Oblique</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div>
+              <label for="blColor">Branch length label color</label>
+              <input id="blColor" type="color" value="#5f6f6d" />
+            </div>
+            <div>
+              <label for="blDecimals">Branch length decimal places</label>
+              <input id="blDecimals" type="number" min="0" max="10" step="1" value="4" />
+            </div>
+          </div>
+
+          <div class="row-2">
+            <button id="newickBtn" class="secondary">Download Newick</button>
+            <button id="resetBtn" type="button">Restore Default Settings</button>
+          </div>
+        </div>
+
+        <div id="status">Load a CSV or Excel file to begin.</div>
+      </section>
+
+      <section class="viewer">
+        <div class="viewer-top">
+          <div>
+            <strong>Tree Preview</strong>
+            <div class="chips">
+              <span class="chip" id="chipTaxa">Taxa: 0</span>
+              <span class="chip" id="chipAlgo">Algorithm: -</span>
+              <span class="chip" id="chipStyle">Style: -</span>
+              <span class="chip" id="chipLayout">Ladderize: -</span>
+            </div>
+          </div>
+          <button id="pngBtn" class="alt" style="width:auto; padding:8px 14px;">Download PNG</button>
+        </div>
+        <svg id="treeSvg" viewBox="0 0 1100 560" preserveAspectRatio="xMidYMid meet"></svg>
+        <p class="footer">Tip: for publication-quality output, start with rectangular phylogram and increase line width/font size.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    const state = {
+      labels: [],
+      matrix: null,
+      parsed: null,
+      tree: null,
+      newick: "",
+      loaded: false,
+      report: null,
+    };
+
+    const DEFAULTS = {
+      algorithm: "nj",
+      ladderize: "down",
+      branchMode: "phylogram",
+      rootMode: "none",
+      monoOut: true,
+      showBL: true,
+      tipFontSize: 12,
+      tipFontStyle: "normal",
+      tipLabelColor: "#111111",
+      branchColor: "#3b4d4a",
+      lineWidth: 1.8,
+      blFontSize: 10,
+      blFontStyle: "normal",
+      blColor: "#5f6f6d",
+      blDecimals: 4,
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    const statusEl = $("status");
+    const svg = $("treeSvg");
+
+    function setStatus(msg, kind = "ok") {
+      statusEl.textContent = msg;
+      statusEl.classList.remove("warn", "error");
+      if (kind === "warn") statusEl.classList.add("warn");
+      if (kind === "error") statusEl.classList.add("error");
+    }
+
+    function parseCSVLine(line) {
+      const out = [];
+      let cur = "";
+      let inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQ && line[i + 1] === '"') { cur += '"'; i++; }
+          else inQ = !inQ;
+        } else if (ch === ',' && !inQ) {
+          out.push(cur);
+          cur = "";
+        } else {
+          cur += ch;
+        }
+      }
+      out.push(cur);
+      return out;
+    }
+
+    function trimTrailingEmpties(arr) {
+      let end = arr.length;
+      while (end > 0 && String(arr[end - 1] ?? "").trim() === "") end--;
+      return arr.slice(0, end);
+    }
+
+    function parseAOA(aoa, sourceName = "input file") {
+      if (!Array.isArray(aoa) || aoa.length < 2) {
+        throw new Error(`${sourceName}: needs a header row and at least one data row.`);
+      }
+
+      const norm = (v) => String(v ?? "").trim();
+      const header = trimTrailingEmpties((aoa[0] || []).map(norm));
+      if (header.length < 2) throw new Error(`${sourceName}: header must include taxon column + distance columns.`);
+
+      const colLabels = header.slice(1);
+      const labels = [];
+      const body = [];
+
+      for (let i = 1; i < aoa.length; i++) {
+        const row = trimTrailingEmpties(Array.isArray(aoa[i]) ? aoa[i] : []);
+        const nonEmpty = row.some((x) => norm(x) !== "");
+        if (!nonEmpty) continue;
+
+        const label = norm(row[0]);
+        if (!label) throw new Error(`${sourceName}: empty sample label in first column at row ${i + 1}.`);
+        labels.push(label);
+
+        const vals = [];
+        for (let j = 1; j <= colLabels.length; j++) {
+          const raw = norm(row[j]);
+          if (raw === "") {
+            vals.push(NaN);
+            continue;
+          }
+          const v = Number(raw);
+          if (!Number.isFinite(v)) {
+            const colName = colLabels[j - 1] || `col${j + 1}`;
+            throw new Error(
+              `${sourceName}: non-numeric distance '${raw}' at row '${label}', column '${colName}'.`
+            );
+          }
+          vals.push(v);
+        }
+        body.push(vals);
+      }
+
+      return { labels, colLabels, matrix: body };
+    }
+
+    function parseCSVText(text, sourceName = "CSV") {
+      const lines = text
+        .replace(/\r\n/g, "\n")
+        .replace(/\r/g, "\n")
+        .split("\n")
+        .filter((l) => l.trim().length > 0);
+
+      const aoa = lines.map(parseCSVLine);
+      return parseAOA(aoa, sourceName);
+    }
+
+    async function parseExcelFile(file) {
+      if (!window.XLSX) {
+        throw new Error(
+          "Excel parser not available. Reload this page with internet access to load .xlsx/.xls."
+        );
+      }
+      const ab = await file.arrayBuffer();
+      const wb = XLSX.read(ab, { type: "array" });
+      if (!wb.SheetNames || wb.SheetNames.length === 0) {
+        throw new Error("Excel file has no worksheets.");
+      }
+      const firstSheet = wb.SheetNames[0];
+      const ws = wb.Sheets[firstSheet];
+      const aoa = XLSX.utils.sheet_to_json(ws, {
+        header: 1,
+        raw: true,
+        blankrows: false,
+        defval: "",
+      });
+      return parseAOA(aoa, `${file.name} (sheet '${firstSheet}')`);
+    }
+
+    async function parseDistanceFile(file) {
+      const name = (file?.name || "").toLowerCase();
+      if (name.endsWith(".xlsx") || name.endsWith(".xls")) {
+        return await parseExcelFile(file);
+      }
+      const raw = await file.text();
+      return parseCSVText(raw, file?.name || "CSV");
+    }
+
+    function clone2D(mat) {
+      return mat.map((r) => r.slice());
+    }
+
+    function fillTriangular(mat, tol = 1e-12) {
+      const n = mat.length;
+      const out = clone2D(mat);
+
+      for (let i = 0; i < n; i++) out[i][i] = 0;
+
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          const a = out[i][j];
+          const b = out[j][i];
+          const aN = Number.isNaN(a);
+          const bN = Number.isNaN(b);
+
+          if (aN && bN) throw new Error(`Missing mirrored entries for (${i + 1},${j + 1}).`);
+          if (aN) { out[i][j] = b; continue; }
+          if (bN) { out[j][i] = a; continue; }
+
+          if (Math.abs(a - b) > tol) {
+            throw new Error(
+              `Mirrored entries differ for pair (${i + 1},${j + 1}): ${a} vs ${b}.`
+            );
+          }
+        }
+      }
+
+      return out;
+    }
+
+    function validateMatrix(labels, colLabels, mat, tol = 1e-12) {
+      const n = labels.length;
+      if (n !== colLabels.length) {
+        throw new Error(`Row/column dimensions mismatch: ${n} vs ${colLabels.length}.`);
+      }
+
+      const trimmedCols = colLabels.map((x) => x.trim());
+      for (let i = 0; i < n; i++) {
+        if (labels[i] !== trimmedCols[i]) {
+          throw new Error("Row labels and column headers must match in the same order.");
+        }
+      }
+
+      const unique = new Set(labels);
+      if (unique.size !== labels.length) throw new Error("Sample labels must be unique.");
+
+      if (mat.length !== n || mat.some((r) => r.length !== n)) {
+        throw new Error("Distance matrix must be square.");
+      }
+
+      const filled = fillTriangular(mat, tol);
+
+      for (let i = 0; i < n; i++) {
+        if (!Number.isFinite(filled[i][i]) || Math.abs(filled[i][i]) > tol) {
+          throw new Error("Matrix diagonal must be 0.");
+        }
+      }
+
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+          const v = filled[i][j];
+          if (!Number.isFinite(v)) throw new Error("Matrix contains missing/NaN values after fill.");
+          if (v < -tol) throw new Error("Matrix contains negative distances.");
+          if (Math.abs(v - filled[j][i]) > tol) throw new Error("Matrix is not symmetric.");
+        }
+      }
+
+      return { matrix: filled, violations: 0, examples: [] };
+    }
+
+    let nextNodeId = 1;
+    function makeNode(name = null) {
+      return { id: `n${nextNodeId++}`, name, children: [], parent: null, parentLength: 0 };
+    }
+
+    function addChild(parent, child, length) {
+      child.parent = parent;
+      child.parentLength = Number.isFinite(length) ? length : 0;
+      parent.children.push(child);
+    }
+
+    function cloneTree(node) {
+      const c = makeNode(node.name);
+      for (const ch of node.children) {
+        const cc = cloneTree(ch);
+        addChild(c, cc, ch.parentLength);
+      }
+      return c;
+    }
+
+    function collectTips(node, out = []) {
+      if (node.children.length === 0) out.push(node);
+      else node.children.forEach((c) => collectTips(c, out));
+      return out;
+    }
+
+    function findTipByName(node, name) {
+      if (node.children.length === 0) return node.name === name ? node : null;
+      for (const ch of node.children) {
+        const f = findTipByName(ch, name);
+        if (f) return f;
+      }
+      return null;
+    }
+
+    function toUndirected(root) {
+      const nodes = new Map();
+      const adj = new Map();
+
+      function ensure(id, ref) {
+        if (!nodes.has(id)) nodes.set(id, ref);
+        if (!adj.has(id)) adj.set(id, []);
+      }
+
+      function walk(node) {
+        ensure(node.id, node);
+        for (const ch of node.children) {
+          ensure(ch.id, ch);
+          adj.get(node.id).push({ id: ch.id, length: ch.parentLength });
+          adj.get(ch.id).push({ id: node.id, length: ch.parentLength });
+          walk(ch);
+        }
+      }
+
+      walk(root);
+      return { nodes, adj };
+    }
+
+    function orientFromRoot(undirected, rootId) {
+      const { nodes, adj } = undirected;
+      const visited = new Set();
+
+      function build(id, parentId = null) {
+        visited.add(id);
+        const original = nodes.get(id);
+        const node = makeNode(original.name);
+        for (const edge of adj.get(id) || []) {
+          if (edge.id === parentId) continue;
+          const child = build(edge.id, id);
+          addChild(node, child, edge.length);
+        }
+        return node;
+      }
+
+      return build(rootId, null);
+    }
+
+    function getEdgeLength(adj, a, b) {
+      const edge = (adj.get(a) || []).find((e) => e.id === b);
+      if (!edge) throw new Error("Internal graph error: missing edge.");
+      return edge.length;
+    }
+
+    function removeUndirectedEdge(adj, a, b) {
+      adj.set(a, (adj.get(a) || []).filter((e) => e.id !== b));
+      adj.set(b, (adj.get(b) || []).filter((e) => e.id !== a));
+    }
+
+    function rerootOnEdge(root, aId, bId, fracFromA = 0.5) {
+      const { nodes, adj } = toUndirected(root);
+      const L = getEdgeLength(adj, aId, bId);
+      const frac = Math.min(1, Math.max(0, fracFromA));
+      const la = L * frac;
+      const lb = L * (1 - frac);
+
+      removeUndirectedEdge(adj, aId, bId);
+
+      const rootNode = makeNode(null);
+      nodes.set(rootNode.id, rootNode);
+      adj.set(rootNode.id, []);
+
+      adj.get(rootNode.id).push({ id: aId, length: la });
+      adj.get(rootNode.id).push({ id: bId, length: lb });
+      adj.get(aId).push({ id: rootNode.id, length: la });
+      adj.get(bId).push({ id: rootNode.id, length: lb });
+
+      return orientFromRoot({ nodes, adj }, rootNode.id);
+    }
+
+    function rerootAtNode(root, nodeId) {
+      const undirected = toUndirected(root);
+      return orientFromRoot(undirected, nodeId);
+    }
+
+    function collectTipNames(node) {
+      return collectTips(node).map((t) => t.name);
+    }
+
+    function findLCAForNames(root, names) {
+      const wanted = new Set(names);
+      let lca = null;
+      let found = 0;
+
+      function dfs(node) {
+        if (node.children.length === 0) {
+          const hit = wanted.has(node.name) ? 1 : 0;
+          if (hit) found += 1;
+          return hit;
+        }
+        let subtotal = 0;
+        for (const ch of node.children) subtotal += dfs(ch);
+        if (subtotal === wanted.size && lca === null) lca = node;
+        return subtotal;
+      }
+
+      dfs(root);
+      if (found !== wanted.size) {
+        const missing = [...wanted].filter((n) => !findTipByName(root, n));
+        throw new Error(`Outgroup sample(s) not found: ${missing.join(", ")}`);
+      }
+      return lca;
+    }
+
+    function isMonophyleticSet(root, names) {
+      if (names.length <= 1) return true;
+      const lca = findLCAForNames(root, names);
+      const desc = new Set(collectTipNames(lca));
+      const chosen = new Set(names);
+      if (desc.size !== chosen.size) return false;
+      for (const n of desc) {
+        if (!chosen.has(n)) return false;
+      }
+      return true;
+    }
+
+    function rerootByOutgroupSet(root, outgroupNames, enforceMonophyly) {
+      if (!outgroupNames || outgroupNames.length === 0) return { tree: root, warning: "" };
+      if (outgroupNames.length === 1) {
+        const tip = findTipByName(root, outgroupNames[0]);
+        if (!tip) throw new Error(`Outgroup '${outgroupNames[0]}' not found.`);
+        if (!tip.parent) return { tree: root, warning: "" };
+        const rooted = rerootOnEdge(root, tip.id, tip.parent.id, 0.5);
+        return { tree: rooted, warning: "" };
+      }
+
+      const lca = findLCAForNames(root, outgroupNames);
+      if (!lca || !lca.parent) return { tree: root, warning: "" };
+
+      const mono = isMonophyleticSet(root, outgroupNames);
+      if (!mono && enforceMonophyly) {
+        throw new Error(
+          "Selected outgroup samples are not monophyletic in this topology. Choose a clade or disable monophyly enforcement."
+        );
+      }
+
+      const rooted = rerootOnEdge(root, lca.id, lca.parent.id, 0.5);
+      const warning = mono
+        ? ""
+        : "Outgroup selection is not strictly monophyletic; rooted using the MRCA of selected samples.";
+      return { tree: rooted, warning };
+    }
+
+    function rerootMidpoint(root) {
+      const { adj } = toUndirected(root);
+      const tips = collectTips(root);
+      if (tips.length < 2) return root;
+
+      function distancesFrom(startId) {
+        const dist = new Map();
+        const prev = new Map();
+        function dfs(id, parent, d) {
+          dist.set(id, d);
+          prev.set(id, parent);
+          for (const e of adj.get(id) || []) {
+            if (e.id === parent) continue;
+            dfs(e.id, id, d + Math.max(0, e.length));
+          }
+        }
+        dfs(startId, null, 0);
+        return { dist, prev };
+      }
+
+      let best = { a: tips[0].id, b: tips[1].id, d: -Infinity, prev: null };
+
+      for (let i = 0; i < tips.length; i++) {
+        const a = tips[i].id;
+        const { dist, prev } = distancesFrom(a);
+        for (let j = i + 1; j < tips.length; j++) {
+          const b = tips[j].id;
+          const d = dist.get(b);
+          if (d > best.d) best = { a, b, d, prev };
+        }
+      }
+
+      if (!Number.isFinite(best.d) || best.d <= 0) return root;
+
+      const path = [];
+      let cur = best.b;
+      while (cur !== null) {
+        path.push(cur);
+        if (cur === best.a) break;
+        cur = best.prev.get(cur);
+      }
+      path.reverse();
+
+      const mid = best.d / 2;
+      let acc = 0;
+      const eps = 1e-12;
+      for (let i = 0; i < path.length - 1; i++) {
+        const u = path[i];
+        const v = path[i + 1];
+        const L = Math.max(0, getEdgeLength(adj, u, v));
+        const next = acc + L;
+
+        if (Math.abs(mid - acc) <= eps) return rerootAtNode(root, u);
+        if (Math.abs(mid - next) <= eps) return rerootAtNode(root, v);
+        if (mid > acc && mid < next) {
+          const frac = (mid - acc) / Math.max(L, eps);
+          return rerootOnEdge(root, u, v, frac);
+        }
+        acc = next;
+      }
+      return root;
+    }
+
+    function runUPGMA(labels, matrix) {
+      let clusters = labels.map((name, i) => ({
+        key: `c${i}`,
+        node: makeNode(name),
+        size: 1,
+        height: 0,
+      }));
+
+      const dist = new Map();
+      function dkey(a, b) { return a < b ? `${a}|${b}` : `${b}|${a}`; }
+
+      for (let i = 0; i < labels.length; i++) {
+        for (let j = i + 1; j < labels.length; j++) {
+          dist.set(dkey(clusters[i].key, clusters[j].key), matrix[i][j]);
+        }
+      }
+
+      while (clusters.length > 1) {
+        let bestI = 0, bestJ = 1, best = Infinity;
+        for (let i = 0; i < clusters.length; i++) {
+          for (let j = i + 1; j < clusters.length; j++) {
+            const v = dist.get(dkey(clusters[i].key, clusters[j].key));
+            if (v < best) {
+              best = v;
+              bestI = i;
+              bestJ = j;
+            }
+          }
+        }
+
+        const A = clusters[bestI];
+        const B = clusters[bestJ];
+        const U = {
+          key: `c${Math.random().toString(36).slice(2, 11)}`,
+          node: makeNode(null),
+          size: A.size + B.size,
+          height: best / 2,
+        };
+
+        addChild(U.node, A.node, U.height - A.height);
+        addChild(U.node, B.node, U.height - B.height);
+
+        const survivors = clusters.filter((_, idx) => idx !== bestI && idx !== bestJ);
+
+        for (const C of survivors) {
+          const dAC = dist.get(dkey(A.key, C.key));
+          const dBC = dist.get(dkey(B.key, C.key));
+          const dUC = (A.size * dAC + B.size * dBC) / (A.size + B.size);
+          dist.set(dkey(U.key, C.key), dUC);
+        }
+
+        clusters = [...survivors, U];
+      }
+
+      return clusters[0].node;
+    }
+
+    function runNJ(labels, matrix) {
+      let clusters = labels.map((name, i) => ({
+        key: `c${i}`,
+        node: makeNode(name),
+      }));
+
+      const dist = new Map();
+      function dkey(a, b) { return a < b ? `${a}|${b}` : `${b}|${a}`; }
+
+      for (let i = 0; i < labels.length; i++) {
+        for (let j = i + 1; j < labels.length; j++) {
+          dist.set(dkey(clusters[i].key, clusters[j].key), matrix[i][j]);
+        }
+      }
+
+      while (clusters.length > 2) {
+        const n = clusters.length;
+        const r = new Map();
+        for (const a of clusters) {
+          let sum = 0;
+          for (const b of clusters) {
+            if (a.key === b.key) continue;
+            sum += dist.get(dkey(a.key, b.key));
+          }
+          r.set(a.key, sum);
+        }
+
+        let bestI = 0, bestJ = 1, best = Infinity;
+        for (let i = 0; i < clusters.length; i++) {
+          for (let j = i + 1; j < clusters.length; j++) {
+            const a = clusters[i], b = clusters[j];
+            const dij = dist.get(dkey(a.key, b.key));
+            const q = (n - 2) * dij - r.get(a.key) - r.get(b.key);
+            if (q < best) {
+              best = q;
+              bestI = i;
+              bestJ = j;
+            }
+          }
+        }
+
+        const A = clusters[bestI];
+        const B = clusters[bestJ];
+        const dij = dist.get(dkey(A.key, B.key));
+        const li = 0.5 * dij + (r.get(A.key) - r.get(B.key)) / (2 * (n - 2));
+        const lj = dij - li;
+
+        const U = {
+          key: `c${Math.random().toString(36).slice(2, 11)}`,
+          node: makeNode(null),
+        };
+
+        addChild(U.node, A.node, li);
+        addChild(U.node, B.node, lj);
+
+        const survivors = clusters.filter((_, idx) => idx !== bestI && idx !== bestJ);
+        for (const C of survivors) {
+          const dic = dist.get(dkey(A.key, C.key));
+          const djc = dist.get(dkey(B.key, C.key));
+          const duc = (dic + djc - dij) / 2;
+          dist.set(dkey(U.key, C.key), duc);
+        }
+
+        clusters = [...survivors, U];
+      }
+
+      const root = makeNode(null);
+      const A = clusters[0], B = clusters[1];
+      const dAB = dist.get(dkey(A.key, B.key));
+      addChild(root, A.node, dAB / 2);
+      addChild(root, B.node, dAB / 2);
+      return root;
+    }
+
+    function adjustNegativeBranches(node, mode) {
+      function walk(n) {
+        for (const ch of n.children) {
+          if (ch.parentLength < 0) {
+            const deficit = -ch.parentLength;
+            ch.parentLength = 0;
+            if (mode === "redistribute" && ch.children.length > 0) {
+              const inc = deficit / ch.children.length;
+              for (const gc of ch.children) {
+                gc.parentLength = Math.max(0, (gc.parentLength ?? 0) + inc);
+              }
+            }
+          }
+          walk(ch);
+        }
+      }
+      if (mode !== "keep") walk(node);
+      return node;
+    }
+
+    function enforceUltrametric(root, tol = 1e-12) {
+      const tipDistances = [];
+
+      function walk(n, d) {
+        if (n.children.length === 0) { tipDistances.push({ node: n, dist: d }); return; }
+        for (const ch of n.children) {
+          walk(ch, d + Math.max(0, ch.parentLength ?? 0));
+        }
+      }
+
+      walk(root, 0);
+      const target = Math.max(...tipDistances.map((x) => x.dist), 0);
+
+      for (const x of tipDistances) {
+        const delta = target - x.dist;
+        if (delta > tol) x.node.parentLength = Math.max(0, (x.node.parentLength ?? 0) + delta);
+      }
+
+      return root;
+    }
+
+    function countTips(node) {
+      if (node.children.length === 0) return 1;
+      let n = 0;
+      for (const ch of node.children) n += countTips(ch);
+      return n;
+    }
+
+    function countOutgroupHits(node, outSet) {
+      if (node.children.length === 0) return outSet.has(node.name) ? 1 : 0;
+      let n = 0;
+      for (const ch of node.children) n += countOutgroupHits(ch, outSet);
+      return n;
+    }
+
+    function ladderizeTree(root, direction = "down", outgroupNames = []) {
+      const outSet = new Set(outgroupNames || []);
+      const down = direction === "down";
+
+      function walk(node) {
+        for (const ch of node.children) walk(ch);
+        node.children.sort((a, b) => {
+          const da = countTips(a);
+          const db = countTips(b);
+          if (da === db) {
+            const na = String(a.name ?? "");
+            const nb = String(b.name ?? "");
+            return na.localeCompare(nb);
+          }
+          return down ? da - db : db - da;
+        });
+      }
+
+      walk(root);
+
+      if (outSet.size > 0 && root.children.length >= 2) {
+        let bestIdx = -1;
+        let bestScore = 0;
+        for (let i = 0; i < root.children.length; i++) {
+          const score = countOutgroupHits(root.children[i], outSet);
+          if (score > bestScore) {
+            bestScore = score;
+            bestIdx = i;
+          }
+        }
+
+        if (bestIdx >= 0 && bestScore > 0) {
+          const ogChild = root.children.splice(bestIdx, 1)[0];
+          if (down) root.children.unshift(ogChild);
+          else root.children.push(ogChild);
+        }
+      }
+
+      return root;
+    }
+
+    function toNewick(node) {
+      if (node.children.length === 0) return sanitizeLabel(node.name ?? "");
+      const kids = node.children.map((c) => `${toNewick(c)}:${formatLen(c.parentLength)}`).join(",");
+      return `(${kids})${node.name ? sanitizeLabel(node.name) : ""}`;
+    }
+
+    function sanitizeLabel(s) {
+      const text = String(s ?? "");
+      if (/[,():;\s]/.test(text)) return `'${text.replace(/'/g, "")}'`;
+      return text;
+    }
+
+    function formatLen(v) {
+      if (!Number.isFinite(v)) return "0";
+      return Number(v).toFixed(6).replace(/\.0+$/, "").replace(/(\.\d*?)0+$/, "$1");
+    }
+
+    function formatBranchLabelValue(v, decimals) {
+      const d = Math.max(0, Math.min(10, Number(decimals) || 0));
+      if (!Number.isFinite(v)) return Number(0).toFixed(d);
+      return Number(v).toFixed(d);
+    }
+
+    function clearSVG() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+    }
+
+    function createSVGEl(name, attrs = {}) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", name);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, String(v)));
+      return el;
+    }
+
+    function tipOrder(node, out = []) {
+      if (node.children.length === 0) out.push(node);
+      else node.children.forEach((c) => tipOrder(c, out));
+      return out;
+    }
+
+    function computeCoords(root, useBranchLengths) {
+      const x = new Map();
+      const y = new Map();
+
+      x.set(root.id, 0);
+      const preorder = [root];
+      for (let i = 0; i < preorder.length; i++) {
+        const n = preorder[i];
+        const nx = x.get(n.id);
+        for (const ch of n.children) {
+          const step = useBranchLengths ? Math.max(0, ch.parentLength ?? 0) : 1;
+          x.set(ch.id, nx + step);
+          preorder.push(ch);
+        }
+      }
+
+      const tips = tipOrder(root);
+      tips.forEach((t, i) => y.set(t.id, i));
+
+      function setY(n) {
+        if (n.children.length === 0) return y.get(n.id);
+        const vals = n.children.map((c) => setY(c));
+        const m = vals.reduce((a, b) => a + b, 0) / vals.length;
+        y.set(n.id, m);
+        return m;
+      }
+
+      setY(root);
+
+      let maxX = Math.max(...x.values(), 0);
+      if (maxX === 0) {
+        x.set(root.id, 0);
+        const nodes = [root];
+        for (let i = 0; i < nodes.length; i++) {
+          const n = nodes[i];
+          const nx = x.get(n.id);
+          for (const ch of n.children) {
+            x.set(ch.id, nx + 1);
+            nodes.push(ch);
+          }
+        }
+        maxX = Math.max(...x.values(), 0);
+      }
+
+      return { x, y, tips, maxX };
+    }
+
+    function drawRectangular(root, opts) {
+      const { x, y, tips, maxX } = computeCoords(root, opts.useBranchLengths);
+      const W = 1100, H = 560;
+      const padL = 36, padR = 220, padT = 24, padB = 24;
+      const xScale = (W - padL - padR) / Math.max(maxX, 1);
+      const yScale = (H - padT - padB) / Math.max(tips.length - 1, 1);
+
+      function sx(v) { return padL + v * xScale; }
+      function sy(v) { return padT + v * yScale; }
+
+      function walk(n) {
+        if (n.children.length === 0) return;
+
+        const ys = n.children.map((c) => sy(y.get(c.id)));
+        const xv = sx(x.get(n.id));
+
+        svg.appendChild(createSVGEl("line", {
+          x1: xv, y1: Math.min(...ys), x2: xv, y2: Math.max(...ys),
+          stroke: opts.branchColor, "stroke-width": opts.lineWidth
+        }));
+
+        for (const ch of n.children) {
+          const xc = sx(x.get(ch.id));
+          const yc = sy(y.get(ch.id));
+          svg.appendChild(createSVGEl("line", {
+            x1: xv, y1: yc, x2: xc, y2: yc,
+            stroke: opts.branchColor, "stroke-width": opts.lineWidth
+          }));
+
+          if (opts.showBranchLengths && opts.useBranchLengths) {
+            const txt = createSVGEl("text", {
+              x: (xv + xc) / 2,
+              y: yc - 4,
+              fill: opts.blColor,
+              "font-size": opts.blFontSize,
+              "font-style": opts.blFontStyle,
+              "text-anchor": "middle"
+            });
+            txt.textContent = formatBranchLabelValue(ch.parentLength, opts.blDecimals);
+            svg.appendChild(txt);
+          }
+
+          walk(ch);
+        }
+      }
+
+      walk(root);
+
+      for (const tip of tips) {
+        const label = createSVGEl("text", {
+          x: sx(x.get(tip.id)) + 8,
+          y: sy(y.get(tip.id)) + opts.tipFontSize * 0.35,
+          fill: opts.tipLabelColor,
+          "font-size": opts.tipFontSize,
+          "font-style": opts.tipFontStyle,
+        });
+        label.textContent = tip.name;
+        svg.appendChild(label);
+      }
+    }
+
+    function drawDiagonal(root, opts) {
+      const { x, y, tips, maxX } = computeCoords(root, opts.useBranchLengths);
+      const W = 1100, H = 560;
+      const padL = 36, padR = 220, padT = 24, padB = 24;
+      const xScale = (W - padL - padR) / Math.max(maxX, 1);
+      const yScale = (H - padT - padB) / Math.max(tips.length - 1, 1);
+
+      function sx(v) { return padL + v * xScale; }
+      function sy(v) { return padT + v * yScale; }
+
+      function walk(n) {
+        for (const ch of n.children) {
+          const x1 = sx(x.get(n.id));
+          const y1 = sy(y.get(n.id));
+          const x2 = sx(x.get(ch.id));
+          const y2 = sy(y.get(ch.id));
+
+          svg.appendChild(createSVGEl("line", {
+            x1, y1, x2, y2,
+            stroke: opts.branchColor, "stroke-width": opts.lineWidth
+          }));
+
+          if (opts.showBranchLengths && opts.useBranchLengths) {
+            const txt = createSVGEl("text", {
+              x: (x1 + x2) / 2,
+              y: (y1 + y2) / 2 - 4,
+              fill: opts.blColor,
+              "font-size": opts.blFontSize,
+              "font-style": opts.blFontStyle,
+              "text-anchor": "middle"
+            });
+            txt.textContent = formatBranchLabelValue(ch.parentLength, opts.blDecimals);
+            svg.appendChild(txt);
+          }
+
+          walk(ch);
+        }
+      }
+
+      walk(root);
+
+      for (const tip of tips) {
+        const label = createSVGEl("text", {
+          x: sx(x.get(tip.id)) + 8,
+          y: sy(y.get(tip.id)) + opts.tipFontSize * 0.35,
+          fill: opts.tipLabelColor,
+          "font-size": opts.tipFontSize,
+          "font-style": opts.tipFontStyle,
+        });
+        label.textContent = tip.name;
+        svg.appendChild(label);
+      }
+    }
+
+    function drawPolar(root, opts, unrooted = false) {
+      const { x, tips, maxX } = computeCoords(root, opts.useBranchLengths);
+      const yTip = new Map();
+      const orderedTips = tipOrder(root);
+      orderedTips.forEach((t, i) => yTip.set(t.id, i));
+
+      const angleFor = new Map();
+      const nTips = Math.max(orderedTips.length, 1);
+
+      for (let i = 0; i < orderedTips.length; i++) {
+        const t = orderedTips[i];
+        const base = (2 * Math.PI * i) / nTips;
+        angleFor.set(t.id, unrooted ? base : (base - Math.PI / 2));
+      }
+
+      function assignAngle(n) {
+        if (n.children.length === 0) return angleFor.get(n.id);
+        const vals = n.children.map((c) => assignAngle(c));
+        const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+        angleFor.set(n.id, avg);
+        return avg;
+      }
+
+      assignAngle(root);
+
+      const W = 1100, H = 560;
+      const cx = W / 2;
+      const cy = H / 2;
+      const rMax = Math.min(W, H) * 0.42;
+
+      function rFor(n) {
+        const rv = x.get(n.id) / Math.max(maxX, 1);
+        return 10 + rv * rMax;
+      }
+
+      function xy(n) {
+        const a = angleFor.get(n.id);
+        const r = rFor(n);
+        return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a), a, r };
+      }
+
+      function walk(n) {
+        const p = xy(n);
+        for (const ch of n.children) {
+          const c = xy(ch);
+          svg.appendChild(createSVGEl("line", {
+            x1: p.x, y1: p.y, x2: c.x, y2: c.y,
+            stroke: opts.branchColor,
+            "stroke-width": opts.lineWidth
+          }));
+
+          if (opts.showBranchLengths && opts.useBranchLengths) {
+            const txt = createSVGEl("text", {
+              x: (p.x + c.x) / 2,
+              y: (p.y + c.y) / 2 - 2,
+              fill: opts.blColor,
+              "font-size": opts.blFontSize,
+              "font-style": opts.blFontStyle,
+              "text-anchor": "middle"
+            });
+            txt.textContent = formatBranchLabelValue(ch.parentLength, opts.blDecimals);
+            svg.appendChild(txt);
+          }
+
+          walk(ch);
+        }
+      }
+
+      walk(root);
+
+      for (const tip of orderedTips) {
+        const p = xy(tip);
+        const tx = p.x + 10 * Math.cos(p.a);
+        const ty = p.y + 10 * Math.sin(p.a);
+        const anchor = (Math.cos(p.a) >= 0) ? "start" : "end";
+
+        const label = createSVGEl("text", {
+          x: tx,
+          y: ty + opts.tipFontSize * 0.3,
+          fill: opts.tipLabelColor,
+          "font-size": opts.tipFontSize,
+          "font-style": opts.tipFontStyle,
+          "text-anchor": anchor,
+        });
+        label.textContent = tip.name;
+        svg.appendChild(label);
+      }
+
+      if (!unrooted) {
+        svg.appendChild(createSVGEl("circle", {
+          cx, cy, r: 2.5, fill: opts.branchColor
+        }));
+      }
+    }
+
+    function renderTree(root) {
+      clearSVG();
+      const style = $("branchMode").value;
+      const opts = {
+        useBranchLengths: true,
+        showBranchLengths: $("showBL").checked,
+        tipFontSize: Number($("tipFontSize").value) || 12,
+        tipFontStyle: $("tipFontStyle").value,
+        tipLabelColor: $("tipLabelColor").value,
+        branchColor: $("branchColor").value,
+        lineWidth: Number($("lineWidth").value) || 1.8,
+        blFontSize: Number($("blFontSize").value) || 10,
+        blFontStyle: $("blFontStyle").value,
+        blColor: $("blColor").value,
+        blDecimals: Number($("blDecimals").value),
+      };
+
+      drawRectangular(root, opts);
+
+      $("chipStyle").textContent = `Style: ${style === "ultrametric" ? "Ultrametric" : "Phylogram"}`;
+      $("chipLayout").textContent = `Ladderize: ${$("ladderize").value === "down" ? "Down (outgroup top)" : "Up (outgroup bottom)"}`;
+    }
+
+    function buildValidationMessage() {
+      return `Loaded ${state.labels.length} taxa.\nChecks passed: symmetric, zero diagonal, no NaN.`;
+    }
+
+    function validateFromState() {
+      if (!state.parsed) throw new Error("No input file loaded.");
+      const val = validateMatrix(
+        state.parsed.labels,
+        state.parsed.colLabels,
+        state.parsed.matrix
+      );
+      state.labels = state.parsed.labels.slice();
+      state.matrix = val.matrix;
+      state.report = val;
+      state.loaded = true;
+      $("chipTaxa").textContent = `Taxa: ${state.labels.length}`;
+      return val;
+    }
+
+    function populateOutgroupOptions(labels) {
+      const outgroupSel = $("outgroup");
+      const previous = new Set(Array.from(outgroupSel.selectedOptions).map((o) => o.value));
+      outgroupSel.innerHTML = "";
+      for (const name of labels) {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        if (previous.has(name)) opt.selected = true;
+        outgroupSel.appendChild(opt);
+      }
+    }
+
+    function selectedOutgroupNames() {
+      return Array.from($("outgroup").selectedOptions).map((o) => o.value).filter(Boolean);
+    }
+
+    function buildTree() {
+      if (!state.parsed) {
+        setStatus("Please load a valid CSV or Excel file first.", "warn");
+        return;
+      }
+
+      try {
+        validateFromState();
+      } catch (err) {
+        state.loaded = false;
+        state.tree = null;
+        state.newick = "";
+        setStatus(`Validation failed: ${err.message}`, "error");
+        clearSVG();
+        return;
+      }
+
+      if (!state.matrix || state.labels.length < 2) {
+        setStatus("Need at least 2 taxa to build a tree.", "warn");
+        return;
+      }
+
+      const algorithm = $("algorithm").value;
+      const rootMode = $("rootMode").value;
+      const outgroups = selectedOutgroupNames();
+      const enforceMono = $("monoOut").checked;
+      const treeStyle = $("branchMode").value;
+      const ladderize = $("ladderize").value;
+      let rootWarning = "";
+
+      let tree = (algorithm === "upgma")
+        ? runUPGMA(state.labels, state.matrix)
+        : runNJ(state.labels, state.matrix);
+
+      if (rootMode === "outgroup" && outgroups.length > 0) {
+        const rooted = rerootByOutgroupSet(tree, outgroups, enforceMono);
+        tree = rooted.tree;
+        rootWarning = rooted.warning;
+      } else if (rootMode === "outgroup" && outgroups.length === 0) {
+        rootWarning = "Outgroup rooting selected, but no outgroup samples are selected.";
+      } else if (rootMode === "midpoint") {
+        tree = rerootMidpoint(tree);
+      }
+      tree = adjustNegativeBranches(tree, "redistribute");
+      if (treeStyle === "ultrametric") tree = enforceUltrametric(tree);
+      tree = ladderizeTree(tree, ladderize, outgroups);
+
+      state.tree = tree;
+      state.newick = `${toNewick(tree)};`;
+
+      renderTree(state.tree);
+      $("chipAlgo").textContent = `Algorithm: ${algorithm.toUpperCase()}`;
+      const validationMsg = buildValidationMessage();
+      const summary = `\nTree built: ${algorithm.toUpperCase()} (${rootMode} rooting).`;
+      const rootMsg = rootWarning ? `\n${rootWarning}` : "";
+      const kind = rootWarning ? "warn" : "ok";
+      setStatus(validationMsg + summary + rootMsg, kind);
+    }
+
+    async function loadMatrix() {
+      const file = $("csvFile").files[0];
+      if (!file) {
+        setStatus("Choose a CSV or Excel file first.", "warn");
+        return;
+      }
+
+      try {
+        const parsed = await parseDistanceFile(file);
+        state.parsed = parsed;
+        populateOutgroupOptions(parsed.labels);
+        buildTree();
+      } catch (err) {
+        console.error(err);
+        state.parsed = null;
+        state.loaded = false;
+        state.matrix = null;
+        state.tree = null;
+        state.newick = "";
+        setStatus(`Failed to load matrix: ${err.message}`, "error");
+        clearSVG();
+      }
+    }
+
+    function downloadText(filename, text) {
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadExampleCSV() {
+      const example = [
+        "Taxon,Sp1,Sp2,Sp3,Sp4",
+        "Sp1,0,,,",
+        "Sp2,0.12,0,,",
+        "Sp3,0.18,0.09,0,",
+        "Sp4,0.25,0.14,0.07,0",
+      ].join("\n");
+      downloadText("example_distance_matrix.csv", example + "\n");
+    }
+
+    function downloadNewick() {
+      if (!state.newick) {
+        setStatus("Load a valid matrix first, then download Newick.", "warn");
+        return;
+      }
+      const algo = $("algorithm").value.toUpperCase();
+      downloadText(`distance_tree_${algo}.newick`, state.newick + "\n");
+    }
+
+    function downloadPNG() {
+      const serializer = new XMLSerializer();
+      const svgText = serializer.serializeToString(svg);
+      const svgBlob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 2200;
+        canvas.height = 1120;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+
+        canvas.toBlob((blob) => {
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "distance_tree.png";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }, "image/png");
+      };
+      img.onerror = () => setStatus("Could not export PNG.", "error");
+      img.src = url;
+    }
+
+    function autoUpdate() {
+      updateRootingUI();
+      if (state.parsed) buildTree();
+    }
+
+    function updateRootingUI() {
+      const useOutgroup = $("rootMode").value === "outgroup";
+      $("outgroup").disabled = !useOutgroup;
+      $("monoOut").disabled = !useOutgroup;
+    }
+
+    function restoreDefaults() {
+      $("algorithm").value = DEFAULTS.algorithm;
+      $("ladderize").value = DEFAULTS.ladderize;
+      $("branchMode").value = DEFAULTS.branchMode;
+      $("rootMode").value = DEFAULTS.rootMode;
+      $("monoOut").checked = DEFAULTS.monoOut;
+      $("showBL").checked = DEFAULTS.showBL;
+
+      $("tipFontSize").value = String(DEFAULTS.tipFontSize);
+      $("tipFontStyle").value = DEFAULTS.tipFontStyle;
+      $("tipLabelColor").value = DEFAULTS.tipLabelColor;
+      $("branchColor").value = DEFAULTS.branchColor;
+      $("lineWidth").value = String(DEFAULTS.lineWidth);
+
+      $("blFontSize").value = String(DEFAULTS.blFontSize);
+      $("blFontStyle").value = DEFAULTS.blFontStyle;
+      $("blColor").value = DEFAULTS.blColor;
+      $("blDecimals").value = String(DEFAULTS.blDecimals);
+
+      for (const opt of $("outgroup").options) opt.selected = false;
+
+      updateRootingUI();
+      if (state.parsed) buildTree();
+      else setStatus("Default settings restored.");
+    }
+
+    $("loadBtn").addEventListener("click", loadMatrix);
+    $("csvFile").addEventListener("change", loadMatrix);
+    $("newickBtn").addEventListener("click", downloadNewick);
+    $("pngBtn").addEventListener("click", downloadPNG);
+    $("exampleBtn").addEventListener("click", downloadExampleCSV);
+    $("resetBtn").addEventListener("click", restoreDefaults);
+
+    [
+      "algorithm",
+      "ladderize",
+      "branchMode",
+      "rootMode",
+      "outgroup",
+      "monoOut",
+      "showBL",
+      "tipFontSize",
+      "tipFontStyle",
+      "tipLabelColor",
+      "branchColor",
+      "lineWidth",
+      "blFontSize",
+      "blFontStyle",
+      "blColor",
+      "blDecimals",
+    ].forEach((id) => {
+      $(id).addEventListener("change", autoUpdate);
+      $(id).addEventListener("input", autoUpdate);
+    });
+
+    $("rootMode").addEventListener("change", updateRootingUI);
+    updateRootingUI();
+  </script>
+</body>
+</html>
