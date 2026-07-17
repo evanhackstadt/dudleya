@@ -110,6 +110,7 @@ samples:
   QUIN_LP_8_:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_biol173/QUIN_LP_8_EAMF3_S13_L001_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_biol173/QUIN_LP_8_EAMF3_S13_L001_R2_001.fastq.gz"
+  # 34 DUSE samples from QUIN above
   COM_LP_269_Du-703:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/COM_LP_269_Du-703_S239_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/COM_LP_269_Du-703_S239_L005_R2_001.fastq.gz"
@@ -146,6 +147,7 @@ samples:
   BAI_LP_105_Du-222:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/BAI_LP_105_Du-222_S37_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/BAI_LP_105_Du-222_S37_L005_R2_001.fastq.gz"
+  # 12 DUSE samples from non-QUIN pops above
   CY_HICN_LP_236_Du-614:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HICN_LP_236_Du-614_S224_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_HICN_LP_236_Du-614_S224_L005_R2_001.fastq.gz"
@@ -158,6 +160,7 @@ samples:
   CY_BOU_LP_290_Du-739:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_BOU_LP_290_Du-739_S288_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/CY_BOU_LP_290_Du-739_S288_L005_R2_001.fastq.gz"
+  # 4 DUCY samples from various pops above
   ABMU_HOR_LP_308_Du-777:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABMU_HOR_LP_308_Du-777_S232_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABMU_HOR_LP_308_Du-777_S232_L005_R2_001.fastq.gz"
@@ -167,3 +170,5 @@ samples:
   ABAB_MAD_LP_322_Du-593:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_322_Du-593_S172_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_322_Du-593_S172_L005_R2_001.fastq.gz"
+  # 3 DUAB samples from various pops above
+  # = 53 samples total
