@@ -21,6 +21,7 @@ ancestral_genome_Du-14/
 *.phy
 old-pipeline-testing/
 to-delete-old-pipeline-testing/
+manual-pipeline/
 
 # Misc files #
 ################
