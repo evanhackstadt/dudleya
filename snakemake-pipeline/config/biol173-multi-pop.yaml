@@ -101,16 +101,13 @@ samples:
   QUIN_LP_65_:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_biol173/QUIN_LP_65_CRDC8_S42_L001_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_biol173/QUIN_LP_65_CRDC8_S42_L001_R2_001.fastq.gz"
-  QUIN_LP_66_:
-    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_biol173/QUIN_LP_66_CRDCDu-786_S38_L001_R1_001.fastq.gz"
-    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_biol173/QUIN_LP_66_CRDCDu-786_S38_L001_R2_001.fastq.gz"
   QUIN_LP_7_:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_biol173/QUIN_LP_7_EAMF1_S7_L001_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_biol173/QUIN_LP_7_EAMF1_S7_L001_R2_001.fastq.gz"
   QUIN_LP_8_:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_biol173/QUIN_LP_8_EAMF3_S13_L001_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_biol173/QUIN_LP_8_EAMF3_S13_L001_R2_001.fastq.gz"
-  # 34 DUSE samples from QUIN above
+  # 33 DUSE samples from QUIN above
   COM_LP_269_Du-703:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/COM_LP_269_Du-703_S239_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/COM_LP_269_Du-703_S239_L005_R2_001.fastq.gz"
@@ -171,4 +168,4 @@ samples:
     r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_322_Du-593_S172_L005_R1_001.fastq.gz"
     r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads/ABAB_MAD_LP_322_Du-593_S172_L005_R2_001.fastq.gz"
   # 3 DUAB samples from various pops above
-  # = 53 samples total
+  # = 52 samples total

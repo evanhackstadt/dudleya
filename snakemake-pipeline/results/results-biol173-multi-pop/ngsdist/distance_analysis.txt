@@ -3,7 +3,7 @@ ngsDist Genetic Distance Analysis
 ======================================================================
 
 Dataset: results/results-biol173-multi-pop/ngsdist/population.dist
-Samples: 53  |  DUSE: 46  DUCY: 4  DUAB: 3
+Samples: 52  |  DUSE: 45  DUCY: 4  DUAB: 3
 Permutations: 10,000  |  RNG seed: 42
 
 ──────────────────────────────────────────────────────────────────────
@@ -11,9 +11,9 @@ BETWEEN-SPECIES PAIRWISE DISTANCES
 ──────────────────────────────────────────────────────────────────────
   Comparison               N pairs        Mean          SE
   ──────────────────────  ────────  ──────────  ──────────
-  D. setchellii vs D. cymosa                N=   184  mean=0.016808  SE=0.000151
-  D. setchellii vs D. abramsii              N=   138  mean=0.026242  SE=0.000280
-  D. cymosa vs D. abramsii                  N=    12  mean=0.025655  SE=0.000956
+  D. setchellii vs D. cymosa                N=   180  mean=0.016799  SE=0.000153
+  D. setchellii vs D. abramsii              N=   135  mean=0.026235  SE=0.000283
+  D. cymosa vs D. abramsii                  N=    12  mean=0.025659  SE=0.000956
 
   Note: SE reflects dispersion across all pairwise comparisons.
   Standard errors are inflated/misleading due to non-independence
@@ -31,9 +31,9 @@ PERMUTATION TESTS (two-tailed, N=10000)
 
   Comparison                                 Obs. Δ mean       p-value
   ────────────────────────────────────────  ────────────  ────────────
-  D.setch.-D.cymosa vs D.setch.-D.abrams.      -0.009434     p = 0.029
-  D.setch.-D.cymosa vs D.cymosa-D.abrams.      -0.008847     p < 0.001
-  D.setch.-D.abrams. vs D.cymosa-D.abrams.     +0.000586     p = 0.003
+  D.setch.-D.cymosa vs D.setch.-D.abrams.      -0.009436     p = 0.023
+  D.setch.-D.cymosa vs D.cymosa-D.abrams.      -0.008860     p < 0.001
+  D.setch.-D.abrams. vs D.cymosa-D.abrams.     +0.000575     p = 0.004
 
 ──────────────────────────────────────────────────────────────────────
 PUTATIVE HYBRID: CY_BOU_LP_290_Du-739
@@ -43,9 +43,9 @@ PUTATIVE HYBRID: CY_BOU_LP_290_Du-739
 
     Group                               N     Mean dist          SE
     ──────────────────────────────  ─────  ────────────  ──────────
-    D. setchellii (DUSE)               46      0.013360    0.000053
-    D. cymosa (DUCY)*                   3      0.014947    0.000933
-    D. abramsii (DUAB)                  3      0.025389    0.002227
+    D. setchellii (DUSE)               45      0.013352    0.000054
+    D. cymosa (DUCY)*                   3      0.014949    0.000933
+    D. abramsii (DUAB)                  3      0.025393    0.002228
 
   * Hybrid excluded from the D. cymosa group for self-comparison.
 
@@ -53,9 +53,9 @@ PUTATIVE HYBRID: CY_BOU_LP_290_Du-739
 
     Comparison                             Obs. Δ mean       p-value
     ────────────────────────────────────  ────────────  ────────────
-    D.setch. vs D.cymosa                     -0.001587     p = 0.001
-    D.setch. vs D.abramsii                   -0.012029     p < 0.001
-    D.cymosa vs D.abramsii                   -0.010442     p = 0.035
+    D.setch. vs D.cymosa                     -0.001597     p < 0.001
+    D.setch. vs D.abramsii                   -0.012041     p < 0.001
+    D.cymosa vs D.abramsii                   -0.010444     p = 0.100
 
   Interpretation guide:
   A hybrid between DUSE and DUCY would show intermediate distances,
@@ -100,7 +100,6 @@ SAMPLE METADATA
   QUIN_LP_63_                                        DUSE
   QUIN_LP_64_                                        DUSE
   QUIN_LP_65_                                        DUSE
-  QUIN_LP_66_                                        DUSE
   QUIN_LP_7_                                         DUSE
   QUIN_LP_8_                                         DUSE
   COM_LP_269_Du-703                                  DUSE
