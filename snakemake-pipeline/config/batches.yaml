@@ -1,0 +1,13 @@
+# config/batches.yaml
+# Registry of pooled sequencing runs: batch tag -> folder holding that run's raw reads.
+# make_sample_sheet.py assigns each sample's `batch` column from the folder its
+# FASTQs live in. A FASTQ in an unregistered folder is an error, so a new run
+# means adding one line here -- no filename tags, no code edits.
+#
+# The tag is free-form (letters, digits, -, _). It is what you will color or
+# facet by when checking for batch effects in the PCA.
+
+batches:
+  main:    /WAVE/datasets/whittalllab/dudleya/raw_reads/raw_reads_2025/
+  biol173: /WAVE/datasets/whittalllab/dudleya/raw_reads/raw_reads_biol173/
+  su26:    /WAVE/datasets/whittalllab/dudleya/raw_reads/raw_reads_summer2026/

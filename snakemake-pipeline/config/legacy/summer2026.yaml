@@ -1,0 +1,668 @@
+# /WAVE/projects2/whittalllab/dudleya/snakemake-pipeline/config/summer2026.yaml
+# Note: changing the layout of this file might break the update_sample_config.py script
+ref_genome: "/WAVE/projects/whittalllab/dudleya/draft_genome/Dudleya_hifiasm_purged_host_genome.fasta"
+anc_genome: "/WAVE/projects/whittalllab/dudleya/ancestral_genome_Du-14/D_cymosa_consensus.fa.gz"
+chroms_file: "config/chroms.txt"
+
+data_parent_dir: "/WAVE/datasets/whittalllab/dudleya"
+output_name: "results-summer2026"
+
+samples:
+  LP_363_Du-794_S215_L006_R1_001.fastq.gz_LP_363_Du-794:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_363_Du-794_S215_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_363_Du-794_S215_L006_R2_001.fastq.gz"
+  LP_364_Du-800_S109_L006_R1_001.fastq.gz_LP_364_Du-800:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_364_Du-800_S109_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_364_Du-800_S109_L006_R2_001.fastq.gz"
+  LP_365_Du-803_S96_L006_R1_001.fastq.gz_LP_365_Du-803:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_365_Du-803_S96_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_365_Du-803_S96_L006_R2_001.fastq.gz"
+  LP_366_Du-806_S174_L006_R1_001.fastq.gz_LP_366_Du-806:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_366_Du-806_S174_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_366_Du-806_S174_L006_R2_001.fastq.gz"
+  LP_367_Du-818_S82_L006_R1_001.fastq.gz_LP_367_Du-818:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_367_Du-818_S82_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_367_Du-818_S82_L006_R2_001.fastq.gz"
+  LP_368_Du-827_S186_L006_R1_001.fastq.gz_LP_368_Du-827:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_368_Du-827_S186_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_368_Du-827_S186_L006_R2_001.fastq.gz"
+  LP_369_Du-828_S86_L006_R1_001.fastq.gz_LP_369_Du-828:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_369_Du-828_S86_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_369_Du-828_S86_L006_R2_001.fastq.gz"
+  LP_370_Du-832_S64_L006_R1_001.fastq.gz_LP_370_Du-832:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_370_Du-832_S64_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_370_Du-832_S64_L006_R2_001.fastq.gz"
+  LP_375_Du-835_S188_L006_R1_001.fastq.gz_LP_375_Du-835:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_375_Du-835_S188_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_375_Du-835_S188_L006_R2_001.fastq.gz"
+  LP_376_Du-837_S124_L006_R1_001.fastq.gz_LP_376_Du-837:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_376_Du-837_S124_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_376_Du-837_S124_L006_R2_001.fastq.gz"
+  LP_377_Du-838_S147_L006_R1_001.fastq.gz_LP_377_Du-838:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_377_Du-838_S147_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_377_Du-838_S147_L006_R2_001.fastq.gz"
+  LP_378_Du-839_S135_L006_R1_001.fastq.gz_LP_378_Du-839:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_378_Du-839_S135_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_378_Du-839_S135_L006_R2_001.fastq.gz"
+  LP_379_Du-840_S98_L006_R1_001.fastq.gz_LP_379_Du-840:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_379_Du-840_S98_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_379_Du-840_S98_L006_R2_001.fastq.gz"
+  LP_380_Du-843_S33_L006_R1_001.fastq.gz_LP_380_Du-843:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_380_Du-843_S33_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_380_Du-843_S33_L006_R2_001.fastq.gz"
+  LP_381_Du-844_S111_L006_R1_001.fastq.gz_LP_381_Du-844:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_381_Du-844_S111_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_381_Du-844_S111_L006_R2_001.fastq.gz"
+  LP_382_Du-845_S160_L006_R1_001.fastq.gz_LP_382_Du-845:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_382_Du-845_S160_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_382_Du-845_S160_L006_R2_001.fastq.gz"
+  LP_383_Du-846_S75_L006_R1_001.fastq.gz_LP_383_Du-846:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_383_Du-846_S75_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_383_Du-846_S75_L006_R2_001.fastq.gz"
+  LP_384_DU-848_S50_L006_R1_001.fastq.gz_LP_384_:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_384_DU-848_S50_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_384_DU-848_S50_L006_R2_001.fastq.gz"
+  LP_385_Du-850_S197_L006_R1_001.fastq.gz_LP_385_Du-850:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_385_Du-850_S197_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_385_Du-850_S197_L006_R2_001.fastq.gz"
+  LP_386_DU-852_S129_L006_R1_001.fastq.gz_LP_386_:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_386_DU-852_S129_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_386_DU-852_S129_L006_R2_001.fastq.gz"
+  LP_387_DU-853_S87_L006_R1_001.fastq.gz_LP_387_:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_387_DU-853_S87_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_387_DU-853_S87_L006_R2_001.fastq.gz"
+  LP_388_DU-856_S77_L006_R1_001.fastq.gz_LP_388_:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_388_DU-856_S77_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_388_DU-856_S77_L006_R2_001.fastq.gz"
+  LP_389_Du-858_S38_L006_R1_001.fastq.gz_LP_389_Du-858:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_389_Du-858_S38_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_389_Du-858_S38_L006_R2_001.fastq.gz"
+  LP_390_Du-859_S60_L006_R1_001.fastq.gz_LP_390_Du-859:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_390_Du-859_S60_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_390_Du-859_S60_L006_R2_001.fastq.gz"
+  LP_391_Du-860_S61_L006_R1_001.fastq.gz_LP_391_Du-860:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_391_Du-860_S61_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_391_Du-860_S61_L006_R2_001.fastq.gz"
+  LP_392_Du-861_S130_L006_R1_001.fastq.gz_LP_392_Du-861:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_392_Du-861_S130_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_392_Du-861_S130_L006_R2_001.fastq.gz"
+  LP_393_Du-862_S18_L006_R1_001.fastq.gz_LP_393_Du-862:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_393_Du-862_S18_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_393_Du-862_S18_L006_R2_001.fastq.gz"
+  LP_394_Du-863_S17_L006_R1_001.fastq.gz_LP_394_Du-863:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_394_Du-863_S17_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_394_Du-863_S17_L006_R2_001.fastq.gz"
+  LP_395_Du-864_S25_L006_R1_001.fastq.gz_LP_395_Du-864:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_395_Du-864_S25_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_395_Du-864_S25_L006_R2_001.fastq.gz"
+  LP_396_Du-865_S20_L006_R1_001.fastq.gz_LP_396_Du-865:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_396_Du-865_S20_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_396_Du-865_S20_L006_R2_001.fastq.gz"
+  LP_397_Du-866_S35_L006_R1_001.fastq.gz_LP_397_Du-866:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_397_Du-866_S35_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_397_Du-866_S35_L006_R2_001.fastq.gz"
+  LP_398_Du-869_S30_L006_R1_001.fastq.gz_LP_398_Du-869:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_398_Du-869_S30_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_398_Du-869_S30_L006_R2_001.fastq.gz"
+  LP_399_Du-870_S22_L006_R1_001.fastq.gz_LP_399_Du-870:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_399_Du-870_S22_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_399_Du-870_S22_L006_R2_001.fastq.gz"
+  LP_400_Du-871_S28_L006_R1_001.fastq.gz_LP_400_Du-871:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_400_Du-871_S28_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_400_Du-871_S28_L006_R2_001.fastq.gz"
+  LP_401_Du-872_S11_L006_R1_001.fastq.gz_LP_401_Du-872:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_401_Du-872_S11_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_401_Du-872_S11_L006_R2_001.fastq.gz"
+  LP_402_Du-873_S6_L006_R1_001.fastq.gz_LP_402_Du-873:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_402_Du-873_S6_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_402_Du-873_S6_L006_R2_001.fastq.gz"
+  LP_403_Du-874_S16_L006_R1_001.fastq.gz_LP_403_Du-874:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_403_Du-874_S16_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_403_Du-874_S16_L006_R2_001.fastq.gz"
+  LP_404_Du-875_S9_L006_R1_001.fastq.gz_LP_404_Du-875:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_404_Du-875_S9_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_404_Du-875_S9_L006_R2_001.fastq.gz"
+  LP_405_Du-876_S19_L006_R1_001.fastq.gz_LP_405_Du-876:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_405_Du-876_S19_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_405_Du-876_S19_L006_R2_001.fastq.gz"
+  LP_406_Du-877_S13_L006_R1_001.fastq.gz_LP_406_Du-877:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_406_Du-877_S13_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_406_Du-877_S13_L006_R2_001.fastq.gz"
+  LP_407_Du-878_S15_L006_R1_001.fastq.gz_LP_407_Du-878:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_407_Du-878_S15_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_407_Du-878_S15_L006_R2_001.fastq.gz"
+  LP_408_Du-879_S26_L006_R1_001.fastq.gz_LP_408_Du-879:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_408_Du-879_S26_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_408_Du-879_S26_L006_R2_001.fastq.gz"
+  LP_409_Du-880_S10_L006_R1_001.fastq.gz_LP_409_Du-880:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_409_Du-880_S10_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_409_Du-880_S10_L006_R2_001.fastq.gz"
+  LP_410_Du-881_S37_L006_R1_001.fastq.gz_LP_410_Du-881:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_410_Du-881_S37_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_410_Du-881_S37_L006_R2_001.fastq.gz"
+  LP_411_Du-882_S7_L006_R1_001.fastq.gz_LP_411_Du-882:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_411_Du-882_S7_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_411_Du-882_S7_L006_R2_001.fastq.gz"
+  LP_412_Du-883_S14_L006_R1_001.fastq.gz_LP_412_Du-883:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_412_Du-883_S14_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_412_Du-883_S14_L006_R2_001.fastq.gz"
+  LP_413_Du-884_S8_L006_R1_001.fastq.gz_LP_413_Du-884:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_413_Du-884_S8_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_413_Du-884_S8_L006_R2_001.fastq.gz"
+  LP_414_Du-885_S21_L006_R1_001.fastq.gz_LP_414_Du-885:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_414_Du-885_S21_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_414_Du-885_S21_L006_R2_001.fastq.gz"
+  LP_425_Du-897_S5_L006_R1_001.fastq.gz_LP_425_Du-897:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_425_Du-897_S5_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_425_Du-897_S5_L006_R2_001.fastq.gz"
+  LP_426_Du-898_S12_L006_R1_001.fastq.gz_LP_426_Du-898:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_426_Du-898_S12_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_426_Du-898_S12_L006_R2_001.fastq.gz"
+  LP_427_Du-913_S53_L006_R1_001.fastq.gz_LP_427_Du-913:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_427_Du-913_S53_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_427_Du-913_S53_L006_R2_001.fastq.gz"
+  LP_428_Du-922_S39_L006_R1_001.fastq.gz_LP_428_Du-922:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_428_Du-922_S39_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_428_Du-922_S39_L006_R2_001.fastq.gz"
+  LP_429_Du-924_S221_L006_R1_001.fastq.gz_LP_429_Du-924:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_429_Du-924_S221_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_429_Du-924_S221_L006_R2_001.fastq.gz"
+  LP_430_Du-925_S168_L006_R1_001.fastq.gz_LP_430_Du-925:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_430_Du-925_S168_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_430_Du-925_S168_L006_R2_001.fastq.gz"
+  LP_431_Du-901_S68_L006_R1_001.fastq.gz_LP_431_Du-901:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_431_Du-901_S68_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_431_Du-901_S68_L006_R2_001.fastq.gz"
+  LP_432_Du-909_S138_L006_R1_001.fastq.gz_LP_432_Du-909:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_432_Du-909_S138_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_432_Du-909_S138_L006_R2_001.fastq.gz"
+  LP_433_Du-911_S43_L006_R1_001.fastq.gz_LP_433_Du-911:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_433_Du-911_S43_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_433_Du-911_S43_L006_R2_001.fastq.gz"
+  LP_434_Du-912_S70_L006_R1_001.fastq.gz_LP_434_Du-912:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_434_Du-912_S70_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_434_Du-912_S70_L006_R2_001.fastq.gz"
+  LP_435_Du-926_S220_L006_R1_001.fastq.gz_LP_435_Du-926:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_435_Du-926_S220_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_435_Du-926_S220_L006_R2_001.fastq.gz"
+  LP_436_Du-927_S164_L006_R1_001.fastq.gz_LP_436_Du-927:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_436_Du-927_S164_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_436_Du-927_S164_L006_R2_001.fastq.gz"
+  LP_437_Du-930_S150_L006_R1_001.fastq.gz_LP_437_Du-930:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_437_Du-930_S150_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_437_Du-930_S150_L006_R2_001.fastq.gz"
+  LP_438_Du-932_S222_L006_R1_001.fastq.gz_LP_438_Du-932:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_438_Du-932_S222_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_438_Du-932_S222_L006_R2_001.fastq.gz"
+  LP_439_Du-937_S177_L006_R1_001.fastq.gz_LP_439_Du-937:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_439_Du-937_S177_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_439_Du-937_S177_L006_R2_001.fastq.gz"
+  LP_440_Du-942_S94_L006_R1_001.fastq.gz_LP_440_Du-942:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_440_Du-942_S94_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_440_Du-942_S94_L006_R2_001.fastq.gz"
+  LP_441_Du-943_S216_L006_R1_001.fastq.gz_LP_441_Du-943:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_441_Du-943_S216_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_441_Du-943_S216_L006_R2_001.fastq.gz"
+  LP_442_Du-944_S102_L006_R1_001.fastq.gz_LP_442_Du-944:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_442_Du-944_S102_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_442_Du-944_S102_L006_R2_001.fastq.gz"
+  LP_443_Du-947_S110_L006_R1_001.fastq.gz_LP_443_Du-947:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_443_Du-947_S110_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_443_Du-947_S110_L006_R2_001.fastq.gz"
+  LP_444_Du-951_S125_L006_R1_001.fastq.gz_LP_444_Du-951:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_444_Du-951_S125_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_444_Du-951_S125_L006_R2_001.fastq.gz"
+  LP_445_Du-952_S223_L006_R1_001.fastq.gz_LP_445_Du-952:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_445_Du-952_S223_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_445_Du-952_S223_L006_R2_001.fastq.gz"
+  LP_446_Du-959_S212_L006_R1_001.fastq.gz_LP_446_Du-959:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_446_Du-959_S212_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_446_Du-959_S212_L006_R2_001.fastq.gz"
+  LP_447_Du-962_S192_L006_R1_001.fastq.gz_LP_447_Du-962:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_447_Du-962_S192_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_447_Du-962_S192_L006_R2_001.fastq.gz"
+  LP_448_Du-963_S214_L006_R1_001.fastq.gz_LP_448_Du-963:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_448_Du-963_S214_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_448_Du-963_S214_L006_R2_001.fastq.gz"
+  LP_449_Du-968_S121_L006_R1_001.fastq.gz_LP_449_Du-968:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_449_Du-968_S121_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_449_Du-968_S121_L006_R2_001.fastq.gz"
+  LP_450_Du-970_S132_L006_R1_001.fastq.gz_LP_450_Du-970:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_450_Du-970_S132_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_450_Du-970_S132_L006_R2_001.fastq.gz"
+  LP_451_Du-971_S56_L006_R1_001.fastq.gz_LP_451_Du-971:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_451_Du-971_S56_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_451_Du-971_S56_L006_R2_001.fastq.gz"
+  LP_452_Du-972_S142_L006_R1_001.fastq.gz_LP_452_Du-972:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_452_Du-972_S142_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_452_Du-972_S142_L006_R2_001.fastq.gz"
+  LP_453_Du-975_S198_L006_R1_001.fastq.gz_LP_453_Du-975:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_453_Du-975_S198_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_453_Du-975_S198_L006_R2_001.fastq.gz"
+  LP_454_Du-998_S90_L006_R1_001.fastq.gz_LP_454_Du-998:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_454_Du-998_S90_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_454_Du-998_S90_L006_R2_001.fastq.gz"
+  LP_455_Du-1005_S57_L006_R1_001.fastq.gz_LP_455_Du-1005:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_455_Du-1005_S57_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_455_Du-1005_S57_L006_R2_001.fastq.gz"
+  LP_456_Du-1006_S62_L006_R1_001.fastq.gz_LP_456_Du-1006:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_456_Du-1006_S62_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_456_Du-1006_S62_L006_R2_001.fastq.gz"
+  LP_457_Du-1007_S181_L006_R1_001.fastq.gz_LP_457_Du-1007:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_457_Du-1007_S181_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_457_Du-1007_S181_L006_R2_001.fastq.gz"
+  LP_458_Du-1015_S207_L006_R1_001.fastq.gz_LP_458_Du-1015:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_458_Du-1015_S207_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_458_Du-1015_S207_L006_R2_001.fastq.gz"
+  LP_459_Du-1016_S151_L006_R1_001.fastq.gz_LP_459_Du-1016:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_459_Du-1016_S151_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_459_Du-1016_S151_L006_R2_001.fastq.gz"
+  LP_460_Du-1023_S139_L006_R1_001.fastq.gz_LP_460_Du-1023:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_460_Du-1023_S139_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_460_Du-1023_S139_L006_R2_001.fastq.gz"
+  LP_461_Du-1024_S76_L006_R1_001.fastq.gz_LP_461_Du-1024:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_461_Du-1024_S76_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_461_Du-1024_S76_L006_R2_001.fastq.gz"
+  LP_462_Du-1025_S44_L006_R1_001.fastq.gz_LP_462_Du-1025:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_462_Du-1025_S44_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_462_Du-1025_S44_L006_R2_001.fastq.gz"
+  LP_463_Du-1026_S196_L006_R1_001.fastq.gz_LP_463_Du-1026:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_463_Du-1026_S196_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_463_Du-1026_S196_L006_R2_001.fastq.gz"
+  LP_464_Du-1027_S189_L006_R1_001.fastq.gz_LP_464_Du-1027:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_464_Du-1027_S189_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_464_Du-1027_S189_L006_R2_001.fastq.gz"
+  LP_465_Du-1028_S169_L006_R1_001.fastq.gz_LP_465_Du-1028:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_465_Du-1028_S169_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_465_Du-1028_S169_L006_R2_001.fastq.gz"
+  LP_466_Du-1030_S52_L006_R1_001.fastq.gz_LP_466_Du-1030:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_466_Du-1030_S52_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_466_Du-1030_S52_L006_R2_001.fastq.gz"
+  LP_467_Du-1031_S83_L006_R1_001.fastq.gz_LP_467_Du-1031:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_467_Du-1031_S83_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_467_Du-1031_S83_L006_R2_001.fastq.gz"
+  LP_468_Du-1033_S81_L006_R1_001.fastq.gz_LP_468_Du-1033:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_468_Du-1033_S81_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_468_Du-1033_S81_L006_R2_001.fastq.gz"
+  LP_470_Du-1036_S92_L006_R1_001.fastq.gz_LP_470_Du-1036:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_470_Du-1036_S92_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_470_Du-1036_S92_L006_R2_001.fastq.gz"
+  LP_471_Du-1037_S72_L006_R1_001.fastq.gz_LP_471_Du-1037:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_471_Du-1037_S72_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_471_Du-1037_S72_L006_R2_001.fastq.gz"
+  LP_472_Du-1042_S190_L006_R1_001.fastq.gz_LP_472_Du-1042:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_472_Du-1042_S190_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_472_Du-1042_S190_L006_R2_001.fastq.gz"
+  LP_473_Du-1043_S173_L006_R1_001.fastq.gz_LP_473_Du-1043:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_473_Du-1043_S173_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_473_Du-1043_S173_L006_R2_001.fastq.gz"
+  LP_474_Du-1045_S209_L006_R1_001.fastq.gz_LP_474_Du-1045:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_474_Du-1045_S209_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_474_Du-1045_S209_L006_R2_001.fastq.gz"
+  LP_475_Du-1046_S112_L006_R1_001.fastq.gz_LP_475_Du-1046:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_475_Du-1046_S112_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_475_Du-1046_S112_L006_R2_001.fastq.gz"
+  LP_476_Du-493_S126_L006_R1_001.fastq.gz_LP_476_Du-493:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_476_Du-493_S126_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_476_Du-493_S126_L006_R2_001.fastq.gz"
+  LP_477_Du-494_S184_L006_R1_001.fastq.gz_LP_477_Du-494:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_477_Du-494_S184_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_477_Du-494_S184_L006_R2_001.fastq.gz"
+  LP_478_Du-495_S71_L006_R1_001.fastq.gz_LP_478_Du-495:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_478_Du-495_S71_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_478_Du-495_S71_L006_R2_001.fastq.gz"
+  LP_479_Du-496_S115_L006_R1_001.fastq.gz_LP_479_Du-496:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_479_Du-496_S115_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_479_Du-496_S115_L006_R2_001.fastq.gz"
+  LP_480_Du-497_S180_L006_R1_001.fastq.gz_LP_480_Du-497:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_480_Du-497_S180_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_480_Du-497_S180_L006_R2_001.fastq.gz"
+  LP_481_Du-498_S108_L006_R1_001.fastq.gz_LP_481_Du-498:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_481_Du-498_S108_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_481_Du-498_S108_L006_R2_001.fastq.gz"
+  LP_482_Du-499_S69_L006_R1_001.fastq.gz_LP_482_Du-499:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_482_Du-499_S69_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_482_Du-499_S69_L006_R2_001.fastq.gz"
+  LP_483_Du-500_S67_L006_R1_001.fastq.gz_LP_483_Du-500:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_483_Du-500_S67_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_483_Du-500_S67_L006_R2_001.fastq.gz"
+  LP_484_Du-501_S63_L006_R1_001.fastq.gz_LP_484_Du-501:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_484_Du-501_S63_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_484_Du-501_S63_L006_R2_001.fastq.gz"
+  LP_485_Du-502_S88_L006_R1_001.fastq.gz_LP_485_Du-502:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_485_Du-502_S88_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_485_Du-502_S88_L006_R2_001.fastq.gz"
+  LP_486_Du-503_S170_L006_R1_001.fastq.gz_LP_486_Du-503:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_486_Du-503_S170_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_486_Du-503_S170_L006_R2_001.fastq.gz"
+  LP_487_Du-504_S24_L006_R1_001.fastq.gz_LP_487_Du-504:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_487_Du-504_S24_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_487_Du-504_S24_L006_R2_001.fastq.gz"
+  LP_488_Du-505_S141_L006_R1_001.fastq.gz_LP_488_Du-505:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_488_Du-505_S141_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_488_Du-505_S141_L006_R2_001.fastq.gz"
+  LP_489_Du-506_S73_L006_R1_001.fastq.gz_LP_489_Du-506:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_489_Du-506_S73_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_489_Du-506_S73_L006_R2_001.fastq.gz"
+  LP_490_Du-507_S118_L006_R1_001.fastq.gz_LP_490_Du-507:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_490_Du-507_S118_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_490_Du-507_S118_L006_R2_001.fastq.gz"
+  LP_491_Du-508_S48_L006_R1_001.fastq.gz_LP_491_Du-508:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_491_Du-508_S48_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_491_Du-508_S48_L006_R2_001.fastq.gz"
+  LP_492_Du-509_S46_L006_R1_001.fastq.gz_LP_492_Du-509:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_492_Du-509_S46_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_492_Du-509_S46_L006_R2_001.fastq.gz"
+  LP_493_Du-510_S55_L006_R1_001.fastq.gz_LP_493_Du-510:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_493_Du-510_S55_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_493_Du-510_S55_L006_R2_001.fastq.gz"
+  LP_494_Du-511_S59_L006_R1_001.fastq.gz_LP_494_Du-511:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_494_Du-511_S59_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_494_Du-511_S59_L006_R2_001.fastq.gz"
+  LP_495_Du-512_S45_L006_R1_001.fastq.gz_LP_495_Du-512:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_495_Du-512_S45_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_495_Du-512_S45_L006_R2_001.fastq.gz"
+  LP_496_Du-513_S40_L006_R1_001.fastq.gz_LP_496_Du-513:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_496_Du-513_S40_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_496_Du-513_S40_L006_R2_001.fastq.gz"
+  LP_497_Du-514_S58_L006_R1_001.fastq.gz_LP_497_Du-514:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_497_Du-514_S58_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_497_Du-514_S58_L006_R2_001.fastq.gz"
+  LP_498_Du-515_S54_L006_R1_001.fastq.gz_LP_498_Du-515:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_498_Du-515_S54_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_498_Du-515_S54_L006_R2_001.fastq.gz"
+  LP_499_Du-516_S114_L006_R1_001.fastq.gz_LP_499_Du-516:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_499_Du-516_S114_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_499_Du-516_S114_L006_R2_001.fastq.gz"
+  LP_500_Du-517_S49_L006_R1_001.fastq.gz_LP_500_Du-517:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_500_Du-517_S49_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_500_Du-517_S49_L006_R2_001.fastq.gz"
+  LP_501_Du-518_S104_L006_R1_001.fastq.gz_LP_501_Du-518:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_501_Du-518_S104_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_501_Du-518_S104_L006_R2_001.fastq.gz"
+  LP_502_Du-519_S66_L006_R1_001.fastq.gz_LP_502_Du-519:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_502_Du-519_S66_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_502_Du-519_S66_L006_R2_001.fastq.gz"
+  LP_503_Du-520_S89_L006_R1_001.fastq.gz_LP_503_Du-520:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_503_Du-520_S89_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_503_Du-520_S89_L006_R2_001.fastq.gz"
+  LP_504_Du-452_S47_L006_R1_001.fastq.gz_LP_504_Du-452:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_504_Du-452_S47_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_504_Du-452_S47_L006_R2_001.fastq.gz"
+  LP_505_Du-453_S133_L006_R1_001.fastq.gz_LP_505_Du-453:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_505_Du-453_S133_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_505_Du-453_S133_L006_R2_001.fastq.gz"
+  LP_506_Du-454_S120_L006_R1_001.fastq.gz_LP_506_Du-454:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_506_Du-454_S120_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_506_Du-454_S120_L006_R2_001.fastq.gz"
+  LP_507_Du-455_S93_L006_R1_001.fastq.gz_LP_507_Du-455:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_507_Du-455_S93_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_507_Du-455_S93_L006_R2_001.fastq.gz"
+  LP_508_Du-456_S103_L006_R1_001.fastq.gz_LP_508_Du-456:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_508_Du-456_S103_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_508_Du-456_S103_L006_R2_001.fastq.gz"
+  LP_509_Du-457_S117_L006_R1_001.fastq.gz_LP_509_Du-457:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_509_Du-457_S117_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_509_Du-457_S117_L006_R2_001.fastq.gz"
+  LP_510_Du-458_S100_L006_R1_001.fastq.gz_LP_510_Du-458:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_510_Du-458_S100_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_510_Du-458_S100_L006_R2_001.fastq.gz"
+  LP_511_Du-459_S105_L006_R1_001.fastq.gz_LP_511_Du-459:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_511_Du-459_S105_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_511_Du-459_S105_L006_R2_001.fastq.gz"
+  LP_512_Du-460_S95_L006_R1_001.fastq.gz_LP_512_Du-460:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_512_Du-460_S95_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_512_Du-460_S95_L006_R2_001.fastq.gz"
+  LP_513_Du-461_S74_L006_R1_001.fastq.gz_LP_513_Du-461:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_513_Du-461_S74_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_513_Du-461_S74_L006_R2_001.fastq.gz"
+  LP_514_Du-462_S79_L006_R1_001.fastq.gz_LP_514_Du-462:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_514_Du-462_S79_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_514_Du-462_S79_L006_R2_001.fastq.gz"
+  LP_515_Du-463_S78_L006_R1_001.fastq.gz_LP_515_Du-463:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_515_Du-463_S78_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_515_Du-463_S78_L006_R2_001.fastq.gz"
+  LP_516A_Du-464_S134_L006_R1_001.fastq.gz_LP_516A_Du-464:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_516A_Du-464_S134_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_516A_Du-464_S134_L006_R2_001.fastq.gz"
+  LP_516B_Du-465_S116_L006_R1_001.fastq.gz_LP_516B_Du-465:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_516B_Du-465_S116_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_516B_Du-465_S116_L006_R2_001.fastq.gz"
+  LP_517_Du-466_S182_L006_R1_001.fastq.gz_LP_517_Du-466:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_517_Du-466_S182_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_517_Du-466_S182_L006_R2_001.fastq.gz"
+  LP_518_Du-467_S149_L006_R1_001.fastq.gz_LP_518_Du-467:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_518_Du-467_S149_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_518_Du-467_S149_L006_R2_001.fastq.gz"
+  LP_519_Du-468_S107_L006_R1_001.fastq.gz_LP_519_Du-468:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_519_Du-468_S107_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_519_Du-468_S107_L006_R2_001.fastq.gz"
+  LP_520_Du-469_S85_L006_R1_001.fastq.gz_LP_520_Du-469:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_520_Du-469_S85_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_520_Du-469_S85_L006_R2_001.fastq.gz"
+  LP_521_Du-470_S158_L006_R1_001.fastq.gz_LP_521_Du-470:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_521_Du-470_S158_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_521_Du-470_S158_L006_R2_001.fastq.gz"
+  LP_522_Du-471_S131_L006_R1_001.fastq.gz_LP_522_Du-471:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_522_Du-471_S131_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_522_Du-471_S131_L006_R2_001.fastq.gz"
+  LP_523_Du-472_S127_L006_R1_001.fastq.gz_LP_523_Du-472:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_523_Du-472_S127_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_523_Du-472_S127_L006_R2_001.fastq.gz"
+  LP_524_Du-473_S175_L006_R1_001.fastq.gz_LP_524_Du-473:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_524_Du-473_S175_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_524_Du-473_S175_L006_R2_001.fastq.gz"
+  LP_525_Du-474_S176_L006_R1_001.fastq.gz_LP_525_Du-474:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_525_Du-474_S176_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_525_Du-474_S176_L006_R2_001.fastq.gz"
+  LP_526_Du-475_S91_L006_R1_001.fastq.gz_LP_526_Du-475:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_526_Du-475_S91_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_526_Du-475_S91_L006_R2_001.fastq.gz"
+  LP_527_Du-476_S178_L006_R1_001.fastq.gz_LP_527_Du-476:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_527_Du-476_S178_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_527_Du-476_S178_L006_R2_001.fastq.gz"
+  LP_528_Du-477_S84_L006_R1_001.fastq.gz_LP_528_Du-477:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_528_Du-477_S84_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_528_Du-477_S84_L006_R2_001.fastq.gz"
+  LP_529_Du-478_S113_L006_R1_001.fastq.gz_LP_529_Du-478:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_529_Du-478_S113_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_529_Du-478_S113_L006_R2_001.fastq.gz"
+  LP_530_Du-479_S202_L006_R1_001.fastq.gz_LP_530_Du-479:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_530_Du-479_S202_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_530_Du-479_S202_L006_R2_001.fastq.gz"
+  LP_531_Du-480_S23_L006_R1_001.fastq.gz_LP_531_Du-480:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_531_Du-480_S23_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_531_Du-480_S23_L006_R2_001.fastq.gz"
+  LP_532_Du-481_S153_L006_R1_001.fastq.gz_LP_532_Du-481:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_532_Du-481_S153_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_532_Du-481_S153_L006_R2_001.fastq.gz"
+  LP_533_Du-482_S208_L006_R1_001.fastq.gz_LP_533_Du-482:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_533_Du-482_S208_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_533_Du-482_S208_L006_R2_001.fastq.gz"
+  LP_534_Du-483_S32_L006_R1_001.fastq.gz_LP_534_Du-483:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_534_Du-483_S32_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_534_Du-483_S32_L006_R2_001.fastq.gz"
+  LP_535_Du-484_S31_L006_R1_001.fastq.gz_LP_535_Du-484:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_535_Du-484_S31_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_535_Du-484_S31_L006_R2_001.fastq.gz"
+  LP_536_Du-485_S41_L006_R1_001.fastq.gz_LP_536_Du-485:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_536_Du-485_S41_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_536_Du-485_S41_L006_R2_001.fastq.gz"
+  LP_537_Du-486_S29_L006_R1_001.fastq.gz_LP_537_Du-486:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_537_Du-486_S29_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_537_Du-486_S29_L006_R2_001.fastq.gz"
+  LP_538_Du-487_S143_L006_R1_001.fastq.gz_LP_538_Du-487:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_538_Du-487_S143_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_538_Du-487_S143_L006_R2_001.fastq.gz"
+  LP_539_Du-488_S27_L006_R1_001.fastq.gz_LP_539_Du-488:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_539_Du-488_S27_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_539_Du-488_S27_L006_R2_001.fastq.gz"
+  LP_540_Du-489_S36_L006_R1_001.fastq.gz_LP_540_Du-489:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_540_Du-489_S36_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_540_Du-489_S36_L006_R2_001.fastq.gz"
+  LP_541_Du-490_S144_L006_R1_001.fastq.gz_LP_541_Du-490:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_541_Du-490_S144_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_541_Du-490_S144_L006_R2_001.fastq.gz"
+  LP_542_Du-491_S165_L006_R1_001.fastq.gz_LP_542_Du-491:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_542_Du-491_S165_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_542_Du-491_S165_L006_R2_001.fastq.gz"
+  LP_543_Du-492_S42_L006_R1_001.fastq.gz_LP_543_Du-492:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_543_Du-492_S42_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_543_Du-492_S42_L006_R2_001.fastq.gz"
+  LP_544_Du-374_S193_L006_R1_001.fastq.gz_LP_544_Du-374:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_544_Du-374_S193_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_544_Du-374_S193_L006_R2_001.fastq.gz"
+  LP_545_Du-375_S145_L006_R1_001.fastq.gz_LP_545_Du-375:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_545_Du-375_S145_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_545_Du-375_S145_L006_R2_001.fastq.gz"
+  LP_546_Du-376_S172_L006_R1_001.fastq.gz_LP_546_Du-376:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_546_Du-376_S172_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_546_Du-376_S172_L006_R2_001.fastq.gz"
+  LP_547_Du-377_S166_L006_R1_001.fastq.gz_LP_547_Du-377:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_547_Du-377_S166_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_547_Du-377_S166_L006_R2_001.fastq.gz"
+  LP_548_Du-378_S136_L006_R1_001.fastq.gz_LP_548_Du-378:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_548_Du-378_S136_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_548_Du-378_S136_L006_R2_001.fastq.gz"
+  LP_549_Du-397_S161_L006_R1_001.fastq.gz_LP_549_Du-397:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_549_Du-397_S161_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_549_Du-397_S161_L006_R2_001.fastq.gz"
+  LP_550_Du-398_S219_L006_R1_001.fastq.gz_LP_550_Du-398:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_550_Du-398_S219_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_550_Du-398_S219_L006_R2_001.fastq.gz"
+  LP_551_Du-399_S203_L006_R1_001.fastq.gz_LP_551_Du-399:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_551_Du-399_S203_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_551_Du-399_S203_L006_R2_001.fastq.gz"
+  LP_552_Du-400_S152_L006_R1_001.fastq.gz_LP_552_Du-400:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_552_Du-400_S152_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_552_Du-400_S152_L006_R2_001.fastq.gz"
+  LP_553_Du-401_S213_L006_R1_001.fastq.gz_LP_553_Du-401:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_553_Du-401_S213_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_553_Du-401_S213_L006_R2_001.fastq.gz"
+  LP_554_Du-402_S205_L006_R1_001.fastq.gz_LP_554_Du-402:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_554_Du-402_S205_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_554_Du-402_S205_L006_R2_001.fastq.gz"
+  LP_555_Du-403_S217_L006_R1_001.fastq.gz_LP_555_Du-403:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_555_Du-403_S217_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_555_Du-403_S217_L006_R2_001.fastq.gz"
+  LP_556_Du-404_S210_L006_R1_001.fastq.gz_LP_556_Du-404:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_556_Du-404_S210_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_556_Du-404_S210_L006_R2_001.fastq.gz"
+  LP_557_Du-405_S171_L006_R1_001.fastq.gz_LP_557_Du-405:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_557_Du-405_S171_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_557_Du-405_S171_L006_R2_001.fastq.gz"
+  LP_558_Du-406_S128_L006_R1_001.fastq.gz_LP_558_Du-406:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_558_Du-406_S128_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_558_Du-406_S128_L006_R2_001.fastq.gz"
+  LP_559_Du-407_S155_L006_R1_001.fastq.gz_LP_559_Du-407:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_559_Du-407_S155_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_559_Du-407_S155_L006_R2_001.fastq.gz"
+  LP_560_Du-408_S137_L006_R1_001.fastq.gz_LP_560_Du-408:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_560_Du-408_S137_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_560_Du-408_S137_L006_R2_001.fastq.gz"
+  LP_561_Du-409_S122_L006_R1_001.fastq.gz_LP_561_Du-409:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_561_Du-409_S122_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_561_Du-409_S122_L006_R2_001.fastq.gz"
+  LP_562_Du-410_S119_L006_R1_001.fastq.gz_LP_562_Du-410:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_562_Du-410_S119_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_562_Du-410_S119_L006_R2_001.fastq.gz"
+  LP_563_Du-411_S194_L006_R1_001.fastq.gz_LP_563_Du-411:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_563_Du-411_S194_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_563_Du-411_S194_L006_R2_001.fastq.gz"
+  LP_564_Du-412_S51_L006_R1_001.fastq.gz_LP_564_Du-412:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_564_Du-412_S51_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_564_Du-412_S51_L006_R2_001.fastq.gz"
+  LP_565_Du-413_S211_L006_R1_001.fastq.gz_LP_565_Du-413:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_565_Du-413_S211_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_565_Du-413_S211_L006_R2_001.fastq.gz"
+  LP_566_Du-414_S183_L006_R1_001.fastq.gz_LP_566_Du-414:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_566_Du-414_S183_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_566_Du-414_S183_L006_R2_001.fastq.gz"
+  LP_567_Du-415_S179_L006_R1_001.fastq.gz_LP_567_Du-415:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_567_Du-415_S179_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_567_Du-415_S179_L006_R2_001.fastq.gz"
+  LP_568_Du-416_S204_L006_R1_001.fastq.gz_LP_568_Du-416:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_568_Du-416_S204_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_568_Du-416_S204_L006_R2_001.fastq.gz"
+  LP_569_Du-417_S206_L006_R1_001.fastq.gz_LP_569_Du-417:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_569_Du-417_S206_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_569_Du-417_S206_L006_R2_001.fastq.gz"
+  LP_570_Du-418_S218_L006_R1_001.fastq.gz_LP_570_Du-418:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_570_Du-418_S218_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_570_Du-418_S218_L006_R2_001.fastq.gz"
+  LP_571_Du-419_S201_L006_R1_001.fastq.gz_LP_571_Du-419:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_571_Du-419_S201_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_571_Du-419_S201_L006_R2_001.fastq.gz"
+  LP_572_Du-830_S187_L006_R1_001.fastq.gz_LP_572_Du-830:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_572_Du-830_S187_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_572_Du-830_S187_L006_R2_001.fastq.gz"
+  LP_573_Du-831_S97_L006_R1_001.fastq.gz_LP_573_Du-831:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_573_Du-831_S97_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_573_Du-831_S97_L006_R2_001.fastq.gz"
+  LP_574_Du-832_S123_L006_R1_001.fastq.gz_LP_574_Du-832:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_574_Du-832_S123_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_574_Du-832_S123_L006_R2_001.fastq.gz"
+  LP_575_Du-833_S140_L006_R1_001.fastq.gz_LP_575_Du-833:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_575_Du-833_S140_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_575_Du-833_S140_L006_R2_001.fastq.gz"
+  LP_576_Du-1054_S106_L006_R1_001.fastq.gz_LP_576_Du-1054:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_576_Du-1054_S106_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_576_Du-1054_S106_L006_R2_001.fastq.gz"
+  LP_577_Du-1055_S185_L006_R1_001.fastq.gz_LP_577_Du-1055:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_577_Du-1055_S185_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_577_Du-1055_S185_L006_R2_001.fastq.gz"
+  LP_578_Du-1056_S162_L006_R1_001.fastq.gz_LP_578_Du-1056:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_578_Du-1056_S162_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_578_Du-1056_S162_L006_R2_001.fastq.gz"
+  LP_579_Du-1057_S146_L006_R1_001.fastq.gz_LP_579_Du-1057:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_579_Du-1057_S146_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_579_Du-1057_S146_L006_R2_001.fastq.gz"
+  LP_580_Du-1058_S148_L006_R1_001.fastq.gz_LP_580_Du-1058:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_580_Du-1058_S148_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_580_Du-1058_S148_L006_R2_001.fastq.gz"
+  LP_581_Du-1059_S167_L006_R1_001.fastq.gz_LP_581_Du-1059:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_581_Du-1059_S167_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_581_Du-1059_S167_L006_R2_001.fastq.gz"
+  LP_582_Du-1060_S154_L006_R1_001.fastq.gz_LP_582_Du-1060:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_582_Du-1060_S154_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_582_Du-1060_S154_L006_R2_001.fastq.gz"
+  LP_583_Du-1061_S157_L006_R1_001.fastq.gz_LP_583_Du-1061:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_583_Du-1061_S157_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_583_Du-1061_S157_L006_R2_001.fastq.gz"
+  LP_584_Du-1063_S163_L006_R1_001.fastq.gz_LP_584_Du-1063:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_584_Du-1063_S163_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_584_Du-1063_S163_L006_R2_001.fastq.gz"
+  LP_585_Du-1064_S159_L006_R1_001.fastq.gz_LP_585_Du-1064:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_585_Du-1064_S159_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_585_Du-1064_S159_L006_R2_001.fastq.gz"
+  LP_586_Du-1065_S191_L006_R1_001.fastq.gz_LP_586_Du-1065:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_586_Du-1065_S191_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_586_Du-1065_S191_L006_R2_001.fastq.gz"
+  LP_587_Du-1034_S199_L006_R1_001.fastq.gz_LP_587_Du-1034:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_587_Du-1034_S199_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_587_Du-1034_S199_L006_R2_001.fastq.gz"
+  LP_588_Du-1066_S101_L006_R1_001.fastq.gz_LP_588_Du-1066:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_588_Du-1066_S101_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_588_Du-1066_S101_L006_R2_001.fastq.gz"
+  LP_589_Du-1067_S200_L006_R1_001.fastq.gz_LP_589_Du-1067:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_589_Du-1067_S200_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_589_Du-1067_S200_L006_R2_001.fastq.gz"
+  LP_590_Du-1068_S195_L006_R1_001.fastq.gz_LP_590_Du-1068:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_590_Du-1068_S195_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_590_Du-1068_S195_L006_R2_001.fastq.gz"
+  LP_591_Du-1069_S156_L006_R1_001.fastq.gz_LP_591_Du-1069:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_591_Du-1069_S156_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_591_Du-1069_S156_L006_R2_001.fastq.gz"
+  LP_592_Du-1070_S99_L006_R1_001.fastq.gz_LP_592_Du-1070:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_592_Du-1070_S99_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_592_Du-1070_S99_L006_R2_001.fastq.gz"
+  LP_593_Du-1071_S80_L006_R1_001.fastq.gz_LP_593_Du-1071:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_593_Du-1071_S80_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_593_Du-1071_S80_L006_R2_001.fastq.gz"
+  LP_594_Du-1072_S65_L006_R1_001.fastq.gz_LP_594_Du-1072:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_594_Du-1072_S65_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_594_Du-1072_S65_L006_R2_001.fastq.gz"
+  LP_595_Du-1073_S34_L006_R1_001.fastq.gz_LP_595_Du-1073:
+    r1: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_595_Du-1073_S34_L006_R1_001.fastq.gz"
+    r2: "/WAVE/datasets/whittalllab/dudleya/raw_reads_summer2026/LP_595_Du-1073_S34_L006_R2_001.fastq.gz"
+# Added 219 samples above

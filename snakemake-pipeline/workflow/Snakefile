@@ -1,33 +1,50 @@
-import os
+import os, sys
+import pandas as pd
+from snakemake.utils import validate
 
-# Config:
-# configfile specified in profile (config/config.yaml)
+sys.path.insert(0, os.path.join(workflow.basedir, "scripts"))
+import sampleinfo
 
-# config maps sample name (POPCODE_LP_xxx_Du-xxx) to r1 and r2 filepaths
-SAMPLES = config["samples"].keys()
+
+# ---- Load Data & Config ----
 DATA_DIR = config["data_parent_dir"]
-N_SAMPLES = len(config["samples"])
+
+SHEET = pd.read_csv(config["sample_sheet"], sep="\t", dtype=str,
+                    keep_default_na=False).set_index("sample", drop=False)
+validate(SHEET, "schemas/samples.schema.yaml")
+TAXA = sampleinfo.Taxonomy.load(config["taxa_file"])
+sampleinfo.check_sheet(SHEET.to_dict("records"), TAXA)      # check the FULL sheet first
+
+# optionally run a subset of the data
+keep = sampleinfo.select_samples(SHEET.to_dict("records"),
+                                 config.get("subset"), config.get("exclude"))
+SHEET = SHEET.loc[[r["sample"] for r in keep]]               # subset, order preserved
+SAMPLES = list(SHEET.index)
+N_SAMPLES = len(SAMPLES)
+
 # Chromosomes for ANGSD chromosome scatter-gather:
 CHROMS = [line.strip() for line in open(config["chroms_file"]) if line.strip()]
 
 pathvars:
     name = config["output_name"]
 
+
 # ---- Overall Goal: ----
 rule all:
     input:
-        "results/<name>/tree/tree.png",
-        "results/<name>/pca/pca.png",
-        "results/<name>/ngsdist/population.dist",
-        "results/<name>/ngsdist/distance_analysis.txt",
-        "results/<name>/qc/aggregate_qc.png"
+        # "results/<name>/tree/tree.png",
+        tree = "results/<name>/tree/population_filtered.contree",    # TEMP
+        pca = "results/<name>/pca/pca.png",
+        dist = "results/<name>/ngsdist/population.dist",
+        dist_stats = "results/<name>/ngsdist/distance_analysis.txt",
+        qc = "results/<name>/qc/aggregate_qc.png"
 
 
 # ---- Rule 1: Fastp Filter ----
 rule fastp:
     input:
-        r1 = lambda wildcards: config["samples"][wildcards.sample]["r1"],
-        r2 = lambda wildcards: config["samples"][wildcards.sample]["r2"]
+        r1 = lambda wc: SHEET.loc[wc.sample, "r1"],
+        r2 = lambda wc: SHEET.loc[wc.sample, "r2"]
     output:
         r1 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R1.fastq.gz"), # store next to raw reads rather than locally
         r2 = os.path.join(DATA_DIR, "filtered_reads", "{sample}_R2.fastq.gz"),
@@ -63,8 +80,8 @@ rule map_and_sort:
         runtime = 360,      # 6 hours
         mem_mb = 32000,     # 32 GB RAM
         cpus_per_task = lambda wildcards, threads: threads
-    benchmark:
-        "benchmarks/bwa_mem_samtools/{sample}.tsv"
+    # benchmark:
+        # "benchmarks/bwa_mem_samtools/{sample}.tsv"
     shell:
         # MANUAL thread allocation (12 for BWA, 4 for Sam). Update if reducing threads.
         """
@@ -94,11 +111,11 @@ rule samtools_flagstat:
 
 # ---- Rule 5: Create Population Info ----
 rule create_pop_info:
-    output:
-        info = "results/<name>/info/population.info"
+    output: info = "results/<name>/info/population.info"
+    params: samples = SAMPLES
     run:
         with open(output.info, "w") as f:
-            for sample in SAMPLES:
+            for sample in params.samples:
                 f.write(sample + "\n")
 
 
@@ -128,7 +145,7 @@ rule angsd:
         mafs   = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.mafs.gz")),
         geno   = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.geno.gz")),
         bcf    = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.bcf")),
-        depth  = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.depthSample")
+        depth  = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.depthSample"))
         # additional ANGSD output files not listed here may also be created
     params:
         data_dir = DATA_DIR,
@@ -137,10 +154,10 @@ rule angsd:
     resources:
         slurm_partition = "mem",
         runtime = 360,      # 6 hours
-        mem_mb = lambda wildcards, attempt: attempt * max(800 * len(config["samples"]), 96000), # 96GB or scale by n_samples
+        mem_mb = lambda wildcards, attempt: attempt * max(800 * N_SAMPLES, 96000), # 96GB or scale by n_samples
         cpus_per_task = lambda wildcards, threads: threads
-    benchmark:
-        "benchmarks/angsd/{chrom}.tsv"
+    # benchmark:
+        # "benchmarks/angsd/{chrom}.tsv"
     shell:
         """
         angsd -b {input.bam_list} -ref {input.ref} -anc {input.anc} \
@@ -200,7 +217,7 @@ rule concat_angsd:
             arr = np.loadtxt(f)
             depth_sum = arr if depth_sum is None else depth_sum + arr
 
-        assert depth_sum.shape[0] == len(config["samples"]), (
+        assert depth_sum.shape[0] == N_SAMPLES, (
             f"depthSample row count ({depth_sum.shape[0]}) does not match "
             f"sample count ({len(config['samples'])}). BAM list order may be inconsistent."
         )
@@ -215,7 +232,7 @@ rule convert_bcf:
     output:
         vcf = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/population_unnamed.vcf.gz"))
     resources:
-        runtime = 360       # 6 hours
+        runtime = 720       # 12 hours
     shell:
         """
         bcftools convert -O z \
@@ -334,6 +351,7 @@ rule iqtree:
         """
 
 # ---- Rule 12: Visualize IQ-TREE ----
+#                                           TODO: toytree broken?
 rule plot_tree:
     input:
         tree = "results/<name>/tree/population_filtered.contree"
@@ -348,20 +366,20 @@ rule plot_tree:
 # ---- Rule 13: PCAngsd ----
 rule pcangsd:
     input:
-        os.path.join(DATA_DIR, "angsd_runs/<name>/population.beagle.gz"),
+        beagle = os.path.join(DATA_DIR, "angsd_runs/<name>/population.beagle.gz")
     output:
-        "results/<name>/pca/population.cov"
+        cov = "results/<name>/pca/population.cov"
     params:
         name = config["output_name"]
     threads: 8
     resources:
         slurm_partition = "mem",
-        runtime = 1440,      # 24 hours
+        runtime = 2880,      # 48 hours
         mem_mb = lambda wc, input: max(40 * input.size_mb, 4000),    # 4GB or scale by input size
-        cpus_per_task = lambda wildcards, threads: threads
+        cpus_per_task = lambda wildcards, threads: threads,
     shell:
         """
-        pcangsd -b {input} -o results/{params.name}/pca/population -t {threads}
+        pcangsd -b {input.beagle} -o results/{params.name}/pca/population -t {threads}
         """
 
 # ---- Rule 14: Plot PCA ----
@@ -377,29 +395,50 @@ rule plot_pca:
         "scripts/pcangsd_visualize.py"
 
 
-# ---- Rule 15: ngsDist ----
+# ---- Rule 15: Count ANGSD sites ----
+rule count_sites:
+    input:
+        mafs = os.path.join(DATA_DIR, "angsd_runs/<name>/population.mafs.gz")
+    output:
+        n_sites = "results/<name>/ngsdist/n_sites.txt"
+    shell:
+        "zcat {input.mafs} | tail -n +2 | wc -l > {output.n_sites}"
+
+
+# ---- Rule 16: ngsDist ----
+
+# ngsDist holds all genotype probabilities as doubles: 3 per site per individual.
+GL_BYTES_PER_SITE_IND = 3 * 8
+NGSDIST_OVERHEAD = 1.5      # multiplier for parsing buffers etc.; TUNE THIS AS NEEDED
+NGSDIST_BASE_MB = 2000      # fixed cost
+MAX_NODE_MB = 2000000       # mem nodes have 2 TB ram each
+
+def ngsdist_mem_mb(wildcards, input, attempt):
+    with open(input.n_sites) as f:
+        n_sites = int(f.read().strip())
+    matrix_mb = n_sites * N_SAMPLES * GL_BYTES_PER_SITE_IND / 1e6
+    request = attempt * (NGSDIST_OVERHEAD * matrix_mb + NGSDIST_BASE_MB)
+    return int(min(request, MAX_NODE_MB))
+
 rule ngsdist:
     input:
         beagle = os.path.join(DATA_DIR, "angsd_runs/<name>/population.beagle.gz"),
         info = "results/<name>/info/population.info"
+        n_sites = "results/<name>/ngsdist/n_sites.txt"
     output:
         dist = "results/<name>/ngsdist/population.dist",
-        n_sites = "results/<name>/ngsdist/n_sites.txt"
     params:
-        name = config["output_name"],
         n_ind = N_SAMPLES
-    threads: 32
+    benchmark:
+        "benchmarks/ngsdist/ngsdist.tsv"      # records max_rss for calibration
+    threads: 8
     resources:
         slurm_partition = "mem",
         runtime = 1440,      # 24 hours
-        mem_mb = lambda wc, input, attempt: attempt * max(20 * input.size_mb, 32000),    # 32GB or scale by input size
+        mem_mb = ngsdist_mem_mb
         cpus_per_task = lambda wildcards, threads: threads
     shell:
         """
-        N_SITES=$(zcat {input.beagle} | tail -n +2 | wc -l)
-
-        echo $N_SITES > {output.n_sites}
-
         ngsDist \
             --geno {input.beagle} \
             --probs \

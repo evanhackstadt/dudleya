@@ -1,0 +1,107 @@
+# config/taxa.yaml
+# The single source of truth for taxonomy and plot styling.
+# A taxonomic revision or a new subspecies is an edit to this file, never to code.
+#
+# Fields
+#   label     display name used in legends
+#   rank      species | subspecies
+#   parent    (subspecies only) the species code it belongs to
+#   color     (species required; subspecies inherit unless overridden) hex color
+#   marker    (species required; subspecies inherit unless overridden) matplotlib marker
+#   prefixes  filename prefixes that map to this taxon, e.g. the "CY" in CY_SIE_LP_012_Du-14
+
+
+# Popcodes with no taxon prefix (e.g. DAN, BAI, QUIN) are assigned to this taxon.
+implicit_taxon: DUSE
+
+taxa:
+  DUSE:
+    label: "D. setchellii"
+    rank: species
+    color: "#0072B2"      # Okabe-Ito palette (colorblind-safe)
+    marker: "o"
+    prefixes: []
+
+  DUCY:
+    label: "D. cymosa"
+    rank: species
+    color: "#D55E00"
+    marker: "s"
+    prefixes: [CY]
+
+  DUCY_PU:
+    label: "D. cymosa ssp. pumila"
+    rank: subspecies
+    parent: DUCY
+    marker: "^"
+    prefixes: [CYPU]
+
+  DUCY_CO:
+    label: "D. cymosa ssp. costifolia"
+    rank: subspecies
+    parent: DUCY
+    marker: "^"
+    prefixes: [CYCO]
+
+  DUCY_CR:
+    label: "D. cymosa ssp. crebrifolia"
+    rank: subspecies
+    parent: DUCY
+    marker: "^"
+    prefixes: [CYCR]
+
+  DUAB:
+    label: "D. abramsii"
+    rank: species
+    color: "#009E73"
+    marker: "X"
+    prefixes: [AB]
+
+  DUAB_AB:
+    label: "D. abramsii ssp. abramsii"
+    rank: subspecies
+    parent: DUAB
+    prefixes: [ABAB]
+
+  DUAB_BE:
+    label: "D. abramsii ssp. bettinae"
+    rank: subspecies
+    parent: DUAB
+    marker: "P"
+    prefixes: [ABBE]
+
+  DUAB_MU:
+    label: "D. abramsii ssp. murina"
+    rank: subspecies
+    parent: DUAB
+    marker: "D"
+    prefixes: [ABMU]
+
+  DUAB_AF:
+    label: "D. abramsii ssp. affinis"
+    rank: subspecies
+    parent: DUAB
+    marker: "D"
+    prefixes: [ABAF]
+
+  DULA:
+    label: "D. lanceolata"
+    rank: species
+    color: "#009E73"
+    marker: "X"
+    prefixes: [LA]
+
+  DUBL:
+    label: "D. blochmaniae"
+    rank: species
+    color: "#009E73"
+    marker: "X"
+    prefixes: [BL]
+  
+
+  UNK:
+    label: "UNKNOWN"
+    rank: species
+    color: "#B5B5B5"
+    marker: "X"
+    prefixes: [UNK]

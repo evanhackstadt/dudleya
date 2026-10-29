@@ -1,0 +1,11 @@
+# /WAVE/projects2/whittalllab/dudleya/snakemake-pipeline/config/projects.yaml
+
+ref_genome: "/WAVE/projects/whittalllab/dudleya/draft_genome/Dudleya_hifiasm_purged_host_genome.fasta"
+anc_genome: "/WAVE/projects/whittalllab/dudleya/ancestral_genome_Du-14/D_cymosa_consensus.fa.gz"
+chroms_file: "config/chroms.txt"
+
+sample_sheet: "/WAVE/projects/whittalllab/dudleya/snakemake-pipeline/config/samples.tsv"
+taxa_file: "/WAVE/projects/whittalllab/dudleya/snakemake-pipeline/config/taxa.yaml"
+
+data_parent_dir: "/WAVE/datasets/whittalllab/dudleya/"
+output_name: "results-main"

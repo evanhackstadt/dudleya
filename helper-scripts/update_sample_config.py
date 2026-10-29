@@ -2,7 +2,12 @@
 # Whittall Lab Dudleya Genomics
 # December 2025
 
-# TODO: organize into functions and __main__ CLI
+# NOTE: THIS IS A LEGACY SCRIPT. NEW SAMPLE MANAGEMENT CONTROLLED BY:
+#       scripts/make_sample_sheet.py
+#       scripts/sampleinfo.py
+#       config/samples.schema.yaml
+#       config/taxa.yaml
+#       config/batches.yaml
 
 # NOTE: assumes this specific filename format:
 #       popcode_LP_xxx_Du-xxx_Sxxx_Lxxx_Rx_00x.fastq.gz
@@ -76,7 +81,7 @@ def custom_selection(samples):
     user_input = input()
     print("<<<<<<<<")
     while user_input != 'quit' and user_input != 'save':
-        if user_input in data_samples and not in selected_samples:  # if they entered the exact sample
+        if user_input in data_samples and user_input not in selected_samples:  # if they entered the exact sample
             selected_samples.append(user_input)
             print(f"Added {user_input}")
             print("All selected samples: ", selected_samples)
@@ -228,16 +233,17 @@ else:
         while line == '\n' or line[0] == '#':
             line = f.readline()
         anc_line = line
+        line = f.readline()
         while line == '\n' or line[0] == '#':
             line = f.readline()
         chroms_line = line
         # ensure file was properly formatted...
         if 'ref_genome: ' not in ref_line:
-            raise ValueError(f"Unable to extract ref_genome from old config file. Instead read: {ref_line}")
+            raise ValueError(f"Unable to extract ref_genome from old config file {old_config_path}. Instead read: {ref_line}")
         if 'anc_genome: ' not in anc_line:
-            raise ValueError(f"Unable to extract anc_genome from old config file. Instead read: {anc_line}")
+            raise ValueError(f"Unable to extract anc_genome from old config file {old_config_path}. Instead read: {anc_line}")
         if 'chroms_file: ' not in chroms_line:
-            raise ValueError(f"Unable to extract chroms_file from old config file. Instead read: {chroms_line}")
+            raise ValueError(f"Unable to extract chroms_file from old config file {old_config_path}. Instead read: {chroms_line}")
     print(f"...Extracted {ref_line}...Extracted {anc_line}...Extracted {chroms_line}...Parsed data_parent_dir: {data_parent_dir}\n")
     
     # optionally name this dataset for unique results folder

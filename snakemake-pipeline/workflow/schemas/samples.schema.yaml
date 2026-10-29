@@ -1,0 +1,49 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+description: One row of config/samples.tsv (one sequenced sample). Validated by snakemake.utils.validate at DAG-build time.
+type: object
+
+properties:
+  sample:
+    type: string
+    # no leading/trailing underscore: guards against the old 'QUIN_LP_10_' artifact
+    pattern: '^[A-Za-z0-9][A-Za-z0-9_.-]*[A-Za-z0-9]$'
+    description: unique sample id; used as the Snakemake {sample} wildcard
+  legacy_id:
+    type: string
+    description: id used in earlier runs (for mapping old BAMs/results)
+  taxon:
+    type: string
+    minLength: 1
+    description: most specific taxon code (key in taxa.yaml)
+  species:
+    type: string
+    minLength: 1
+    description: species-level taxon code
+  population:
+    type: string
+    pattern: '^[A-Z0-9]+(_[A-Z0-9]+)?$'
+  lp_id:
+    type: string
+    minLength: 1
+  du_id:
+    type: string
+    pattern: '^(Du-[0-9A-Za-z]+)?$'
+    description: Du-number; empty if unassigned
+  field_tag:
+    type: string
+    description: collection-site tag where present (e.g. EAMF6); may be empty
+  batch:
+    type: string
+    pattern: '^[A-Za-z0-9_-]+$'
+    description: pooled sequencing run tag from config/batches.yaml (for batch-effect checks)
+  lane:
+    type: string
+    pattern: '^L[0-9]{3}$'
+  r1:
+    type: string
+    pattern: '\.fastq\.gz$'
+  r2:
+    type: string
+    pattern: '\.fastq\.gz$'
+
+required: [sample, taxon, species, population, lp_id, batch, lane, r1, r2]
