@@ -18,6 +18,6 @@ default-resources:
 configfile: project.yaml
 
 # Behavior
-retries: 3
+retries: 2
 printshellcmds: true
 show-failed-logs: true

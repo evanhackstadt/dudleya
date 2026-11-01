@@ -98,6 +98,10 @@ class Taxonomy:
             "marker": t.get("marker", sp["marker"]),
         }
 
+    def own_color(self, code):
+        """Color set explicitly on this taxon in taxa.yaml (None if it would be inherited)."""
+        return self.taxa[code].get("color")
+
     def species_codes(self):
         return [c for c, t in self.taxa.items() if t["rank"] == "species"]
 
