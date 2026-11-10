@@ -141,11 +141,11 @@ rule angsd:
         ref = config["ref_genome"],
         anc = config["anc_genome"]
     output:
-        beagle = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.beagle.gz")), # store in datasets dir
-        mafs   = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.mafs.gz")),
-        geno   = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.geno.gz")),
+        beagle = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.beagle.gz"), # store in datasets dir
+        mafs   = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.mafs.gz"),
+        geno   = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.geno.gz"),
         bcf    = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.bcf")),
-        depth  = temp(os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.depthSample"))
+        depth  = os.path.join(DATA_DIR, "angsd_runs/<name>/{chrom}/population.depthSample")
         # additional ANGSD output files not listed here may also be created
     params:
         data_dir = DATA_DIR,
@@ -255,7 +255,7 @@ rule index_vcf:
         bcftools reheader \
             -s {input.info} \
             -o {output.vcf} \
-            {input}
+            {input.vcf}
         
         tabix -p vcf {output.vcf}
         """
@@ -273,7 +273,7 @@ rule filter_vcf:
         vcf   = os.path.join(DATA_DIR, "angsd_runs/<name>/population_filtered.vcf.gz"),
         index = os.path.join(DATA_DIR, "angsd_runs/<name>/population_filtered.vcf.gz.tbi")
     resources:
-        runtime = 1080   # 18 hours
+        runtime = 2160   # 36 hours
     shell:
         """
         bcftools view -m2 -M2 -v snps {input.vcf} | \
@@ -420,7 +420,7 @@ rule count_sites:
 GL_BYTES_PER_SITE_IND = 3 * 8   # 3 probabilities per site per individual
 NGSDIST_OVERHEAD = 1.5      # multiplier for parsing buffers etc.; TUNE THIS AS NEEDED
 NGSDIST_BASE_MB = 2000      # fixed cost
-MAX_NODE_MB = 180000       # mem nodes have 2 TB ram each, use 1.8 TB ceiling
+MAX_NODE_MB = 1800000       # mem nodes have 2 TB ram each, use 1.8 TB ceiling
 
 def ngsdist_mem_mb(wildcards, input, attempt):
     with open(input.n_sites) as f:
@@ -440,7 +440,7 @@ rule ngsdist:
         n_ind = N_SAMPLES
     benchmark:
         "benchmarks/ngsdist/ngsdist.tsv"      # records max_rss for calibration
-    threads: 8
+    threads: 32
     resources:
         slurm_partition = "mem",
         runtime = 1440,      # 24 hours
@@ -488,8 +488,9 @@ rule aggregate_qc:
         flagstats   = expand(os.path.join(DATA_DIR, "qc_reports_reads", "{sample}_flagstat.txt"), sample=SAMPLES),
         depthSample = os.path.join(DATA_DIR, "angsd_runs/<name>/population.depthSample")
     output:
-        csv  = "results/<name>/qc/aggregate_qc.csv",
-        plot = "results/<name>/qc/aggregate_qc.png"
+        csv     = "results/<name>/qc/aggregate_qc.csv",
+        plot    = "results/<name>/qc/aggregate_qc.png",
+        summary = "results/<name>/qc/aggregate_qc_summary.txt"
     conda:
         "/WAVE/projects/whittalllab/conda_envs/visualization"
     script:
