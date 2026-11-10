@@ -112,21 +112,21 @@ def draw(points, variant, styles, x_pc, y_pc, ve, path, dpi, xlim=None, ylim=Non
         sub = view[view[variant] == cat]
         if sub.empty:
             continue
-        ax.scatter(sub[xcol], sub[ycol], color=st["color"], marker=st["marker"], s=30,
-                   edgecolors="black", linewidths=0.3, alpha=0.9, label=f"{st['label']} (n={len(sub)})")
+        ax.scatter(sub[xcol], sub[ycol], color=st["color"], marker=st["marker"], s=70,
+                   edgecolors="black", linewidths=0.3, alpha=0.85, label=f"{st['label']} (n={len(sub)})")
     if annotate:
         for x, y, lab in zip(view[xcol], view[ycol], view["label"]):
-            ax.annotate(lab, (x, y), fontsize=5)
+            ax.annotate(lab, (x, y), fontsize=7)
     if xlim:
         ax.set_xlim(xlim)
         ax.set_ylim(ylim)
 
-    ax.set_xlabel(f"{xcol} ({ve[x_pc - 1]:.2f}% of variance)")
-    ax.set_ylabel(f"{ycol} ({ve[y_pc - 1]:.2f}% of variance)")
-    ax.set_title(f"{len(view)}-sample PCA by {variant}" + (" (zoom)" if xlim else ""), fontsize=13)
+    ax.set_xlabel(f"{xcol} ({ve[x_pc - 1]:.2f}% of variance)", fontsize=15)
+    ax.set_ylabel(f"{ycol} ({ve[y_pc - 1]:.2f}% of variance)", fontsize=15)
+    ax.set_title(f"{len(view)}-sample PCA by {variant}" + (" (zoom)" if xlim else ""), fontsize=15)
     n_leg = len(ax.get_legend_handles_labels()[0])
     ax.legend(loc="upper left", bbox_to_anchor=(1.01, 1), frameon=False,
-              fontsize=9 if n_leg <= 15 else 7, ncol=1 if n_leg <= 25 else 2)
+              fontsize=11 if n_leg <= 15 else 9, ncol=1 if n_leg <= 25 else 2)
     fig.savefig(path, dpi=dpi, bbox_inches="tight")
     plt.close(fig)
 
@@ -166,11 +166,12 @@ def run(cov_path, info_path, sheet_path, taxa_path, outdir, max_zooms=4, x_pc=1,
     for variant in VARIANTS:
         styles = make_styles(points, tax, variant)
         args = (points, variant, styles, x_pc, y_pc, ve)
-        draw(*args, os.path.join(outdir, f"pca_{variant}.png"), DPI_FULL)
+        pc_tag = f"_pc{x_pc}_pc{y_pc}" if (x_pc != 1 or y_pc != 2) else ""
+        draw(*args, os.path.join(outdir, f"pca_{variant}{pc_tag}.png"), DPI_FULL)
         if variant == "species":
-            draw(*args, os.path.join(outdir, "pca_species_labeled.png"), DPI_FULL, annotate=True)
+            draw(*args, os.path.join(outdir, f"pca_species_labeled{pc_tag}.png"), DPI_FULL, annotate=True)
         for i, (xl, yl) in enumerate(boxes, 1):
-            draw(*args, os.path.join(outdir, "zoom", f"pca_{variant}_zoom{i}.png"), DPI_ZOOM,
+            draw(*args, os.path.join(outdir, "zoom", f"pca_{variant}{pc_tag}_zoom{i}.png"), DPI_ZOOM,
                  xlim=xl, ylim=yl, annotate=True)
 
     points.drop(columns="label").to_csv(os.path.join(outdir, "points.csv"), index_label="sample")

@@ -5,9 +5,10 @@
 
 """
 Aggregate QC metrics across samples from fastp JSON and samtools flagstat outputs.
-Produces a summary CSV and a read-attrition + mapping-rate plot.
+Produces a summary CSV, coverage statistics text file, and QC plot.
 """
 
+import argparse
 import os
 import json
 import re
@@ -34,7 +35,7 @@ def parse_fastp(json_path):
         "raw_bases":           bf["total_bases"],
         "raw_coverage":        bf["total_bases"] / GENOME_SIZE,
         "post_fastp_reads":    af["total_reads"],
-        "post_fastp_coverage": af["total_reads"] / GENOME_SIZE,
+        "post_fastp_coverage": af["total_bases"] / GENOME_SIZE,
         "passed_filter":       filtering["passed_filter_reads"],
         "low_quality":         filtering["low_quality_reads"],
         "too_short":           filtering["too_short_reads"],
@@ -91,158 +92,265 @@ def parse_depth_sample(depth_path):
 
 # --- Aggregate ---
 
-depth_records = parse_depth_sample(snakemake.input.depthSample)
-
-records = []
-for (json_path, flagstat_path, depth_rec) in zip(snakemake.input.fastp_jsons,
-                                                  snakemake.input.flagstats,
-                                                  depth_records):
-    sample = os.path.basename(json_path).replace("FastpFilterReport_", "").replace(".json", "")
-    pop    = sample.split("_LP_")[0]
-    row    = {"sample": sample, "population": pop}
-    row.update(parse_fastp(json_path))
-    row.update(parse_flagstat(flagstat_path))
-    row.update(depth_rec)
-    records.append(row)
-
-df = pd.DataFrame(records).sort_values("sample")
-
-# Derived columns
-df["fastp_retention_pct"] = 100 * df["post_fastp_reads"] / df["raw_reads"]
-df["reads_lost_fastp"]    = df["raw_reads"] - df["post_fastp_reads"]
-df["reads_lost_mapping"]  = df["post_fastp_reads"] - df["mapped_reads"]
-
-# Flag potentially problematic samples (thresholds are adjustable)  — ignoring for now
-# LOW_READS_THRESHOLD   = 1_000_000   # fewer than 1M mapped reads
-# LOW_MAPPING_THRESHOLD = 70.0        # below 70% mapping rate
-# LOW_DEPTH_THRESHOLD = 3.0   # mean depth below 3x is generally unreliable
-
-# df["flag_low_reads"]   = df["mapped_reads"] < LOW_READS_THRESHOLD
-# df["flag_low_mapping"] = df["mapping_rate"] < LOW_MAPPING_THRESHOLD
-# df["flag_low_depth"] = df["angsd_mean_depth"] < LOW_DEPTH_THRESHOLD
-# df["flagged"]        = df["flag_low_reads"] | df["flag_low_mapping"] | df["flag_low_depth"]
-
-# Save CSV
-df.to_csv(snakemake.output.csv, index=False)
-print(f"QC table saved to {snakemake.output.csv}")
-# print(f"\nFlagged samples ({df['flagged'].sum()} total):")
-# print(df[df["flagged"]][["sample", "mapped_reads", "mapping_rate"]])
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(description="Aggregate QC metrics across samples.")
+    parser.add_argument("--fastp-dir", "--fastp_dir", required=True,
+                        help="Directory containing fastp JSON reports.")
+    parser.add_argument("--flagstat-dir", "--flagstat_dir",
+                        help="Directory containing samtools flagstat files (defaults to --fastp-dir).")
+    parser.add_argument("--population-info", "--population_info", required=True,
+                        help="population.info file containing the sample names to collect.")
+    parser.add_argument("--depth-sample", "--depth_sample",
+                        help="Optional ANGSD depthSample file for mean-depth summaries.")
+    parser.add_argument("--output-dir", "--output_dir", default=".",
+                        help="Directory for the output CSV and plot.")
+    return parser.parse_args(argv)
 
 
-# --- Plots ---
+def read_population_samples(path):
+    with open(path) as sample_file:
+        samples = [line.strip() for line in sample_file if line.strip()]
+    if not samples:
+        raise ValueError(f"No sample names found in population.info file: {path}")
+    if len(samples) != len(set(samples)):
+        raise ValueError(f"Duplicate sample names found in population.info file: {path}")
+    return samples
 
-fig, axes = plt.subplots(4, 1, figsize=(max(14, len(df) * 0.12), 18))
-fig.suptitle(f"Aggregate QC — {len(df)} samples", fontsize=14, y=1.01)
 
-samples   = df["sample"]
-x         = np.arange(len(df))
-bar_width = 0.8
+def find_sample_file(directory, sample, file_type):
+    if file_type == "fastp":
+        filenames = (f"{sample}_fastp_report.json", f"FastpFilterReport_{sample}.json")
+    else:
+        filenames = (f"{sample}_flagstat.txt",)
 
-for ax in axes:
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.spines["left"].set_linewidth(0.8)
-    ax.spines["bottom"].set_linewidth(0.8)
-    ax.tick_params(color="black", labelcolor="black")
+    for filename in filenames:
+        path = os.path.join(directory, filename)
+        if os.path.isfile(path):
+            return path
+    expected = " or ".join(filenames)
+    raise FileNotFoundError(f"No {file_type} file for sample {sample!r} in {directory}; expected {expected}")
 
-# --- Panel 1: Sequencing Coverage (raw and post-fastp) ---
-ax1 = axes[0]
-ax1.bar(x,
-        df["raw_coverage"],
-        width=bar_width,
-        label="Raw Coverage",
-        color="#4d4d4d",
-        edgecolor="black",
-        linewidth=0.5)
-ax1.bar(x,
-        df["post_fastp_coverage"],
-        width=bar_width,
-        label="Post-Fasp Coverage",
-        color="#bfbfbf",
-        edgecolor="black",
-        linewidth=0.5,
-        hatch="///")
-ax1.set_title("Sequencing Coverage")
-ax1.set_ylabel("Coverage of whole genome")
-ax1.legend(fontsize=8, loc="upper right", frameon=False)
 
-# --- Panel 2: Read attrition stacked bar ---
-ax2 = axes[1]
-ax2.bar(x,
-        df["mapped_reads"],
-        width=bar_width,
-        label="Mapped",
-        color="#4d4d4d",
-        edgecolor="black",
-        linewidth=0.5)
-ax2.bar(x,
-        df["reads_lost_mapping"],
-        width=bar_width,
-        label="Lost at mapping",
-        color="#bfbfbf",
-        edgecolor="black",
-        linewidth=0.5,
-        hatch="///",
-        bottom=df["mapped_reads"])
-ax2.bar(x,
-        df["reads_lost_fastp"],
-        width=bar_width,
-        label="Lost at fastp",
-        color="#ffffff",
-        edgecolor="black",
-        linewidth=0.5,
-        hatch="xxx",
-        bottom=df["mapped_reads"] + df["reads_lost_mapping"])
+def run(fastp_jsons, flagstats, depth_sample, output_csv, output_plot, output_summary):
+    if len(fastp_jsons) != len(flagstats):
+        raise ValueError("The number of fastp reports and flagstat files does not match.")
 
-ax2.set_title("Read Attrition per Sample")
-ax2.set_ylabel("Read count")
-ax2.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f"{v/1e6:.1f}M"))
-ax2.set_xticks([])
-ax2.legend(fontsize=8, loc="upper right", frameon=False)
+    depth_records = parse_depth_sample(depth_sample) if depth_sample else None
+    if depth_records is not None and len(depth_records) != len(fastp_jsons):
+        raise ValueError(
+            f"Depth file contains {len(depth_records)} rows but {len(fastp_jsons)} samples were selected."
+        )
 
-# --- Panel 3: Mapping rate per sample ---
-ax3 = axes[2]
-ax3.bar(x,
-        df["mapping_rate"],
-        width=bar_width,
-        color="#4d4d4d",
-        edgecolor="black",
-        linewidth=0.5)
-ax3.set_title("Mapping Rate per Sample")
-ax3.set_ylabel("% reads mapped")
-ax3.set_ylim(0, 105)
-ax3.set_xticks([])
+    records = []
+    for index, (json_path, flagstat_path) in enumerate(zip(fastp_jsons, flagstats)):
+        filename = os.path.basename(json_path)
+        if filename.startswith("FastpFilterReport_"):
+            sample = filename[len("FastpFilterReport_"):-len(".json")]
+        else:
+            sample = filename[:-len("_fastp_report.json")]
+        pop = sample.split("_LP_")[0]
+        row = {"sample": sample, "population": pop}
+        row.update(parse_fastp(json_path))
+        row.update(parse_flagstat(flagstat_path))
+        if depth_records is not None:
+            row.update(depth_records[index])
+        records.append(row)
 
-# --- Panel 4: Mean depth per sample post-ANGSD ---
-ax4 = axes[3]
-ax4.bar(x,
-        df["angsd_mean_depth"],
-        width=bar_width,
-        color="#4d4d4d",
-        edgecolor="black",
-        linewidth=0.5)
-ax4.set_title("Mean Depth per Sample (post-ANGSD filters)")
-ax4.set_ylabel("Mean depth (x)")
-ax4.set_xticks(x)
-ax4.set_xticklabels(df["sample"], rotation=90, fontsize=5)
-ax4.set_xlabel("Sample")
+    if not records:
+        raise ValueError("No samples were selected for QC aggregation.")
+    df = pd.DataFrame(records).sort_values("sample")
 
-# --- Panel 5: Mapped read count distribution by population ---
-# skip for now - if adding this back, add a subplot above
-'''
-ax5 = axes[4]
-pop_order = df.groupby("population")["mapped_reads"].median().sort_values().index
-sns.boxplot(data=df, x="population", y="mapped_reads",
-            order=pop_order, ax=ax5, color="#4C72B0",
-            flierprops={"marker": "o", "markersize": 3})
-ax5.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f"{v/1e6:.1f}M"))
-ax5.axhline(LOW_READS_THRESHOLD, color="black", linestyle="--", linewidth=0.8, alpha=0.7)
-ax5.set_title("Mapped Read Distribution by Population")
-ax5.set_xlabel("Population")
-ax5.set_ylabel("Mapped reads")
-ax5.tick_params(axis="x", rotation=45)
-'''
+    # Derived columns
+    df["fastp_retention_pct"] = 100 * df["post_fastp_reads"] / df["raw_reads"]
+    df["reads_lost_fastp"]    = df["raw_reads"] - df["post_fastp_reads"]
+    df["reads_lost_mapping"]  = df["post_fastp_reads"] - df["mapped_reads"]
 
-plt.tight_layout()
-plt.savefig(snakemake.output.plot, dpi=300, bbox_inches="tight")
-print(f"QC plot saved to {snakemake.output.plot}")
+    # Flag potentially problematic samples (thresholds are adjustable)  — ignoring for now
+    # LOW_READS_THRESHOLD   = 1_000_000   # fewer than 1M mapped reads
+    # LOW_MAPPING_THRESHOLD = 70.0        # below 70% mapping rate
+    # LOW_DEPTH_THRESHOLD = 3.0   # mean depth below 3x is generally unreliable
+
+    # df["flag_low_reads"]   = df["mapped_reads"] < LOW_READS_THRESHOLD
+    # df["flag_low_mapping"] = df["mapping_rate"] < LOW_MAPPING_THRESHOLD
+    # df["flag_low_depth"] = df["angsd_mean_depth"] < LOW_DEPTH_THRESHOLD
+    # df["flagged"]        = df["flag_low_reads"] | df["flag_low_mapping"] | df["flag_low_depth"]
+
+    # Save CSV
+    df.to_csv(output_csv, index=False)
+    print(f"QC table saved to {output_csv}")
+
+    with open(output_summary, "w") as summary_file:
+        summary_file.write(f"Coverage summary statistics across {len(df)} samples\n")
+        for label, column in (
+            ("Raw coverage", "raw_coverage"),
+            ("Post-fastp coverage", "post_fastp_coverage"),
+        ):
+            coverage = df[column]
+            summary_file.write(f"\n{label}:\n")
+            summary_file.write(f"  min: {coverage.min():.3f}\n")
+            summary_file.write(f"  max: {coverage.max():.3f}\n")
+            summary_file.write(f"  mean: {coverage.mean():.3f}\n")
+            summary_file.write(f"  median: {coverage.median():.3f}\n")
+    print(f"QC summary saved to {output_summary}")
+
+    # print(f"\nFlagged samples ({df['flagged'].sum()} total):")
+    # print(df[df["flagged"]][["sample", "mapped_reads", "mapping_rate"]])
+
+
+    # --- Plots ---
+
+    panel_count = 4 if depth_records is not None else 3
+    fig, axes = plt.subplots(panel_count, 1, figsize=(max(14, len(df) * 0.12), 4.5 * panel_count))
+    fig.suptitle(f"Aggregate QC — {len(df)} samples", fontsize=14, y=1.01)
+
+    samples   = df["sample"]
+    x         = np.arange(len(df))
+    bar_width = 0.8
+
+    for ax in axes:
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.spines["left"].set_linewidth(0.8)
+        ax.spines["bottom"].set_linewidth(0.8)
+        ax.tick_params(color="black", labelcolor="black")
+
+    # --- Panel 1: Sequencing Coverage (raw and post-fastp) ---
+    ax1 = axes[0]
+    ax1.bar(x,
+            df["raw_coverage"],
+            width=bar_width,
+            label="Raw Coverage",
+            color="#4d4d4d",
+            edgecolor="black",
+            linewidth=0.5)
+    ax1.bar(x,
+            df["post_fastp_coverage"],
+            width=bar_width,
+            label="Post-Fasp Coverage",
+            color="#bfbfbf",
+            edgecolor="black",
+            linewidth=0.5,
+            hatch="///")
+    ax1.set_title("Sequencing Coverage")
+    ax1.set_ylabel("Coverage of whole genome")
+    ax1.legend(fontsize=8, loc="upper right", frameon=False)
+
+    # --- Panel 2: Read attrition stacked bar ---
+    ax2 = axes[1]
+    ax2.bar(x,
+            df["mapped_reads"],
+            width=bar_width,
+            label="Mapped",
+            color="#4d4d4d",
+            edgecolor="black",
+            linewidth=0.5)
+    ax2.bar(x,
+            df["reads_lost_mapping"],
+            width=bar_width,
+            label="Lost at mapping",
+            color="#bfbfbf",
+            edgecolor="black",
+            linewidth=0.5,
+            hatch="///",
+            bottom=df["mapped_reads"])
+    ax2.bar(x,
+            df["reads_lost_fastp"],
+            width=bar_width,
+            label="Lost at fastp",
+            color="#ffffff",
+            edgecolor="black",
+            linewidth=0.5,
+            hatch="xxx",
+            bottom=df["mapped_reads"] + df["reads_lost_mapping"])
+
+    ax2.set_title("Read Attrition per Sample")
+    ax2.set_ylabel("Read count")
+    ax2.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f"{v/1e6:.1f}M"))
+    ax2.set_xticks([])
+    ax2.legend(fontsize=8, loc="upper right", frameon=False)
+
+    # --- Panel 3: Mapping rate per sample ---
+    ax3 = axes[2]
+    ax3.bar(x,
+            df["mapping_rate"],
+            width=bar_width,
+            color="#4d4d4d",
+            edgecolor="black",
+            linewidth=0.5)
+    ax3.set_title("Mapping Rate per Sample")
+    ax3.set_ylabel("% reads mapped")
+    ax3.set_ylim(0, 105)
+    ax3.set_xticks([])
+
+    # --- Panel 4: Mean depth per sample post-ANGSD ---
+    if depth_records is not None:
+        ax4 = axes[3]
+        ax4.bar(x,
+                df["angsd_mean_depth"],
+                width=bar_width,
+                color="#4d4d4d",
+                edgecolor="black",
+                linewidth=0.5)
+        ax4.set_title("Mean Depth per Sample (post-ANGSD filters)")
+        ax4.set_ylabel("Mean depth (x)")
+        ax4.set_xticks(x)
+        ax4.set_xticklabels(df["sample"], rotation=90, fontsize=5)
+        ax4.set_xlabel("Sample")
+
+    # --- Panel 5: Mapped read count distribution by population ---
+    # skip for now - if adding this back, add a subplot above
+    '''
+    ax5 = axes[4]
+    pop_order = df.groupby("population")["mapped_reads"].median().sort_values().index
+    sns.boxplot(data=df, x="population", y="mapped_reads",
+                order=pop_order, ax=ax5, color="#4C72B0",
+                flierprops={"marker": "o", "markersize": 3})
+    ax5.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f"{v/1e6:.1f}M"))
+    ax5.axhline(LOW_READS_THRESHOLD, color="black", linestyle="--", linewidth=0.8, alpha=0.7)
+    ax5.set_title("Mapped Read Distribution by Population")
+    ax5.set_xlabel("Population")
+    ax5.set_ylabel("Mapped reads")
+    ax5.tick_params(axis="x", rotation=45)
+    '''
+
+    plt.tight_layout()
+    plt.savefig(output_plot, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+    print(f"QC plot saved to {output_plot}")
+
+
+
+def main(snakemake_obj=None, argv=None):
+    if snakemake_obj is not None:
+        run(snakemake_obj.input.fastp_jsons,
+            snakemake_obj.input.flagstats,
+            snakemake_obj.input.depthSample,
+            snakemake_obj.output.csv,
+            snakemake_obj.output.plot,
+            snakemake_obj.output.summary)
+        return
+
+    args = parse_args(argv)
+    samples = read_population_samples(args.population_info)
+    fastp_jsons = [find_sample_file(args.fastp_dir, sample, "fastp") for sample in samples]
+    flagstat_dir = args.flagstat_dir or args.fastp_dir
+    flagstats = [find_sample_file(flagstat_dir, sample, "flagstat") for sample in samples]
+
+    os.makedirs(args.output_dir, exist_ok=True)
+    output_csv = os.path.join(args.output_dir, "aggregate_qc.csv")
+    output_plot = os.path.join(args.output_dir, "aggregate_qc.png")
+    output_summary = os.path.join(args.output_dir, "aggregate_qc_summary.txt")
+    run(
+        fastp_jsons,
+        flagstats,
+        args.depth_sample,
+        output_csv,
+        output_plot,
+        output_summary,
+    )
+
+
+if "snakemake" in globals():
+    main(snakemake)
+elif __name__ == "__main__":
+    main()
