@@ -8,7 +8,7 @@ sample_sheet: "/WAVE/projects/whittalllab/dudleya/snakemake-pipeline/config/samp
 taxa_file: "/WAVE/projects/whittalllab/dudleya/snakemake-pipeline/config/taxa.yaml"
 
 data_parent_dir: "/WAVE/datasets/whittalllab/dudleya/"
+output_name: "results-biol173-clones"
 
-output_name: "results-biol173"
 subset:
   batch: [biol173]

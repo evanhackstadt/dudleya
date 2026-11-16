@@ -1,0 +1,13 @@
+Coverage summary statistics across 46 samples
+
+Raw coverage:
+  min: 0.776
+  max: 26.185
+  mean: 12.409
+  median: 12.229
+
+Post-fastp coverage:
+  min: 0.709
+  max: 24.798
+  mean: 11.544
+  median: 11.367

@@ -3,7 +3,7 @@ ngsDist Genetic Distance Analysis
 ======================================================================
 
 Dataset: results/results-biol173-multi-pop/ngsdist/population.dist
-Samples: 52  |  DUSE: 45  DUCY: 4  DUAB: 3
+Samples: 46  |  DUSE: 39  DUCY: 4  DUAB: 3
 Permutations: 10,000  |  RNG seed: 42
 
 ──────────────────────────────────────────────────────────────────────
@@ -11,9 +11,9 @@ BETWEEN-SPECIES PAIRWISE DISTANCES
 ──────────────────────────────────────────────────────────────────────
   Comparison               N pairs        Mean          SE
   ──────────────────────  ────────  ──────────  ──────────
-  D. setchellii vs D. cymosa                N=   180  mean=0.016799  SE=0.000153
-  D. setchellii vs D. abramsii              N=   135  mean=0.026235  SE=0.000283
-  D. cymosa vs D. abramsii                  N=    12  mean=0.025659  SE=0.000956
+  D. setchellii vs D. cymosa                N=   156  mean=0.016812  SE=0.000164
+  D. setchellii vs D. abramsii              N=   117  mean=0.026254  SE=0.000306
+  D. cymosa vs D. abramsii                  N=    12  mean=0.025684  SE=0.000959
 
   Note: SE reflects dispersion across all pairwise comparisons.
   Standard errors are inflated/misleading due to non-independence
@@ -31,9 +31,9 @@ PERMUTATION TESTS (two-tailed, N=10000)
 
   Comparison                                 Obs. Δ mean       p-value
   ────────────────────────────────────────  ────────────  ────────────
-  D.setch.-D.cymosa vs D.setch.-D.abrams.      -0.009436     p = 0.023
-  D.setch.-D.cymosa vs D.cymosa-D.abrams.      -0.008860     p < 0.001
-  D.setch.-D.abrams. vs D.cymosa-D.abrams.     +0.000575     p = 0.004
+  D.setch.-D.cymosa vs D.setch.-D.abrams.      -0.009442     p = 0.029
+  D.setch.-D.cymosa vs D.cymosa-D.abrams.      -0.008872     p < 0.001
+  D.setch.-D.abrams. vs D.cymosa-D.abrams.     +0.000570     p = 0.007
 
 ──────────────────────────────────────────────────────────────────────
 PUTATIVE HYBRID: CY_BOU_LP_290_Du-739
@@ -43,9 +43,9 @@ PUTATIVE HYBRID: CY_BOU_LP_290_Du-739
 
     Group                               N     Mean dist          SE
     ──────────────────────────────  ─────  ────────────  ──────────
-    D. setchellii (DUSE)               45      0.013352    0.000054
-    D. cymosa (DUCY)*                   3      0.014949    0.000933
-    D. abramsii (DUAB)                  3      0.025393    0.002228
+    D. setchellii (DUSE)               39      0.013372    0.000061
+    D. cymosa (DUCY)*                   3      0.014961    0.000934
+    D. abramsii (DUAB)                  3      0.025416    0.002234
 
   * Hybrid excluded from the D. cymosa group for self-comparison.
 
@@ -53,9 +53,9 @@ PUTATIVE HYBRID: CY_BOU_LP_290_Du-739
 
     Comparison                             Obs. Δ mean       p-value
     ────────────────────────────────────  ────────────  ────────────
-    D.setch. vs D.cymosa                     -0.001597     p < 0.001
-    D.setch. vs D.abramsii                   -0.012041     p < 0.001
-    D.cymosa vs D.abramsii                   -0.010444     p = 0.100
+    D.setch. vs D.cymosa                     -0.001589     p = 0.001
+    D.setch. vs D.abramsii                   -0.012045     p < 0.001
+    D.cymosa vs D.abramsii                   -0.010456     p = 0.096
 
   Interpretation guide:
   A hybrid between DUSE and DUCY would show intermediate distances,
@@ -69,58 +69,52 @@ SAMPLE METADATA
 
   Sample                                          Species
   ─────────────────────────────────────────────  ────────
-  QUIN_LP_10_                                        DUSE
-  QUIN_LP_11_                                        DUSE
-  QUIN_LP_14_                                        DUSE
-  QUIN_LP_17_                                        DUSE
-  QUIN_LP_19_                                        DUSE
-  QUIN_LP_1_                                         DUSE
-  QUIN_LP_20_                                        DUSE
-  QUIN_LP_22_                                        DUSE
-  QUIN_LP_23_                                        DUSE
-  QUIN_LP_25_                                        DUSE
-  QUIN_LP_26_                                        DUSE
-  QUIN_LP_28_                                        DUSE
-  QUIN_LP_29_                                        DUSE
-  QUIN_LP_31_                                        DUSE
-  QUIN_LP_32_                                        DUSE
-  QUIN_LP_37_                                        DUSE
-  QUIN_LP_40_                                        DUSE
-  QUIN_LP_41_                                        DUSE
-  QUIN_LP_43_                                        DUSE
-  QUIN_LP_44_                                        DUSE
-  QUIN_LP_52_                                        DUSE
-  QUIN_LP_55_                                        DUSE
-  QUIN_LP_56_                                        DUSE
-  QUIN_LP_58_                                        DUSE
-  QUIN_LP_59_                                        DUSE
-  QUIN_LP_5_                                         DUSE
-  QUIN_LP_61_                                        DUSE
-  QUIN_LP_62_                                        DUSE
-  QUIN_LP_63_                                        DUSE
-  QUIN_LP_64_                                        DUSE
-  QUIN_LP_65_                                        DUSE
-  QUIN_LP_7_                                         DUSE
-  QUIN_LP_8_                                         DUSE
+  ABAB_MAD_LP_322_Du-593                             DUAB
+  ABBE_BERN_LP_312_Du-781                            DUAB
+  ABMU_HOR_LP_308_Du-777                             DUAB
+  BAI_LP_105_Du-222                                  DUSE
   COM_LP_269_Du-703                                  DUSE
-  DOV_LP_080_Du-176                                  DUSE
-  RIC_LP_199_Du-528                                  DUSE
   CROB_LP_177_Du-389                                 DUSE
+  CY_BOU_LP_290_Du-739                               DUCY  <── FOCAL HYBRID
+  CY_HICN_LP_236_Du-614                              DUCY
+  CY_HUN_LP_267_Du-686                               DUCY
+  CY_SIE_LP_189_Du-446                               DUCY
+  DOV_LP_080_Du-176                                  DUSE
+  DUD_LP_136_Du-287                                  DUSE
   KIRN_LP_184_Du-426                                 DUSE
   MALV_LP_095_Du-201                                 DUSE
-  TULP_LP_120_Du-248                                 DUSE
-  DUD_LP_136_Du-287                                  DUSE
-  STI_LP_034_Du-52                                   DUSE
-  RSV_LP_050_Du-87                                   DUSE
   QUI1_LP_255_Du-654                                 DUSE
-  BAI_LP_105_Du-222                                  DUSE
-  CY_HICN_LP_236_Du-614                              DUCY
-  CY_SIE_LP_189_Du-446                               DUCY
-  CY_HUN_LP_267_Du-686                               DUCY
-  CY_BOU_LP_290_Du-739                               DUCY  <── FOCAL HYBRID
-  ABMU_HOR_LP_308_Du-777                             DUAB
-  ABBE_BERN_LP_312_Du-781                            DUAB
-  ABAB_MAD_LP_322_Du-593                             DUAB
+  RIC_LP_199_Du-528                                  DUSE
+  RSV_LP_050_Du-87                                   DUSE
+  STI_LP_034_Du-52                                   DUSE
+  TULPG_LP_120_Du-248                                DUSE
+  QUIN_LP_10_EAMF6                                   DUSE
+  QUIN_LP_11_EAMF8                                   DUSE
+  QUIN_LP_14_CRDC2                                   DUSE
+  QUIN_LP_17_CRDC7                                   DUSE
+  QUIN_LP_19_MRHS3                                   DUSE
+  QUIN_LP_20_MRHS6                                   DUSE
+  QUIN_LP_22_MRHS1                                   DUSE
+  QUIN_LP_25_IFML1                                   DUSE
+  QUIN_LP_29_IFML6                                   DUSE
+  QUIN_LP_31_EAMF2                                   DUSE
+  QUIN_LP_32_EAMF4                                   DUSE
+  QUIN_LP_37_MRHS4                                   DUSE
+  QUIN_LP_40_MRHS7                                   DUSE
+  QUIN_LP_41_MRHS8                                   DUSE
+  QUIN_LP_43_SSRJ1                                   DUSE
+  QUIN_LP_44_SSRJ4                                   DUSE
+  QUIN_LP_55_IFML4                                   DUSE
+  QUIN_LP_56_IFML5                                   DUSE
+  QUIN_LP_58_IFML7                                   DUSE
+  QUIN_LP_59_IFML8                                   DUSE
+  QUIN_LP_5_SSRJ7                                    DUSE
+  QUIN_LP_61_CRDC1                                   DUSE
+  QUIN_LP_62_CRDC3                                   DUSE
+  QUIN_LP_63_CRDC4                                   DUSE
+  QUIN_LP_64_CRDC6                                   DUSE
+  QUIN_LP_65_CRDC8                                   DUSE
+  QUIN_LP_7_EAMF1                                    DUSE
 
 ======================================================================
 END OF REPORT

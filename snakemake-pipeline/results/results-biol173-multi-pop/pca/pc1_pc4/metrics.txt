@@ -1,0 +1,39 @@
+samples: 52
+
+variance explained (top 20 PCs)
+PC1	31.643%
+PC2	9.372%
+PC3	8.530%
+PC4	2.159%
+PC5	1.969%
+PC6	1.932%
+PC7	1.783%
+PC8	1.711%
+PC9	1.624%
+PC10	1.572%
+PC11	1.441%
+PC12	1.352%
+PC13	1.304%
+PC14	1.299%
+PC15	1.214%
+PC16	1.161%
+PC17	1.148%
+PC18	1.100%
+PC19	1.025%
+PC20	1.012%
+
+samples by species
+DUSE	45
+DUCY	4
+DUAB	3
+
+samples by taxon
+DUSE	45
+DUCY	4
+DUAB_MU	1
+DUAB_BE	1
+DUAB_AB	1
+
+samples by batch
+biol173	33
+main	19
