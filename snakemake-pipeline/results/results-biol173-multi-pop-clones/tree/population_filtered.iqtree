@@ -1,0 +1,368 @@
+IQ-TREE 3.0.1 built Jul  9 2025
+
+Input file name: results/results-biol173-multi-pop-clones/tree/population_filtered.varsites.phy
+Type of analysis: tree reconstruction + ultrafast bootstrap (1000 replicates)
+Random seed number: 103883
+
+REFERENCES
+----------
+
+To cite IQ-TREE 3 please use:
+
+Thomas K.F. Wong, Nhan Ly-Trong, Huaiyan Ren, Hector Banos, Andrew J. Roger,
+Edward Susko, Chris Bielow, Nicola De Maio, Nick Goldman, Matthew W. Hahn,
+Gavin Huttley, Robert Lanfear, Bui Quang Minh (2025)
+IQ-TREE 3: Phylogenomic Inference Software using Complex Evolutionary Models.
+Submitted.
+
+Please also cite the following paper(s) for the feature(s) that you used:
+
+Since you used ultrafast bootstrap (UFBoot) please also cite: 
+
+Diep Thi Hoang, Olga Chernomor, Arndt von Haeseler, Bui Quang Minh,
+and Le Sy Vinh (2018) UFBoot2: Improving the ultrafast bootstrap
+approximation. Mol. Biol. Evol., 35:518–522.
+https://doi.org/10.1093/molbev/msx281
+
+SEQUENCE ALIGNMENT
+------------------
+
+Input data: 61 sequences with 2909101 nucleotide sites
+Number of constant sites: 0 (= 0% of all sites)
+Number of invariant (constant or ambiguous constant) sites: 0 (= 0% of all sites)
+Number of parsimony informative sites: 2529341
+Number of distinct site patterns: 2485332
+
+SUBSTITUTION PROCESS
+--------------------
+
+Model of substitution: GTR+F+ASC
+
+Rate parameter R:
+
+  A-C: 0.9937
+  A-G: 3.7269
+  A-T: 1.3046
+  C-G: 0.6269
+  C-T: 3.7383
+  G-T: 1.0000
+
+State frequencies: (empirical counts from alignment)
+
+  pi(A) = 0.2578
+  pi(C) = 0.2416
+  pi(G) = 0.2423
+  pi(T) = 0.2583
+
+Rate matrix Q:
+
+  A    -1.036    0.1681    0.6324    0.2359
+  C    0.1794   -0.9617    0.1064     0.676
+  G    0.6727     0.106   -0.9596    0.1808
+  T    0.2355    0.6323    0.1697    -1.037
+
+Model of rate heterogeneity: Uniform
+
+MAXIMUM LIKELIHOOD TREE
+-----------------------
+
+Log-likelihood of the tree: -46873269.5109 (s.e. 15237.5646)
+Unconstrained log-likelihood (without tree): -41617704.4329
+Number of free parameters (#branches + #model parameters): 127
+Akaike information criterion (AIC) score: 93746793.0219
+Corrected Akaike information criterion (AICc) score: 93746793.0330
+Bayesian information criterion (BIC) score: 93748429.2079
+
+Total tree length (sum of branch lengths): 3.4064
+Sum of internal branch lengths: 1.8308 (53.7450% of tree length)
+
+NOTE: Tree is UNROOTED although outgroup taxon 'QUIN_LP_10_' is drawn at root
+Numbers in parentheses are  ultrafast bootstrap support (%)
+
++-----QUIN_LP_10_
+|
+|        +---QUIN_LP_11_
+|     +--| (100)
+|     |  +--QUIN_LP_32_
+|  +--| (100)
+|  |  |     +--QUIN_LP_31_
+|  |  |  +--| (100)
+|  |  |  |  +---QUIN_LP_8_
+|  |  +--| (100)
+|  |     |  +--QUIN_LP_44_
+|  |     +--| (100)
+|  |        +--QUIN_LP_7_
++--| (100)
+|  |              +--QUIN_LP_14_
+|  |           +--| (100)
+|  |           |  +--QUIN_LP_61_
+|  |        +--| (100)
+|  |        |  +--QUIN_LP_62_
+|  |     +--| (100)
+|  |     |  |     +--QUIN_LP_17_
+|  |     |  |  +--| (100)
+|  |     |  |  |  +--QUIN_LP_64_
+|  |     |  +--| (100)
+|  |     |     +--QUIN_LP_52_
+|  |  +--| (98)
+|  |  |  |           +---QUIN_LP_20_
+|  |  |  |        +--| (78)
+|  |  |  |        |  +---QUIN_LP_40_
+|  |  |  |     +--| (100)
+|  |  |  |     |  |    +--QUIN_LP_59_
+|  |  |  |     |  +----| (100)
+|  |  |  |     |       |  +--QUIN_LP_36_EAMFDu-787
+|  |  |  |     |       +--| (100)
+|  |  |  |     |          +--QUIN_LP_57_IFMLDu-787
+|  |  |  |  +--| (100)
+|  |  |  |  |  |  +---QUIN_LP_41_
+|  |  |  |  |  +--| (100)
+|  |  |  |  |     |       +--QUIN_LP_48_SSRJDu-791
+|  |  |  |  |     |    +--| (100)
+|  |  |  |  |     |    |  +--QUIN_LP_58_
+|  |  |  |  |     +----| (100)
+|  |  |  |  |          +--QUIN_LP_60_IFMLDu-791
+|  |  |  +--| (100)
+|  |  |     |        +--QUIN_LP_25_
+|  |  |     |     +--| (100)
+|  |  |     |     |  +--QUIN_LP_39_MRHSDu-788
+|  |  |     |  +--| (100)
+|  |  |     |  |  |        +--QUIN_LP_26_
+|  |  |     |  |  |     +--| (100)
+|  |  |     |  |  |     |  |  +--QUIN_LP_55_
+|  |  |     |  |  |     |  +--| (100)
+|  |  |     |  |  |     |     +--QUIN_LP_45_SSRJDu-790
+|  |  |     |  |  |  +--| (100)
+|  |  |     |  |  |  |  |  +--QUIN_LP_28_
+|  |  |     |  |  |  |  +--| (100)
+|  |  |     |  |  |  |     +--QUIN_LP_42_MRHSDu-789
+|  |  |     |  |  +--| (100)
+|  |  |     |  |     +--QUIN_LP_29_
+|  |  |     +--| (100)
+|  |  |        +--QUIN_LP_56_
+|  +--| (100)
+|     |     +--QUIN_LP_5_
+|     |  +--| (82)
+|     |  |  |  +--QUIN_LP_63_
+|     |  |  +--| (94)
+|     |  |     |                  +---COM_LP_269_Du-703
+|     |  |     |               +--| (100)
+|     |  |     |               |  +-------DOV_LP_080_Du-176
+|     |  |     |           +---| (100)
+|     |  |     |           |   |       +---RIC_LP_199_Du-528
+|     |  |     |           |   +-------| (100)
+|     |  |     |           |           |     +----CROB_LP_177_Du-389
+|     |  |     |           |           |  +--| (100)
+|     |  |     |           |           |  |  |     +---KIRN_LP_184_Du-426
+|     |  |     |           |           |  |  |  +--| (100)
+|     |  |     |           |           |  |  |  |  +--TULP_LP_120_Du-248
+|     |  |     |           |           |  |  +--| (100)
+|     |  |     |           |           |  |     +--MALV_LP_095_Du-201
+|     |  |     |           |           +--| (100)
+|     |  |     |           |              +--DUD_LP_136_Du-287
+|     |  |     |        +--| (100)
+|     |  |     |        |  +------BAI_LP_105_Du-222
+|     |  |     |     +--| (100)
+|     |  |     |     |  |                                     +--CY_HICN_LP_236_Du-614
+|     |  |     |     |  |                           +---------| (100)
+|     |  |     |     |  |                           |         +--CY_SIE_LP_189_Du-446
+|     |  |     |     |  |                       +---| (100)
+|     |  |     |     |  |                       |   |  +--ABMU_HOR_LP_308_Du-777
+|     |  |     |     |  |                       |   +--| (100)
+|     |  |     |     |  |                       |      +--ABAB_MAD_LP_322_Du-593
+|     |  |     |     |  |     +-----------------| (100)
+|     |  |     |     |  |     |                 +--ABBE_BERN_LP_312_Du-781
+|     |  |     |     |  +-----| (100)
+|     |  |     |     |        +----CY_BOU_LP_290_Du-739
+|     |  |     |  +--| (100)
+|     |  |     |  |  +--CY_HUN_LP_267_Du-686
+|     |  |     +--| (100)
+|     |  |        |     +--STI_LP_034_Du-52
+|     |  |        |  +--| (100)
+|     |  |        |  |  +---RSV_LP_050_Du-87
+|     |  |        +--| (100)
+|     |  |           +----QUI1_LP_255_Du-654
+|     +--| (100)
+|        +--QUIN_LP_65_
+|
+|           +--QUIN_LP_19_
+|     +-----| (100)
+|     |     +--QUIN_LP_37_
+|  +--| (100)
+|  |  |    +--QUIN_LP_1_
+|  |  +----| (100)
+|  |       +--QUIN_LP_43_
++--| (100)
+   |          +--QUIN_LP_22_
+   |       +--| (100)
+   |       |  +--QUIN_LP_23_
+   |  +----| (100)
+   |  |    +--QUIN_LP_66_CRDCDu-786
+   +--| (100)
+      +--QUIN_LP_54_CRDCDu-793
+
+Tree in newick format:
+
+(QUIN_LP_10_:0.0629526442,(((QUIN_LP_11_:0.0479397917,QUIN_LP_32_:0.0323976194)100:0.0300060934,((QUIN_LP_31_:0.0357750743,QUIN_LP_8_:0.0410365720)100:0.0193280597,(QUIN_LP_44_:0.0384806931,QUIN_LP_7_:0.0373591638)100:0.0198790693)100:0.0149612965)100:0.0125060112,(((((QUIN_LP_14_:0.0386304259,QUIN_LP_61_:0.0326412155)100:0.0238223814,QUIN_LP_62_:0.0124619177)100:0.0129324994,((QUIN_LP_17_:0.0124087380,QUIN_LP_64_:0.0175261741)100:0.0262970143,QUIN_LP_52_:0.0044921146)100:0.0253490086)100:0.0119290110,((((QUIN_LP_20_:0.0438305578,QUIN_LP_40_:0.0411772391)78:0.0140289397,(QUIN_LP_59_:0.0016340460,(QUIN_LP_36_EAMFDu-787:0.0012113415,QUIN_LP_57_IFMLDu-787:0.0009966700)100:0.0021111986)100:0.0605544433)100:0.0226728975,(QUIN_LP_41_:0.0446266032,((QUIN_LP_48_SSRJDu-791:0.0021396530,QUIN_LP_58_:0.0039150891)100:0.0041721585,QUIN_LP_60_IFMLDu-791:0.0047528156)100:0.0517494086)100:0.0169270863)100:0.0232329734,(((QUIN_LP_25_:0.0109647728,QUIN_LP_39_MRHSDu-788:0.0096145796)100:0.0348308469,(((QUIN_LP_26_:0.0343258340,(QUIN_LP_55_:0.0048861194,QUIN_LP_45_SSRJDu-790:0.0054435538)100:0.0079576876)100:0.0192329095,(QUIN_LP_28_:0.0054470403,QUIN_LP_42_MRHSDu-789:0.0065302394)100:0.0247382812)100:0.0230528725,QUIN_LP_29_:0.0271760054)100:0.0196994958)100:0.0189607887,QUIN_LP_56_:0.0312712368)100:0.0336935304)100:0.0198511074)98:0.0103684308,((QUIN_LP_5_:0.0174626752,(QUIN_LP_63_:0.0104835591,((((((COM_LP_269_Du-703:0.0458880493,DOV_LP_080_Du-176:0.0897967737)100:0.0359664882,(RIC_LP_199_Du-528:0.0490197096,((CROB_LP_177_Du-389:0.0542482399,((KIRN_LP_184_Du-426:0.0459522955,TULP_LP_120_Du-248:0.0337483151)100:0.0143093595,MALV_LP_095_Du-201:0.0359396509)100:0.0131407950)100:0.0130262515,DUD_LP_136_Du-287:0.0342859265)100:0.0260662661)100:0.0840467534)100:0.0504675851,BAI_LP_105_Du-222:0.0765871669)100:0.0391113175,((((CY_HICN_LP_236_Du-614:0.0293857149,CY_SIE_LP_189_Du-446:0.0301958871)100:0.1105410055,(ABMU_HOR_LP_308_Du-777:0.0235463438,ABAB_MAD_LP_322_Du-593:0.0288443277)100:0.0396876084)100:0.0510416003,ABBE_BERN_LP_312_Du-781:0.0171443888)100:0.1854616765,CY_BOU_LP_290_Du-739:0.0555912107)100:0.0711478347)100:0.0405120328,CY_HUN_LP_267_Du-686:0.0120008040)100:0.0342450159,((STI_LP_034_Du-52:0.0399903527,RSV_LP_050_Du-87:0.0507914243)100:0.0266830527,QUI1_LP_255_Du-654:0.0589061730)100:0.0295945360)100:0.0409091687)94:0.0084604115)82:0.0074906479,QUIN_LP_65_:0.0053325831)100:0.0101403950)100:0.0109820169)100:0.0129000635,(((QUIN_LP_19_:0.0047304419,QUIN_LP_37_:0.0115459765)100:0.0714807682,(QUIN_LP_1_:0.0060341081,QUIN_LP_43_:0.0064921954)100:0.0599744075)100:0.0218184749,(((QUIN_LP_22_:0.0020824179,QUIN_LP_23_:0.0022851098)100:0.0037116020,QUIN_LP_66_CRDCDu-786:0.0018428171)100:0.0595370603,QUIN_LP_54_CRDCDu-793:0.0014379247)100:0.0378223499)100:0.0156569825);
+
+CONSENSUS TREE
+--------------
+
+Consensus tree is constructed from 1000 bootstrap trees
+Log-likelihood of consensus tree: -46873269.510952912
+Robinson-Foulds distance between ML tree and consensus tree: 0
+
+Branches with support >0.000000000% are kept (extended consensus)
+Branch lengths are optimized by maximum likelihood on original alignment
+Numbers in parentheses are bootstrap supports (%)
+
++-----QUIN_LP_10_
+|
+|        +---QUIN_LP_11_
+|     +--| (100)
+|     |  +--QUIN_LP_32_
+|  +--| (100)
+|  |  |     +--QUIN_LP_31_
+|  |  |  +--| (100)
+|  |  |  |  +---QUIN_LP_8_
+|  |  +--| (100)
+|  |     |  +--QUIN_LP_44_
+|  |     +--| (100)
+|  |        +--QUIN_LP_7_
++--| (100)
+|  |              +--QUIN_LP_14_
+|  |           +--| (100)
+|  |           |  +--QUIN_LP_61_
+|  |        +--| (100)
+|  |        |  +--QUIN_LP_62_
+|  |     +--| (100)
+|  |     |  |     +--QUIN_LP_17_
+|  |     |  |  +--| (100)
+|  |     |  |  |  +--QUIN_LP_64_
+|  |     |  +--| (100)
+|  |     |     +--QUIN_LP_52_
+|  |  +--| (98)
+|  |  |  |           +---QUIN_LP_20_
+|  |  |  |        +--| (78)
+|  |  |  |        |  +---QUIN_LP_40_
+|  |  |  |     +--| (100)
+|  |  |  |     |  |    +--QUIN_LP_59_
+|  |  |  |     |  +----| (100)
+|  |  |  |     |       |  +--QUIN_LP_36_EAMFDu-787
+|  |  |  |     |       +--| (100)
+|  |  |  |     |          +--QUIN_LP_57_IFMLDu-787
+|  |  |  |  +--| (100)
+|  |  |  |  |  |  +---QUIN_LP_41_
+|  |  |  |  |  +--| (100)
+|  |  |  |  |     |       +--QUIN_LP_48_SSRJDu-791
+|  |  |  |  |     |    +--| (100)
+|  |  |  |  |     |    |  +--QUIN_LP_58_
+|  |  |  |  |     +----| (100)
+|  |  |  |  |          +--QUIN_LP_60_IFMLDu-791
+|  |  |  +--| (100)
+|  |  |     |        +--QUIN_LP_25_
+|  |  |     |     +--| (100)
+|  |  |     |     |  +--QUIN_LP_39_MRHSDu-788
+|  |  |     |  +--| (100)
+|  |  |     |  |  |        +--QUIN_LP_26_
+|  |  |     |  |  |     +--| (100)
+|  |  |     |  |  |     |  |  +--QUIN_LP_55_
+|  |  |     |  |  |     |  +--| (100)
+|  |  |     |  |  |     |     +--QUIN_LP_45_SSRJDu-790
+|  |  |     |  |  |  +--| (100)
+|  |  |     |  |  |  |  |  +--QUIN_LP_28_
+|  |  |     |  |  |  |  +--| (100)
+|  |  |     |  |  |  |     +--QUIN_LP_42_MRHSDu-789
+|  |  |     |  |  +--| (100)
+|  |  |     |  |     +--QUIN_LP_29_
+|  |  |     +--| (100)
+|  |  |        +--QUIN_LP_56_
+|  +--| (100)
+|     |     +--QUIN_LP_5_
+|     |  +--| (82)
+|     |  |  |  +--QUIN_LP_63_
+|     |  |  +--| (94)
+|     |  |     |                  +---COM_LP_269_Du-703
+|     |  |     |               +--| (100)
+|     |  |     |               |  +-------DOV_LP_080_Du-176
+|     |  |     |           +---| (100)
+|     |  |     |           |   |       +---RIC_LP_199_Du-528
+|     |  |     |           |   +-------| (100)
+|     |  |     |           |           |     +----CROB_LP_177_Du-389
+|     |  |     |           |           |  +--| (100)
+|     |  |     |           |           |  |  |     +---KIRN_LP_184_Du-426
+|     |  |     |           |           |  |  |  +--| (100)
+|     |  |     |           |           |  |  |  |  +--TULP_LP_120_Du-248
+|     |  |     |           |           |  |  +--| (100)
+|     |  |     |           |           |  |     +--MALV_LP_095_Du-201
+|     |  |     |           |           +--| (100)
+|     |  |     |           |              +--DUD_LP_136_Du-287
+|     |  |     |        +--| (100)
+|     |  |     |        |  +------BAI_LP_105_Du-222
+|     |  |     |     +--| (100)
+|     |  |     |     |  |                                     +--CY_HICN_LP_236_Du-614
+|     |  |     |     |  |                           +---------| (100)
+|     |  |     |     |  |                           |         +--CY_SIE_LP_189_Du-446
+|     |  |     |     |  |                       +---| (100)
+|     |  |     |     |  |                       |   |  +--ABMU_HOR_LP_308_Du-777
+|     |  |     |     |  |                       |   +--| (100)
+|     |  |     |     |  |                       |      +--ABAB_MAD_LP_322_Du-593
+|     |  |     |     |  |     +-----------------| (100)
+|     |  |     |     |  |     |                 +--ABBE_BERN_LP_312_Du-781
+|     |  |     |     |  +-----| (100)
+|     |  |     |     |        +----CY_BOU_LP_290_Du-739
+|     |  |     |  +--| (100)
+|     |  |     |  |  +--CY_HUN_LP_267_Du-686
+|     |  |     +--| (100)
+|     |  |        |     +--STI_LP_034_Du-52
+|     |  |        |  +--| (100)
+|     |  |        |  |  +---RSV_LP_050_Du-87
+|     |  |        +--| (100)
+|     |  |           +----QUI1_LP_255_Du-654
+|     +--| (100)
+|        +--QUIN_LP_65_
+|
+|           +--QUIN_LP_19_
+|     +-----| (100)
+|     |     +--QUIN_LP_37_
+|  +--| (100)
+|  |  |    +--QUIN_LP_1_
+|  |  +----| (100)
+|  |       +--QUIN_LP_43_
++--| (100)
+   |          +--QUIN_LP_22_
+   |       +--| (100)
+   |       |  +--QUIN_LP_23_
+   |  +----| (100)
+   |  |    +--QUIN_LP_66_CRDCDu-786
+   +--| (100)
+      +--QUIN_LP_54_CRDCDu-793
+
+
+Consensus tree in newick format: 
+
+(QUIN_LP_10_:0.0629526359,(((QUIN_LP_11_:0.0479397483,QUIN_LP_32_:0.0323975964)100:0.0300061928,((QUIN_LP_31_:0.0357750293,QUIN_LP_8_:0.0410365658)100:0.0193281341,(QUIN_LP_44_:0.0384806762,QUIN_LP_7_:0.0373591099)100:0.0198791347)100:0.0149613263)100:0.0125060618,(((((QUIN_LP_14_:0.0386304132,QUIN_LP_61_:0.0326411760)100:0.0238224726,QUIN_LP_62_:0.0124618995)100:0.0129325645,((QUIN_LP_17_:0.0124087225,QUIN_LP_64_:0.0175261403)100:0.0262970217,QUIN_LP_52_:0.0044921391)100:0.0253490261)100:0.0119290265,((((QUIN_LP_20_:0.0438305625,QUIN_LP_40_:0.0411771941)78:0.0140290335,(QUIN_LP_59_:0.0016340788,(QUIN_LP_36_EAMFDu-787:0.0012113266,QUIN_LP_57_IFMLDu-787:0.0009966347)100:0.0021112382)100:0.0605544001)100:0.0226729964,(QUIN_LP_41_:0.0446266082,((QUIN_LP_48_SSRJDu-791:0.0021396529,QUIN_LP_58_:0.0039151337)100:0.0041721519,QUIN_LP_60_IFMLDu-791:0.0047528219)100:0.0517493869)100:0.0169271495)100:0.0232330133,(((QUIN_LP_25_:0.0109647474,QUIN_LP_39_MRHSDu-788:0.0096145796)100:0.0348308840,(((QUIN_LP_26_:0.0343258194,(QUIN_LP_55_:0.0048861041,QUIN_LP_45_SSRJDu-790:0.0054435571)100:0.0079576976)100:0.0192329357,(QUIN_LP_28_:0.0054470673,QUIN_LP_42_MRHSDu-789:0.0065302480)100:0.0247382845)100:0.0230528996,QUIN_LP_29_:0.0271759929)100:0.0196995014)100:0.0189607955,QUIN_LP_56_:0.0312712660)100:0.0336935794)100:0.0198511121)98:0.0103684388,((QUIN_LP_5_:0.0174627509,(QUIN_LP_63_:0.0104834066,((((((COM_LP_269_Du-703:0.0458880617,DOV_LP_080_Du-176:0.0897966661)100:0.0359665753,(RIC_LP_199_Du-528:0.0490196540,((CROB_LP_177_Du-389:0.0542481778,((KIRN_LP_184_Du-426:0.0459522198,TULP_LP_120_Du-248:0.0337482587)100:0.0143093245,MALV_LP_095_Du-201:0.0359396021)100:0.0131407755)100:0.0130262395,DUD_LP_136_Du-287:0.0342859064)100:0.0260662578)100:0.0840466490)100:0.0504676138,BAI_LP_105_Du-222:0.0765871185)100:0.0391113871,((((CY_HICN_LP_236_Du-614:0.0293857247,CY_SIE_LP_189_Du-446:0.0301958611)100:0.1105410793,(ABMU_HOR_LP_308_Du-777:0.0235463870,ABAB_MAD_LP_322_Du-593:0.0288443144)100:0.0396876249)100:0.0510416714,ABBE_BERN_LP_312_Du-781:0.0171444451)100:0.1854615631,CY_BOU_LP_290_Du-739:0.0555912818)100:0.0711483523)100:0.0405117437,CY_HUN_LP_267_Du-686:0.0120007024)100:0.0342453286,((STI_LP_034_Du-52:0.0399903363,RSV_LP_050_Du-87:0.0507913765)100:0.0266832068,QUI1_LP_255_Du-654:0.0589061062)100:0.0295947654)100:0.0409083532)94:0.0084609290)82:0.0074902574,QUIN_LP_65_:0.0053325406)100:0.0101405915)100:0.0109820299)100:0.0129000967,(((QUIN_LP_19_:0.0047304521,QUIN_LP_37_:0.0115459822)100:0.0714807298,(QUIN_LP_1_:0.0060341302,QUIN_LP_43_:0.0064921930)100:0.0599743911)100:0.0218185686,(((QUIN_LP_22_:0.0020823961,QUIN_LP_23_:0.0022851264)100:0.0037116094,QUIN_LP_66_CRDCDu-786:0.0018428396)100:0.0595369881,QUIN_LP_54_CRDCDu-793:0.0014379303)100:0.0378224125)100:0.0156570083);
+
+ALISIM COMMAND
+--------------
+To simulate an alignment of the same length as the original alignment, using the tree and model parameters estimated from this analysis, you can use the following command:
+
+--alisim simulated_MSA -t results/results-biol173-multi-pop-clones/tree/population_filtered.treefile -m "GTR{0.99367,3.72692,1.30457,0.626872,3.73829}+F{0.257808,0.241579,0.242336,0.258278}+ASC" --length 2909101
+
+To mimic the alignment used to produce this analysis, i.e. simulate an alignment of the same length as the original alignment, using the tree and model parameters estimated from this analysis *and* copying the same gap positions as the original alignment, you can use the following command:
+
+iqtree -s results/results-biol173-multi-pop-clones/tree/population_filtered.varsites.phy --alisim mimicked_MSA
+
+To simulate any number of alignments in either of the two commandlines above, use the --num-alignments options, for example mimic 100 alignments you would use the command line:
+
+iqtree -s results/results-biol173-multi-pop-clones/tree/population_filtered.varsites.phy --alisim mimicked_MSA --num-alignments 100
+
+For more information on using AliSim, please visit: www.iqtree.org/doc/AliSim
+
+TIME STAMP
+----------
+
+Date and time: Thu Apr 23 04:34:43 2026
+Total CPU time used: 355273.8246 seconds (98h:41m:13s)
+Total wall-clock time used: 35687.92107 seconds (9h:54m:47s)
+

@@ -1,0 +1,11 @@
+Multiple DNAx was performed on 6 plant samples. Below are the sets.
+Du787: LP36 + LP57 + LP59
+Du788: LP25 + LP39
+Du789: LP28 + LP42
+Du790: LP45 + LP55
+Du791: LP48 + LP60 + LP58
+Du793: LP22 + LP54
+
+The folder raw_reads_biol173_artificial_clones/ does not contain all of these samples.
+Rather, for a clonal set of n LPs, it contains n-1 of the LPs, 
+leaving one LP in the raw_reads_biol173/ folder.
